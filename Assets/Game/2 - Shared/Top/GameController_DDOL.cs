@@ -3,7 +3,6 @@ using UnityEngine;
 public class GameController_DDOL : MonoBehaviour
 {
     public int PreviousRoundMoves = 0;
-    public StatSheet PreviousRoundStats;
     ChangeScene _sceneChanger;
 
     void Awake()
