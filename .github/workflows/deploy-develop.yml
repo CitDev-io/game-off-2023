@@ -1,0 +1,62 @@
+name: WebGL to Itch (production)
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    name: WebGL Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      # Cache
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      # Notification 1
+      - name: Discord Notify Start
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: https://discord.com/api/webhooks/1170506735417561148/aSOW9j2jrA2P06H1L8zhvDkUEqVNzi6EubX_9FrDf4EiwP_6vDBkaHM7atnMT7gnhAc1
+          content: ":wrench: **New build started** WebGL build started on `develop` branch for the game-off-2023 project. This will take 2-10 minutes."
+      
+      # Build
+      - name: Unity WebGL Build
+        uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          targetPlatform: WebGL
+
+      # Output
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: build
+          
+      - name: Butler Push to Itch.io (production)
+        uses: manleydev/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: webgl
+          ITCH_GAME: game-off-2023
+          ITCH_USER: citizendevelopers
+          PACKAGE: build
+
+      # Notification 2
+      - name: Discord Notify Complete
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: https://discord.com/api/webhooks/1170506735417561148/aSOW9j2jrA2P06H1L8zhvDkUEqVNzi6EubX_9FrDf4EiwP_6vDBkaHM7atnMT7gnhAc1
+          content: ":white_check_mark: **WebGL build complete** a new build is available at https://citizendevelopers.itch.io/game-off-2023"
