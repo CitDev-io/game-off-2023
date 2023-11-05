@@ -13,21 +13,56 @@ public class CombatReferee : MonoBehaviour
     public GameObject combatantUI;
     public GameObject WinUI;
     public GameObject LoseUI;
+    public int StageNumber = 1;
+    public int WaveNumber = 1;
 
 
     void Start()
     {
-        // introduce combatants
+        SetupWave();   
+    }
 
+    Transform GetSpawnPointByIndex(int index) {
+        
+        return transform.Find("Enemy Field").transform.Find("SpawnPoint" + index.ToString());
+    }
+
+    void SetupWave() {
+        // make sure the queue is empty
+        combatantQueue.Clear();
+
+        // make sure there aren't CPUs in the field
+        foreach (Transform child in transform) {
+            if (child.gameObject.GetComponent<CpuCharacter>() != null) {
+                Destroy(child.gameObject);
+            }
+        }
+
+        // clear out enemies from last wave
+        combatants.RemoveAll(combatant => combatant is CpuCharacter);
+
+        // spawn enemies for this wave
+        for (int i = 0; i < WaveNumber; i++) {
+            GameObject newEnemy = Instantiate(Resources.Load("Characters/CPU/Stage" + StageNumber + "Mob")) as GameObject;
+            newEnemy.transform.parent = GameObject.Find("Combat Field").transform;
+            newEnemy.transform.position = GetSpawnPointByIndex(i).position;
+            Debug.Log(GetSpawnPointByIndex(i).position);
+            combatants.Add(newEnemy.GetComponent<CpuCharacter>());
+        }
+        
         // set up combatant queue
         SeedCombatQueue();
 
-        PROGRESSBOARD();     
+        // set up current combatant
+        PROGRESSBOARD();
     }
+
 
     void SeedCombatQueue()
     {
-        foreach(Combatant combatant in combatants)
+        // add all combatants to the queue in a random order
+        List<Combatant> shuffledCombatants = combatants.OrderBy(combatant => Random.Range(0, 100)).ToList();
+        foreach(Combatant combatant in shuffledCombatants)
         {
             combatantQueue.Enqueue(combatant);
         }
@@ -38,14 +73,27 @@ public class CombatReferee : MonoBehaviour
         if (GetAlivePCs().Count == 0) {
             Debug.Log("The CPUs have won!");
             LoseUI.SetActive(true);
+            CleanupOnEndTrigger();
             return;
         } else if (GetAliveCPUs().Count == 0) {
-            Debug.Log("The PCs have won!");
-            WinUI.SetActive(true);
-            return;
+            if (WaveNumber == 3) {
+                Debug.Log("The PCs have won the game!");
+                WinUI.SetActive(true);
+                CleanupOnEndTrigger();
+                return;
+            } else {
+                WaveNumber++;
+                SetupWave();
+                return;
+            }
         }
 
         MoveToNextCombatant();
+    }
+
+    void CleanupOnEndTrigger() {
+        currentCombatant = null;
+        AdjustCurrentCombatantUI();
     }
 
     void MoveToNextCombatant() {
@@ -68,7 +116,7 @@ public class CombatReferee : MonoBehaviour
     }
 
     void AdjustCurrentCombatantUI() {
-        if (currentCombatant is PlayerCharacter) {
+        if (currentCombatant != null && currentCombatant is PlayerCharacter) {
             combatantUI.SetActive(true);
         } else {
             combatantUI.SetActive(false);

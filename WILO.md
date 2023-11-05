@@ -1,5 +1,3 @@
 # WILO
-- pipelines/webhooks set up
-- Starter character class
-- Combat Controller
-- github setup
+X Prefabify the characters
+X Define Spawn Point Markers
