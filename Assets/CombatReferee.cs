@@ -14,7 +14,7 @@ public class CombatReferee : MonoBehaviour
     public GameObject WinUI;
     public GameObject LoseUI;
     public int StageNumber = 1;
-    public int WaveNumber = 1;
+    public int WaveNumber = 4;
 
 
     void Start()
@@ -69,6 +69,21 @@ public class CombatReferee : MonoBehaviour
         }
     }
 
+    void StageChangeover() {
+        StageNumber++;
+        WaveNumber = 4;
+        StageResetPlayerCharacters();
+        SetupWave();
+    }
+
+    void StageResetPlayerCharacters() {
+        List<Combatant> PCs = GetAllPCs();
+        foreach (Combatant pc in PCs) {
+            pc.currentHealth = pc.maximumHealth;
+            pc.isDead = false;
+        }
+    }
+
     void PROGRESSBOARD() {
         // Check Win Conditions
         if (GetAlivePCs().Count == 0) {
@@ -78,10 +93,14 @@ public class CombatReferee : MonoBehaviour
             return;
         } else if (GetAliveCPUs().Count == 0) {
             if (WaveNumber == 5) {
-                Debug.Log("The PCs have won the game!");
-                WinUI.SetActive(true);
-                CleanupOnEndTrigger();
-                return;
+                if (StageNumber == 4) {
+                    Debug.Log("The PCs have won the game!");
+                    WinUI.SetActive(true);
+                    CleanupOnEndTrigger();
+                    return;
+                } else {
+                    StageChangeover();
+                }
             } else {
                 WaveNumber++;
                 SetupWave();
@@ -151,6 +170,10 @@ public class CombatReferee : MonoBehaviour
 
     List<Combatant> GetAliveCPUs() {
         return combatantQueue.ToList().FindAll(combatant => combatant is CpuCharacter && !combatant.isDead);
+    }
+
+    List<Combatant> GetAllPCs() {
+        return combatantQueue.ToList().FindAll(combatant => combatant is PlayerCharacter);
     }
 
     Combatant getRandomPlayerCharacter() {
