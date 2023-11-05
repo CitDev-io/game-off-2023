@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Game/3 - Title/Title.unity
     guid: ad93bf8cd02f51c4287c6aca3ce159cf
+  - enabled: 1
+    path: Assets/Game/CombatScene/CombatScene.unity
+    guid: d68d5308d3da6c6428b4040042bbde56
   m_configObjects: {}
