@@ -14,7 +14,7 @@ public class GameController_DDOL : MonoBehaviour
     private void Start()
     {
         _sceneChanger = GetComponent<ChangeScene>();
-        SetSoundLevel(2);
+        SetSoundLevel(1);
         SetMusicToggle(true);
     }
 
