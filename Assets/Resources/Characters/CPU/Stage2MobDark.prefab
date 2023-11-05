@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2592222073688843248, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8
+      objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: MaxDamage
       value: 6
@@ -65,7 +69,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029500, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: m_Name
-      value: Stage2Mob
+      value: Stage2MobDark
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}

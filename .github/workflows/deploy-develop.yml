@@ -61,5 +61,5 @@ jobs:
       - name: Discord Notify Complete
         uses: tsickert/discord-webhook@v5.3.0
         with:
-          webhook-url: https://discord.com/api/webhooks/1170506735417561148/aSOW9j2jrA2P06H1L8zhvDkUEqVNzi6EubX_9FrDf4EiwP_6vDBkaHM7atnMT7gnhAc1
-          content: ":white_check_mark: **WebGL build complete** a new build is available at https://citizendevelopers.itch.io/game-off-2023"
+          webhook-url: https://discord.com/api/webhooks/1170786929487380480/yuj8iw81_Jzy1QUHvMm4o5vuQ6pfufUw47Ak8wcf1SGJqkAqGr1recNRi_F0kidW1m4l
+          content: ":white_check_mark: **WebGL build complete** a new build is available at https://citizendevelopers.itch.io/game-off-2023 and in case you missed it, this beauty has NO CIRCLES."

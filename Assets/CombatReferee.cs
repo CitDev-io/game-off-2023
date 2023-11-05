@@ -42,8 +42,9 @@ public class CombatReferee : MonoBehaviour
         combatants.RemoveAll(combatant => combatant is CpuCharacter);
 
         // spawn enemies for this wave
-        for (int i = 0; i < WaveNumber; i++) {
-            GameObject newEnemy = Instantiate(Resources.Load("Characters/CPU/Stage" + StageNumber + "Mob")) as GameObject;
+        List<EnemyType> enemiesToMake = GetEnemiesForWave();
+        for (var i=0; i < enemiesToMake.Count; i++) {
+            GameObject newEnemy = Instantiate(Resources.Load("Characters/CPU/" + enemiesToMake[i].ToString())) as GameObject;
             newEnemy.transform.parent = GameObject.Find("Combat Field").transform;
             newEnemy.transform.position = GetSpawnPointByIndex(i).position;
             Debug.Log(GetSpawnPointByIndex(i).position);
@@ -76,7 +77,7 @@ public class CombatReferee : MonoBehaviour
             CleanupOnEndTrigger();
             return;
         } else if (GetAliveCPUs().Count == 0) {
-            if (WaveNumber == 3) {
+            if (WaveNumber == 5) {
                 Debug.Log("The PCs have won the game!");
                 WinUI.SetActive(true);
                 CleanupOnEndTrigger();
@@ -163,5 +164,39 @@ public class CombatReferee : MonoBehaviour
     IEnumerator CpuTurn() {
         yield return new WaitForSeconds(1f);
         ExecuteAttack(false, currentCombatant, getRandomPlayerCharacter());
+    }
+
+    List<EnemyType> GetEnemiesForWave() {
+        List<EnemyType> enemies = new List<EnemyType>();
+        switch (WaveNumber) {
+            case 1:
+                enemies.Add(EnemyType.Stage1MobLight);
+                enemies.Add(EnemyType.Stage1MobDark);
+                break;
+            case 2:
+                enemies.Add(EnemyType.Stage1MobLight);
+                enemies.Add(EnemyType.Stage1MobLight);
+                enemies.Add(EnemyType.Stage1MobDark);
+                break;
+            case 3:
+                enemies.Add(EnemyType.Stage1MobLight);
+                enemies.Add(EnemyType.Stage1MobLight);
+                enemies.Add(EnemyType.Stage1MobDark);
+                enemies.Add(EnemyType.Stage1MobDark);
+                break;
+            case 4:
+                enemies.Add(EnemyType.Stage1MobLight);
+                enemies.Add(EnemyType.Stage1MobLight);
+                enemies.Add(EnemyType.Stage1MobLight);
+                enemies.Add(EnemyType.Stage1MobDark);
+                enemies.Add(EnemyType.Stage1MobDark);
+                break;
+            case 5:
+                enemies.Add(EnemyType.Stage1MobLight);
+                enemies.Add(EnemyType.Stage1MobDark);
+                enemies.Add(EnemyType.Stage1Boss);
+                break;
+        }
+        return enemies;
     }
 }
