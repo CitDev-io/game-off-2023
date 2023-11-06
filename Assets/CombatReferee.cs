@@ -14,7 +14,7 @@ public class CombatReferee : MonoBehaviour
     public GameObject WinUI;
     public GameObject LoseUI;
     public int StageNumber = 1;
-    public int WaveNumber = 4;
+    public int WaveNumber = 1;
 
 
     void Start()
@@ -69,9 +69,14 @@ public class CombatReferee : MonoBehaviour
         }
     }
 
+    void WaveChangeover() {
+        WaveNumber++;
+        SetupWave();
+    }
+
     void StageChangeover() {
         StageNumber++;
-        WaveNumber = 4;
+        WaveNumber = 1;
         StageResetPlayerCharacters();
         SetupWave();
     }
@@ -84,7 +89,13 @@ public class CombatReferee : MonoBehaviour
         }
     }
 
+    void PurgeDeadCombatantsFromQueue() {
+        List<Combatant> combatantsToRemove = combatantQueue.ToList().FindAll(combatant => combatant.isDead);
+        combatantQueue = new Queue<Combatant>(combatantQueue.ToList().FindAll(combatant => !combatant.isDead));
+    }
+
     void PROGRESSBOARD() {
+        PurgeDeadCombatantsFromQueue();
         // Check Win Conditions
         if (GetAlivePCs().Count == 0) {
             Debug.Log("The CPUs have won!");
@@ -100,10 +111,10 @@ public class CombatReferee : MonoBehaviour
                     return;
                 } else {
                     StageChangeover();
+                    return;
                 }
             } else {
-                WaveNumber++;
-                SetupWave();
+                WaveChangeover();
                 return;
             }
         }
@@ -119,12 +130,8 @@ public class CombatReferee : MonoBehaviour
     void MoveToNextCombatant() {
         if (currentCombatant != null) currentCombatant.TurnEnd();
 
-
-
         currentCombatant = combatantQueue.Dequeue();
-        while (currentCombatant.isDead && combatantQueue.Count > 0) {
-            currentCombatant = combatantQueue.Dequeue();
-        }
+
         AdjustCurrentCombatantUI();
         Debug.Log("It is now " + currentCombatant.gameObject.name + "'s turn.");
         currentCombatant.TurnStart();
@@ -154,8 +161,7 @@ public class CombatReferee : MonoBehaviour
             Debug.Log(attacker.gameObject.name + " used a special attack on " + target.gameObject.name + "!");
         } else {
             Debug.Log(attacker.gameObject.name + " attacked " + target.gameObject.name + "!");
-            int DamageDealt = Random.Range(attacker.MinDamage, attacker.MaxDamage);
-            target.TakeDamage(DamageDealt);
+            target.HandleIncomingAttack(attacker.powerType, attacker);
         }
         PROGRESSBOARD();
     }
@@ -165,15 +171,15 @@ public class CombatReferee : MonoBehaviour
     }
 
     List<Combatant> GetAlivePCs() {
-        return combatantQueue.ToList().FindAll(combatant => combatant is PlayerCharacter && !combatant.isDead);
+        return combatants.ToList().FindAll(combatant => combatant is PlayerCharacter && !combatant.isDead);
     }
 
     List<Combatant> GetAliveCPUs() {
-        return combatantQueue.ToList().FindAll(combatant => combatant is CpuCharacter && !combatant.isDead);
+        return combatants.ToList().FindAll(combatant => combatant is CpuCharacter && !combatant.isDead);
     }
 
     List<Combatant> GetAllPCs() {
-        return combatantQueue.ToList().FindAll(combatant => combatant is PlayerCharacter);
+        return combatants.ToList().FindAll(combatant => combatant is PlayerCharacter);
     }
 
     Combatant getRandomPlayerCharacter() {
@@ -185,8 +191,15 @@ public class CombatReferee : MonoBehaviour
     }
 
     IEnumerator CpuTurn() {
-        yield return new WaitForSeconds(1f);
-        ExecuteAttack(false, currentCombatant, getRandomPlayerCharacter());
+        if (currentCombatant is CpuCharacter cpu) {
+            if (cpu.currentStagger == 0) {
+                cpu.RestoreStagger();
+            }
+            yield return new WaitForSeconds(1f);
+            ExecuteAttack(false, currentCombatant, getRandomPlayerCharacter());
+        } else {
+            yield break;
+        }
     }
 
     List<EnemyType> GetEnemiesForWave() {

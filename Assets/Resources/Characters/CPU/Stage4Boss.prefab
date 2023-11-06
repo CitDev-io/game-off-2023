@@ -37,19 +37,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: MaxDamage
-      value: 20
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: MinDamage
-      value: 2
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
+      propertyPath: powerType
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: currentHealth
-      value: 30
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: maximumHealth
-      value: 30
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
+      propertyPath: currentStagger
+      value: 550
+      objectReference: {fileID: 0}
+    - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
+      propertyPath: maximumStagger
+      value: 550
       objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029475, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: m_RootOrder
@@ -98,6 +110,10 @@ PrefabInstance:
     - target: {fileID: 2592222073781029500, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: m_Name
       value: Stage4Boss
+      objectReference: {fileID: 0}
+    - target: {fileID: 8227263699079869787, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 3.67
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}

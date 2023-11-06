@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Combatant : MonoBehaviour
+public abstract class Combatant : MonoBehaviour
 {
+    [SerializeField]
+    public int BaseMitigation = 0;
+    [SerializeField]
+    public PowerType powerType = PowerType.LIGHT;
     [SerializeField]
     public int maximumHealth = 1;
     [SerializeField]
@@ -31,6 +35,7 @@ public class Combatant : MonoBehaviour
         if (HealthTicker != null) {
             HealthTicker.GetComponent<TMP_Text>().text = currentHealth.ToString() + "/" + maximumHealth.ToString();
         }
+        MoreFixedUpdate();
 
         if (TurnIndicator != null) {
             if (IsCurrentCombatant) {
@@ -49,7 +54,35 @@ public class Combatant : MonoBehaviour
         IsCurrentCombatant = false;
     }
 
-    public void TakeDamage(int Damage) {
+    public int GetRandomDamageRoll() {
+        return Random.Range(MinDamage, MaxDamage);
+    }
+
+    public int HandleIncomingAttack(PowerType sourcePowerType, Combatant source) {
+        int rawDamage = source.GetRandomDamageRoll();
+
+        bool resistantToPowerType = sourcePowerType == powerType;
+        int PowerTypeResistance = resistantToPowerType ? 10 : 0;
+        int mitigationPower = BaseMitigation + PowerTypeResistance;
+        int mitigatedDamage = (int) (rawDamage * (mitigationPower / 100f));
+
+        int unmitigatedDamage = Mathf.Clamp(
+            rawDamage - mitigatedDamage,
+            0,
+            rawDamage
+        );
+
+        int FinalDamage = CalculateFinalDamage(sourcePowerType, source, rawDamage, unmitigatedDamage);
+
+        TakeDamage(FinalDamage);
+        return FinalDamage;
+    }
+
+    internal abstract void MoreFixedUpdate();
+    internal abstract int CalculateFinalDamage(PowerType sourcePowerType, Combatant source, int rawDamage, int unmitigatedDamage);
+
+
+    void TakeDamage(int Damage) {
         currentHealth -= Damage;
         if (currentHealth <= 0) {
             currentHealth = 0;

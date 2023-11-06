@@ -11,6 +11,30 @@ PrefabInstance:
       propertyPath: m_Color.g
       value: 0.76686984
       objectReference: {fileID: 0}
+    - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
+      propertyPath: MaxDamage
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
+      propertyPath: MinDamage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
+      propertyPath: currentHealth
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
+      propertyPath: maximumHealth
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
+      propertyPath: currentStagger
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
+      propertyPath: maximumStagger
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029475, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: m_RootOrder
       value: 0
