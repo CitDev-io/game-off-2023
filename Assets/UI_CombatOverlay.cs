@@ -18,7 +18,7 @@ public class UI_CombatOverlay : MonoBehaviour
 
     void FixedUpdate()
     {
-        StageText.text = "Stage: " + _combatReferee.StageNumber.ToString();
-        WaveText.text = "Wave: " + _combatReferee.WaveNumber.ToString();
+        StageText.text = "Stage: " + _combatReferee.gameState.StageNumber.ToString();
+        WaveText.text = "Wave: " + _combatReferee.gameState.WaveNumber.ToString();
     }
 }

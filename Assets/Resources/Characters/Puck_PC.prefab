@@ -179,6 +179,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6807464997833760215, guid: 010aa7d44f3b8f34d961fe525a2f0823, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6807464997993402549, guid: 010aa7d44f3b8f34d961fe525a2f0823, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -242,6 +246,22 @@ PrefabInstance:
     - target: {fileID: 6807464998052182329, guid: 010aa7d44f3b8f34d961fe525a2f0823, type: 3}
       propertyPath: m_Name
       value: Puck_PC
+      objectReference: {fileID: 0}
+    - target: {fileID: 6807464998815831211, guid: 010aa7d44f3b8f34d961fe525a2f0823, type: 3}
+      propertyPath: m_SortingLayer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6807464998815831211, guid: 010aa7d44f3b8f34d961fe525a2f0823, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6807464998815831211, guid: 010aa7d44f3b8f34d961fe525a2f0823, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -2076554051
+      objectReference: {fileID: 0}
+    - target: {fileID: 6807464998815831213, guid: 010aa7d44f3b8f34d961fe525a2f0823, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6807464998052182311, guid: 010aa7d44f3b8f34d961fe525a2f0823, type: 3}
