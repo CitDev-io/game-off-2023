@@ -22,6 +22,14 @@ public class GameState
         return combatants.FindAll(combatant => combatant is CpuCharacter && !combatant.isDead);
     }
 
+    public List<Combatant> GetDefeatedPCs() {
+        return combatants.FindAll(combatant => combatant is PlayerCharacter && combatant.isDead);
+    }
+
+    public List<Combatant> GetDefeatedCPUs() {
+        return combatants.FindAll(combatant => combatant is CpuCharacter && combatant.isDead);
+    }
+
     public List<Combatant> GetAllPCs() {
         return combatants.FindAll(combatant => combatant is PlayerCharacter);
     }

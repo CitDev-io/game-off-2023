@@ -11,6 +11,10 @@ public class CombatReferee : MonoBehaviour
     public GameObject WinUI;
     // TODO: Give to UIManager
     public GameObject LoseUI;
+    //TODO: give to UIManager
+    public GameObject ReviveUI;
+    //TODO: give to UIManager
+    public GameObject BoonUI;
 
     // Long-Term Referee Stuff
     public GameState gameState;
@@ -82,6 +86,42 @@ public class CombatReferee : MonoBehaviour
         }
     }
 
+    void ReviveAllPCs() {
+        List<Combatant> PCs = gameState.GetAllPCs();
+        foreach (Combatant pc in PCs) {
+            pc.currentHealth = pc.maximumHealth;
+            pc.isDead = false;
+        }
+    }
+
+    public void UserResponse_Revive(bool doIt) {
+        ReviveUI.SetActive(false);
+        if (doIt && gameState.ScalesOwned >= 5) {
+            gameState.ScalesOwned -= 5;
+            ReviveAllPCs();
+            WaveChangeStep2();
+        }
+    }
+
+    public void UserResponse_Boon() {
+        BoonUI.SetActive(false);
+        WaveChangeover();
+    }
+
+    void WaveChangeStep1() {
+        gameState.ScalesOwned += gameState.GetDefeatedCPUs().Count;
+        if (gameState.ScalesOwned >= 5 && gameState.GetDefeatedPCs().Count > 0) {
+            ReviveUI.SetActive(true);
+        } else {
+            WaveChangeStep2();
+        }
+    }
+
+    //TODO: UI Manager
+    void WaveChangeStep2() {
+        BoonUI.SetActive(true);
+    }
+
     void WaveChangeover() {
         gameState.WaveNumber++;
         SetupWave();
@@ -127,7 +167,7 @@ public class CombatReferee : MonoBehaviour
                     return;
                 }
             } else {
-                WaveChangeover();
+                WaveChangeStep1();
                 return;
             }
         }
