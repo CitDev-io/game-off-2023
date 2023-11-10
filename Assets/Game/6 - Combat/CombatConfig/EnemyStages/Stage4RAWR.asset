@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a37d62a4904393d4ba8b4798c11a8be6, type: 3}
+  m_Name: Stage4RAWR
+  m_EditorClassIdentifier: 
+  Wave1:
+  - {fileID: 11400000, guid: 8c24efbdc79299a44b0495238743654d, type: 2}
+  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
+  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
+  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  Wave2:
+  - {fileID: 11400000, guid: 5e01b368bea675e4491894cbc06f8d0c, type: 2}
+  - {fileID: 11400000, guid: 5e01b368bea675e4491894cbc06f8d0c, type: 2}
+  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
+  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  Wave3:
+  - {fileID: 11400000, guid: 5e01b368bea675e4491894cbc06f8d0c, type: 2}
+  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
+  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  Wave4:
+  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
+  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
+  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
+  Wave5:
+  - {fileID: 11400000, guid: 8c24efbdc79299a44b0495238743654d, type: 2}
+  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
+  - {fileID: 11400000, guid: 14122647f411d72408e8a236eac2d907, type: 2}
+  Wave6: []
+  Wave7: []
