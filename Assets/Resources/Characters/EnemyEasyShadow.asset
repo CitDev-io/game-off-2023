@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1f911328fe241041bd769443387dfdb, type: 3}
+  m_Name: EnemyEasyShadow
+  m_EditorClassIdentifier: 
+  _Name: Bad Guy Easy
+  _PowerType: 1
+  _TeamType: 1
+  _BaseMitigation: 0
+  _BaseHP: 200
+  _BaseSP: 200
+  _BaseAttackMin: 10
+  _BaseAttackMax: 40

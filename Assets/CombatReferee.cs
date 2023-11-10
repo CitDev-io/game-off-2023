@@ -86,10 +86,11 @@ public class CombatReferee : MonoBehaviour
         }
     }
 
+    [ContextMenu("Revive All PCs")]
     void ReviveAllPCs() {
         List<Combatant> PCs = gameState.GetAllPCs();
         foreach (Combatant pc in PCs) {
-            pc.currentHealth = pc.maximumHealth;
+            pc.currentHealth = pc.Config.BaseHP;
             pc.isDead = false;
         }
     }
@@ -137,7 +138,7 @@ public class CombatReferee : MonoBehaviour
     void StageResetPlayerCharacters() {
         List<Combatant> PCs = gameState.GetAllPCs();
         foreach (Combatant pc in PCs) {
-            pc.currentHealth = pc.maximumHealth;
+            pc.currentHealth = pc.Config.BaseHP;
             pc.isDead = false;
         }
     }
@@ -219,7 +220,7 @@ public class CombatReferee : MonoBehaviour
             Debug.Log(attacker.gameObject.name + " used a special attack on " + target.gameObject.name + "!");
         } else {
             Debug.Log(attacker.gameObject.name + " attacked " + target.gameObject.name + "!");
-            target.HandleIncomingAttack(attacker.powerType, attacker);
+            target.HandleIncomingAttack(attacker.Config.PowerType, attacker);
         }
         PROGRESSBOARD();
     }

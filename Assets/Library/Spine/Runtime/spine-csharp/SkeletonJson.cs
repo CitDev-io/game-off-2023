@@ -1,16 +1,16 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated July 28, 2023. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2023, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
  * conditions of Section 2 of the Spine Editor License Agreement:
  * http://esotericsoftware.com/spine-editor-license
  *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software or
+ * otherwise create derivative works of the Spine Runtimes (collectively,
  * "Products"), provided that each user of the Products must obtain their own
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
@@ -23,8 +23,8 @@
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
  * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE
+ * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 #if (UNITY_5 || UNITY_5_3_OR_NEWER || UNITY_WSA || UNITY_WP8 || UNITY_WP8_1)
@@ -32,8 +32,8 @@
 #endif
 
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 
 #if WINDOWS_STOREAPP
 using System.Threading.Tasks;
@@ -65,7 +65,7 @@ namespace Spine {
 		private async Task<SkeletonData> ReadFile(string path) {
 			var folder = Windows.ApplicationModel.Package.Current.InstalledLocation;
 			var file = await folder.GetFileAsync(path).AsTask().ConfigureAwait(false);
-			using (var reader = new StreamReader(await file.OpenStreamForReadAsync().ConfigureAwait(false))) {
+			using (StreamReader reader = new StreamReader(await file.OpenStreamForReadAsync().ConfigureAwait(false))) {
 				SkeletonData skeletonData = ReadSkeletonData(reader);
 				skeletonData.Name = Path.GetFileNameWithoutExtension(path);
 				return skeletonData;
@@ -77,30 +77,30 @@ namespace Spine {
 		}
 #else
 		public override SkeletonData ReadSkeletonData (string path) {
-		#if WINDOWS_PHONE
-			using (var reader = new StreamReader(Microsoft.Xna.Framework.TitleContainer.OpenStream(path))) {
-		#else
-			using (var reader = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))) {
-		#endif
+#if WINDOWS_PHONE
+			using (StreamReader reader = new StreamReader(Microsoft.Xna.Framework.TitleContainer.OpenStream(path))) {
+#else
+			using (StreamReader reader = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))) {
+#endif
 				SkeletonData skeletonData = ReadSkeletonData(reader);
 				skeletonData.name = Path.GetFileNameWithoutExtension(path);
 				return skeletonData;
 			}
 		}
-		#endif
+#endif
 
 		public SkeletonData ReadSkeletonData (TextReader reader) {
 			if (reader == null) throw new ArgumentNullException("reader", "reader cannot be null.");
 
 			float scale = this.scale;
-			var skeletonData = new SkeletonData();
+			SkeletonData skeletonData = new SkeletonData();
 
-			var root = Json.Deserialize(reader) as Dictionary<string, Object>;
+			Dictionary<string, object> root = Json.Deserialize(reader) as Dictionary<string, Object>;
 			if (root == null) throw new Exception("Invalid JSON.");
 
 			// Skeleton.
 			if (root.ContainsKey("skeleton")) {
-				var skeletonMap = (Dictionary<string, Object>)root["skeleton"];
+				Dictionary<string, object> skeletonMap = (Dictionary<string, Object>)root["skeleton"];
 				skeletonData.hash = (string)skeletonMap["hash"];
 				skeletonData.version = (string)skeletonMap["spine"];
 				skeletonData.x = GetFloat(skeletonMap, "x", 0);
@@ -121,7 +121,7 @@ namespace Spine {
 						if (parent == null)
 							throw new Exception("Parent bone not found: " + boneMap["parent"]);
 					}
-					var data = new BoneData(skeletonData.Bones.Count, (string)boneMap["name"], parent);
+					BoneData data = new BoneData(skeletonData.Bones.Count, (string)boneMap["name"], parent);
 					data.length = GetFloat(boneMap, "length", 0) * scale;
 					data.x = GetFloat(boneMap, "x", 0) * scale;
 					data.y = GetFloat(boneMap, "y", 0) * scale;
@@ -142,11 +142,11 @@ namespace Spine {
 			// Slots.
 			if (root.ContainsKey("slots")) {
 				foreach (Dictionary<string, Object> slotMap in (List<Object>)root["slots"]) {
-					var slotName = (string)slotMap["name"];
-					var boneName = (string)slotMap["bone"];
+					string slotName = (string)slotMap["name"];
+					string boneName = (string)slotMap["bone"];
 					BoneData boneData = skeletonData.FindBone(boneName);
 					if (boneData == null) throw new Exception("Slot bone not found: " + boneName);
-					var data = new SlotData(skeletonData.Slots.Count, slotName, boneData);
+					SlotData data = new SlotData(skeletonData.Slots.Count, slotName, boneData);
 
 					if (slotMap.ContainsKey("color")) {
 						string color = (string)slotMap["color"];
@@ -157,7 +157,7 @@ namespace Spine {
 					}
 
 					if (slotMap.ContainsKey("dark")) {
-						var color2 = (string)slotMap["dark"];
+						string color2 = (string)slotMap["dark"];
 						data.r2 = ToColor(color2, 0, 6); // expectedLength = 6. ie. "RRGGBB"
 						data.g2 = ToColor(color2, 1, 6);
 						data.b2 = ToColor(color2, 2, 6);
@@ -178,7 +178,7 @@ namespace Spine {
 				foreach (Dictionary<string, Object> constraintMap in (List<Object>)root["ik"]) {
 					IkConstraintData data = new IkConstraintData((string)constraintMap["name"]);
 					data.order = GetInt(constraintMap, "order", 0);
-					data.skinRequired = GetBoolean(constraintMap,"skin", false);
+					data.skinRequired = GetBoolean(constraintMap, "skin", false);
 
 					if (constraintMap.ContainsKey("bones")) {
 						foreach (string boneName in (List<Object>)constraintMap["bones"]) {
@@ -207,7 +207,7 @@ namespace Spine {
 				foreach (Dictionary<string, Object> constraintMap in (List<Object>)root["transform"]) {
 					TransformConstraintData data = new TransformConstraintData((string)constraintMap["name"]);
 					data.order = GetInt(constraintMap, "order", 0);
-					data.skinRequired = GetBoolean(constraintMap,"skin", false);
+					data.skinRequired = GetBoolean(constraintMap, "skin", false);
 
 					if (constraintMap.ContainsKey("bones")) {
 						foreach (string boneName in (List<Object>)constraintMap["bones"]) {
@@ -243,11 +243,11 @@ namespace Spine {
 			}
 
 			// Path constraints.
-			if(root.ContainsKey("path")) {
+			if (root.ContainsKey("path")) {
 				foreach (Dictionary<string, Object> constraintMap in (List<Object>)root["path"]) {
 					PathConstraintData data = new PathConstraintData((string)constraintMap["name"]);
 					data.order = GetInt(constraintMap, "order", 0);
-					data.skinRequired = GetBoolean(constraintMap,"skin", false);
+					data.skinRequired = GetBoolean(constraintMap, "skin", false);
 
 					if (constraintMap.ContainsKey("bones")) {
 						foreach (string boneName in (List<Object>)constraintMap["bones"]) {
@@ -313,7 +313,7 @@ namespace Spine {
 					skin.constraints.TrimExcess();
 					if (skinMap.ContainsKey("attachments")) {
 						foreach (KeyValuePair<string, Object> slotEntry in (Dictionary<string, Object>)skinMap["attachments"]) {
-							int slotIndex = skeletonData.FindSlotIndex(slotEntry.Key);
+							int slotIndex = FindSlotIndex(skeletonData, slotEntry.Key);
 							foreach (KeyValuePair<string, Object> entry in ((Dictionary<string, Object>)slotEntry.Value)) {
 								try {
 									Attachment attachment = ReadAttachment((Dictionary<string, Object>)entry.Value, skin, slotIndex, entry.Key, skeletonData);
@@ -336,17 +336,17 @@ namespace Spine {
 				if (skin == null) throw new Exception("Slot not found: " + linkedMesh.skin);
 				Attachment parent = skin.GetAttachment(linkedMesh.slotIndex, linkedMesh.parent);
 				if (parent == null) throw new Exception("Parent mesh not found: " + linkedMesh.parent);
-				linkedMesh.mesh.DeformAttachment = linkedMesh.inheritDeform ? (VertexAttachment)parent : linkedMesh.mesh;
+				linkedMesh.mesh.TimelineAttachment = linkedMesh.inheritTimelines ? (VertexAttachment)parent : linkedMesh.mesh;
 				linkedMesh.mesh.ParentMesh = (MeshAttachment)parent;
-				linkedMesh.mesh.UpdateUVs();
+				if (linkedMesh.mesh.Region != null) linkedMesh.mesh.UpdateRegion();
 			}
 			linkedMeshes.Clear();
 
 			// Events.
 			if (root.ContainsKey("events")) {
 				foreach (KeyValuePair<string, Object> entry in (Dictionary<string, Object>)root["events"]) {
-					var entryMap = (Dictionary<string, Object>)entry.Value;
-					var data = new EventData(entry.Key);
+					Dictionary<string, object> entryMap = (Dictionary<string, Object>)entry.Value;
+					EventData data = new EventData(entry.Key);
 					data.Int = GetInt(entryMap, "int", 0);
 					data.Float = GetFloat(entryMap, "float", 0);
 					data.String = GetString(entryMap, "string", string.Empty);
@@ -383,14 +383,16 @@ namespace Spine {
 			float scale = this.scale;
 			name = GetString(map, "name", name);
 
-			var typeName = GetString(map, "type", "region");
-			var type = (AttachmentType)Enum.Parse(typeof(AttachmentType), typeName, true);
-
-			string path = GetString(map, "path", name);
+			string typeName = GetString(map, "type", "region");
+			AttachmentType type = (AttachmentType)Enum.Parse(typeof(AttachmentType), typeName, true);
 
 			switch (type) {
-			case AttachmentType.Region:
-				RegionAttachment region = attachmentLoader.NewRegionAttachment(skin, name, path);
+			case AttachmentType.Region: {
+				string path = GetString(map, "path", name);
+				object sequenceJson;
+				map.TryGetValue("sequence", out sequenceJson);
+				Sequence sequence = ReadSequence(sequenceJson);
+				RegionAttachment region = attachmentLoader.NewRegionAttachment(skin, name, path, sequence);
 				if (region == null) return null;
 				region.Path = path;
 				region.x = GetFloat(map, "x", 0) * scale;
@@ -400,17 +402,19 @@ namespace Spine {
 				region.rotation = GetFloat(map, "rotation", 0);
 				region.width = GetFloat(map, "width", 32) * scale;
 				region.height = GetFloat(map, "height", 32) * scale;
+				region.sequence = sequence;
 
 				if (map.ContainsKey("color")) {
-					var color = (string)map["color"];
+					string color = (string)map["color"];
 					region.r = ToColor(color, 0);
 					region.g = ToColor(color, 1);
 					region.b = ToColor(color, 2);
 					region.a = ToColor(color, 3);
 				}
 
-				region.UpdateOffset();
+				if (region.Region != null) region.UpdateRegion();
 				return region;
+			}
 			case AttachmentType.Boundingbox:
 				BoundingBoxAttachment box = attachmentLoader.NewBoundingBoxAttachment(skin, name);
 				if (box == null) return null;
@@ -418,80 +422,95 @@ namespace Spine {
 				return box;
 			case AttachmentType.Mesh:
 			case AttachmentType.Linkedmesh: {
-					MeshAttachment mesh = attachmentLoader.NewMeshAttachment(skin, name, path);
-					if (mesh == null) return null;
-					mesh.Path = path;
+				string path = GetString(map, "path", name);
+				object sequenceJson;
+				map.TryGetValue("sequence", out sequenceJson);
+				Sequence sequence = ReadSequence(sequenceJson);
+				MeshAttachment mesh = attachmentLoader.NewMeshAttachment(skin, name, path, sequence);
+				if (mesh == null) return null;
+				mesh.Path = path;
 
-					if (map.ContainsKey("color")) {
-						var color = (string)map["color"];
-						mesh.r = ToColor(color, 0);
-						mesh.g = ToColor(color, 1);
-						mesh.b = ToColor(color, 2);
-						mesh.a = ToColor(color, 3);
-					}
+				if (map.ContainsKey("color")) {
+					string color = (string)map["color"];
+					mesh.r = ToColor(color, 0);
+					mesh.g = ToColor(color, 1);
+					mesh.b = ToColor(color, 2);
+					mesh.a = ToColor(color, 3);
+				}
 
-					mesh.Width = GetFloat(map, "width", 0) * scale;
-					mesh.Height = GetFloat(map, "height", 0) * scale;
+				mesh.Width = GetFloat(map, "width", 0) * scale;
+				mesh.Height = GetFloat(map, "height", 0) * scale;
+				mesh.Sequence = sequence;
 
-					string parent = GetString(map, "parent", null);
-					if (parent != null) {
-						linkedMeshes.Add(new LinkedMesh(mesh, GetString(map, "skin", null), slotIndex, parent, GetBoolean(map, "deform", true)));
-						return mesh;
-					}
-
-					float[] uvs = GetFloatArray(map, "uvs", 1);
-					ReadVertices(map, mesh, uvs.Length);
-					mesh.triangles = GetIntArray(map, "triangles");
-					mesh.regionUVs = uvs;
-					mesh.UpdateUVs();
-
-					if (map.ContainsKey("hull")) mesh.HullLength = GetInt(map, "hull", 0) << 1;
-					if (map.ContainsKey("edges")) mesh.Edges = GetIntArray(map, "edges");
+				string parent = GetString(map, "parent", null);
+				if (parent != null) {
+					linkedMeshes.Add(new LinkedMesh(mesh, GetString(map, "skin", null), slotIndex, parent, GetBoolean(map, "timelines", true)));
 					return mesh;
 				}
+
+				float[] uvs = GetFloatArray(map, "uvs", 1);
+				ReadVertices(map, mesh, uvs.Length);
+				mesh.triangles = GetIntArray(map, "triangles");
+				mesh.regionUVs = uvs;
+				if (mesh.Region != null) mesh.UpdateRegion();
+
+				if (map.ContainsKey("hull")) mesh.HullLength = GetInt(map, "hull", 0) << 1;
+				if (map.ContainsKey("edges")) mesh.Edges = GetIntArray(map, "edges");
+				return mesh;
+			}
 			case AttachmentType.Path: {
-					PathAttachment pathAttachment = attachmentLoader.NewPathAttachment(skin, name);
-					if (pathAttachment == null) return null;
-					pathAttachment.closed = GetBoolean(map, "closed", false);
-					pathAttachment.constantSpeed = GetBoolean(map, "constantSpeed", true);
+				PathAttachment pathAttachment = attachmentLoader.NewPathAttachment(skin, name);
+				if (pathAttachment == null) return null;
+				pathAttachment.closed = GetBoolean(map, "closed", false);
+				pathAttachment.constantSpeed = GetBoolean(map, "constantSpeed", true);
 
-					int vertexCount = GetInt(map, "vertexCount", 0);
-					ReadVertices(map, pathAttachment, vertexCount << 1);
+				int vertexCount = GetInt(map, "vertexCount", 0);
+				ReadVertices(map, pathAttachment, vertexCount << 1);
 
-					// potential BOZO see Java impl
-					pathAttachment.lengths = GetFloatArray(map, "lengths", scale);
-					return pathAttachment;
-				}
+				// potential BOZO see Java impl
+				pathAttachment.lengths = GetFloatArray(map, "lengths", scale);
+				return pathAttachment;
+			}
 			case AttachmentType.Point: {
-					PointAttachment point = attachmentLoader.NewPointAttachment(skin, name);
-					if (point == null) return null;
-					point.x = GetFloat(map, "x", 0) * scale;
-					point.y = GetFloat(map, "y", 0) * scale;
-					point.rotation = GetFloat(map, "rotation", 0);
+				PointAttachment point = attachmentLoader.NewPointAttachment(skin, name);
+				if (point == null) return null;
+				point.x = GetFloat(map, "x", 0) * scale;
+				point.y = GetFloat(map, "y", 0) * scale;
+				point.rotation = GetFloat(map, "rotation", 0);
 
-					//string color = GetString(map, "color", null);
-					//if (color != null) point.color = color;
-					return point;
-				}
+				//string color = GetString(map, "color", null);
+				//if (color != null) point.color = color;
+				return point;
+			}
 			case AttachmentType.Clipping: {
-					ClippingAttachment clip = attachmentLoader.NewClippingAttachment(skin, name);
-					if (clip == null) return null;
+				ClippingAttachment clip = attachmentLoader.NewClippingAttachment(skin, name);
+				if (clip == null) return null;
 
-					string end = GetString(map, "end", null);
-					if (end != null) {
-						SlotData slot = skeletonData.FindSlot(end);
-						if (slot == null) throw new Exception("Clipping end slot not found: " + end);
-						clip.EndSlot = slot;
-					}
-
-					ReadVertices(map, clip, GetInt(map, "vertexCount", 0) << 1);
-
-					//string color = GetString(map, "color", null);
-					// if (color != null) clip.color = color;
-					return clip;
+				string end = GetString(map, "end", null);
+				if (end != null) {
+					SlotData slot = skeletonData.FindSlot(end);
+					if (slot == null) throw new Exception("Clipping end slot not found: " + end);
+					clip.EndSlot = slot;
 				}
+
+				ReadVertices(map, clip, GetInt(map, "vertexCount", 0) << 1);
+
+				//string color = GetString(map, "color", null);
+				// if (color != null) clip.color = color;
+				return clip;
+			}
 			}
 			return null;
+		}
+
+		public static Sequence ReadSequence (object sequenceJson) {
+			Dictionary<string, object> map = sequenceJson as Dictionary<string, Object>;
+			if (map == null) return null;
+			Sequence sequence = new Sequence(GetInt(map, "count"));
+			sequence.start = GetInt(map, "start", 1);
+			sequence.digits = GetInt(map, "digits", 0);
+			sequence.setupIndex = GetInt(map, "setup", 0);
+			return sequence;
 		}
 
 		private void ReadVertices (Dictionary<string, Object> map, VertexAttachment attachment, int verticesLength) {
@@ -523,47 +542,55 @@ namespace Spine {
 			attachment.vertices = weights.ToArray();
 		}
 
+		private int FindSlotIndex (SkeletonData skeletonData, string slotName) {
+			SlotData[] slots = skeletonData.slots.Items;
+			for (int i = 0, n = skeletonData.slots.Count; i < n; i++)
+				if (slots[i].name == slotName) return i;
+			throw new Exception("Slot not found: " + slotName);
+		}
+
 		private void ReadAnimation (Dictionary<string, Object> map, string name, SkeletonData skeletonData) {
-			var scale = this.scale;
-			var timelines = new ExposedList<Timeline>();
+			float scale = this.scale;
+			ExposedList<Timeline> timelines = new ExposedList<Timeline>();
 
 			// Slot timelines.
 			if (map.ContainsKey("slots")) {
 				foreach (KeyValuePair<string, Object> entry in (Dictionary<string, Object>)map["slots"]) {
 					string slotName = entry.Key;
-					int slotIndex = skeletonData.FindSlotIndex(slotName);
-					var timelineMap = (Dictionary<string, Object>)entry.Value;
+					int slotIndex = FindSlotIndex(skeletonData, slotName);
+					Dictionary<string, object> timelineMap = (Dictionary<string, Object>)entry.Value;
 					foreach (KeyValuePair<string, Object> timelineEntry in timelineMap) {
-						var values = (List<Object>)timelineEntry.Value;
-						if (values.Count == 0) continue;
-						var timelineName = (string)timelineEntry.Key;
+						List<object> values = (List<Object>)timelineEntry.Value;
+						int frames = values.Count;
+						if (frames == 0) continue;
+						string timelineName = (string)timelineEntry.Key;
 						if (timelineName == "attachment") {
-							var timeline = new AttachmentTimeline(values.Count, slotIndex);
+							AttachmentTimeline timeline = new AttachmentTimeline(frames, slotIndex);
 							int frame = 0;
 							foreach (Dictionary<string, Object> keyMap in values) {
-								timeline.SetFrame(frame++, GetFloat(keyMap, "time", 0), (string)keyMap["name"]);
+								timeline.SetFrame(frame++, GetFloat(keyMap, "time", 0), GetString(keyMap, "name", null));
 							}
 							timelines.Add(timeline);
 
 						} else if (timelineName == "rgba") {
-							var timeline = new RGBATimeline(values.Count, values.Count << 2, slotIndex);
+							RGBATimeline timeline = new RGBATimeline(frames, frames << 2, slotIndex);
 
-							var keyMapEnumerator = values.GetEnumerator();
+							List<object>.Enumerator keyMapEnumerator = values.GetEnumerator();
 							keyMapEnumerator.MoveNext();
-							var keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+							Dictionary<string, object> keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 							float time = GetFloat(keyMap, "time", 0);
 							string color = (string)keyMap["color"];
 							float r = ToColor(color, 0);
 							float g = ToColor(color, 1);
 							float b = ToColor(color, 2);
 							float a = ToColor(color, 3);
-							for (int frame = 0, bezier = 0;; frame++) {
+							for (int frame = 0, bezier = 0; ; frame++) {
 								timeline.SetFrame(frame, time, r, g, b, a);
 								if (!keyMapEnumerator.MoveNext()) {
 									timeline.Shrink(bezier);
 									break;
 								}
-								var nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+								Dictionary<string, object> nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 
 								float time2 = GetFloat(nextMap, "time", 0);
 								color = (string)nextMap["color"];
@@ -589,11 +616,11 @@ namespace Spine {
 							timelines.Add(timeline);
 
 						} else if (timelineName == "rgb") {
-							var timeline = new RGBTimeline(values.Count, values.Count * 3, slotIndex);
+							RGBTimeline timeline = new RGBTimeline(frames, frames * 3, slotIndex);
 
-							var keyMapEnumerator = values.GetEnumerator();
+							List<object>.Enumerator keyMapEnumerator = values.GetEnumerator();
 							keyMapEnumerator.MoveNext();
-							var keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+							Dictionary<string, object> keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 							float time = GetFloat(keyMap, "time", 0);
 							string color = (string)keyMap["color"];
 							float r = ToColor(color, 0, 6);
@@ -605,7 +632,7 @@ namespace Spine {
 									timeline.Shrink(bezier);
 									break;
 								}
-								var nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+								Dictionary<string, object> nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 
 								float time2 = GetFloat(nextMap, "time", 0);
 								color = (string)nextMap["color"];
@@ -628,16 +655,16 @@ namespace Spine {
 							timelines.Add(timeline);
 
 						} else if (timelineName == "alpha") {
-							var keyMapEnumerator = values.GetEnumerator();
+							List<object>.Enumerator keyMapEnumerator = values.GetEnumerator();
 							keyMapEnumerator.MoveNext();
-							timelines.Add(ReadTimeline(ref keyMapEnumerator, new AlphaTimeline(values.Count, values.Count, slotIndex), 0, 1));
+							timelines.Add(ReadTimeline(ref keyMapEnumerator, new AlphaTimeline(frames, frames, slotIndex), 0, 1));
 
-						}  else if (timelineName == "rgba2") {
-							var timeline = new RGBA2Timeline(values.Count, values.Count * 7, slotIndex);
+						} else if (timelineName == "rgba2") {
+							RGBA2Timeline timeline = new RGBA2Timeline(frames, frames * 7, slotIndex);
 
-							var keyMapEnumerator = values.GetEnumerator();
+							List<object>.Enumerator keyMapEnumerator = values.GetEnumerator();
 							keyMapEnumerator.MoveNext();
-							var keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+							Dictionary<string, object> keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 							float time = GetFloat(keyMap, "time", 0);
 							string color = (string)keyMap["light"];
 							float r = ToColor(color, 0);
@@ -654,7 +681,7 @@ namespace Spine {
 									timeline.Shrink(bezier);
 									break;
 								}
-								var nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+								Dictionary<string, object> nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 
 								float time2 = GetFloat(nextMap, "time", 0);
 								color = (string)nextMap["light"];
@@ -690,11 +717,11 @@ namespace Spine {
 							timelines.Add(timeline);
 
 						} else if (timelineName == "rgb2") {
-							var timeline = new RGB2Timeline(values.Count, values.Count * 6, slotIndex);
+							RGB2Timeline timeline = new RGB2Timeline(frames, frames * 6, slotIndex);
 
-							var keyMapEnumerator = values.GetEnumerator();
+							List<object>.Enumerator keyMapEnumerator = values.GetEnumerator();
 							keyMapEnumerator.MoveNext();
-							var keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+							Dictionary<string, object> keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 							float time = GetFloat(keyMap, "time", 0);
 							string color = (string)keyMap["light"];
 							float r = ToColor(color, 0, 6);
@@ -710,7 +737,7 @@ namespace Spine {
 									timeline.Shrink(bezier);
 									break;
 								}
-								var nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+								Dictionary<string, object> nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 
 								float time2 = GetFloat(nextMap, "time", 0);
 								color = (string)nextMap["light"];
@@ -752,39 +779,47 @@ namespace Spine {
 			if (map.ContainsKey("bones")) {
 				foreach (KeyValuePair<string, Object> entry in (Dictionary<string, Object>)map["bones"]) {
 					string boneName = entry.Key;
-					int boneIndex = skeletonData.FindBoneIndex(boneName);
+					int boneIndex = -1;
+					BoneData[] bones = skeletonData.bones.Items;
+					for (int i = 0, n = skeletonData.bones.Count; i < n; i++) {
+						if (bones[i].name == boneName) {
+							boneIndex = i;
+							break;
+						}
+					}
 					if (boneIndex == -1) throw new Exception("Bone not found: " + boneName);
-					var timelineMap = (Dictionary<string, Object>)entry.Value;
+					Dictionary<string, object> timelineMap = (Dictionary<string, Object>)entry.Value;
 					foreach (KeyValuePair<string, Object> timelineEntry in timelineMap) {
-						var values = (List<Object>)timelineEntry.Value;
-						var keyMapEnumerator = values.GetEnumerator();
+						List<object> values = (List<Object>)timelineEntry.Value;
+						List<object>.Enumerator keyMapEnumerator = values.GetEnumerator();
 						if (!keyMapEnumerator.MoveNext()) continue;
-						var timelineName = (string)timelineEntry.Key;
+						int frames = values.Count;
+						string timelineName = (string)timelineEntry.Key;
 						if (timelineName == "rotate")
-							timelines.Add(ReadTimeline(ref keyMapEnumerator, new RotateTimeline(values.Count, values.Count, boneIndex), 0, 1));
+							timelines.Add(ReadTimeline(ref keyMapEnumerator, new RotateTimeline(frames, frames, boneIndex), 0, 1));
 						else if (timelineName == "translate") {
-							TranslateTimeline timeline = new TranslateTimeline(values.Count, values.Count << 1, boneIndex);
+							TranslateTimeline timeline = new TranslateTimeline(frames, frames << 1, boneIndex);
 							timelines.Add(ReadTimeline(ref keyMapEnumerator, timeline, "x", "y", 0, scale));
 						} else if (timelineName == "translatex") {
 							timelines
-								.Add(ReadTimeline(ref keyMapEnumerator, new TranslateXTimeline(values.Count, values.Count, boneIndex), 0, scale));
+								.Add(ReadTimeline(ref keyMapEnumerator, new TranslateXTimeline(frames, frames, boneIndex), 0, scale));
 						} else if (timelineName == "translatey") {
 							timelines
-								.Add(ReadTimeline(ref keyMapEnumerator, new TranslateYTimeline(values.Count, values.Count, boneIndex), 0, scale));
+								.Add(ReadTimeline(ref keyMapEnumerator, new TranslateYTimeline(frames, frames, boneIndex), 0, scale));
 						} else if (timelineName == "scale") {
-							ScaleTimeline timeline = new ScaleTimeline(values.Count, values.Count << 1, boneIndex);
+							ScaleTimeline timeline = new ScaleTimeline(frames, frames << 1, boneIndex);
 							timelines.Add(ReadTimeline(ref keyMapEnumerator, timeline, "x", "y", 1, 1));
 						} else if (timelineName == "scalex")
-							timelines.Add(ReadTimeline(ref keyMapEnumerator, new ScaleXTimeline(values.Count, values.Count, boneIndex), 1, 1));
+							timelines.Add(ReadTimeline(ref keyMapEnumerator, new ScaleXTimeline(frames, frames, boneIndex), 1, 1));
 						else if (timelineName == "scaley")
-							timelines.Add(ReadTimeline(ref keyMapEnumerator, new ScaleYTimeline(values.Count, values.Count, boneIndex), 1, 1));
+							timelines.Add(ReadTimeline(ref keyMapEnumerator, new ScaleYTimeline(frames, frames, boneIndex), 1, 1));
 						else if (timelineName == "shear") {
-							ShearTimeline timeline = new ShearTimeline(values.Count, values.Count << 1, boneIndex);
+							ShearTimeline timeline = new ShearTimeline(frames, frames << 1, boneIndex);
 							timelines.Add(ReadTimeline(ref keyMapEnumerator, timeline, "x", "y", 0, 1));
 						} else if (timelineName == "shearx")
-							timelines.Add(ReadTimeline(ref keyMapEnumerator, new ShearXTimeline(values.Count, values.Count, boneIndex), 0, 1));
+							timelines.Add(ReadTimeline(ref keyMapEnumerator, new ShearXTimeline(frames, frames, boneIndex), 0, 1));
 						else if (timelineName == "sheary")
-							timelines.Add(ReadTimeline(ref keyMapEnumerator, new ShearYTimeline(values.Count, values.Count, boneIndex), 0, 1));
+							timelines.Add(ReadTimeline(ref keyMapEnumerator, new ShearYTimeline(frames, frames, boneIndex), 0, 1));
 						else
 							throw new Exception("Invalid timeline type for a bone: " + timelineName + " (" + boneName + ")");
 					}
@@ -794,12 +829,12 @@ namespace Spine {
 			// IK constraint timelines.
 			if (map.ContainsKey("ik")) {
 				foreach (KeyValuePair<string, Object> timelineMap in (Dictionary<string, Object>)map["ik"]) {
-					var timelineMapValues = (List<Object>)timelineMap.Value;
-					var keyMapEnumerator = timelineMapValues.GetEnumerator();
+					List<object> values = (List<Object>)timelineMap.Value;
+					List<object>.Enumerator keyMapEnumerator = values.GetEnumerator();
 					if (!keyMapEnumerator.MoveNext()) continue;
-					var keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+					Dictionary<string, object> keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 					IkConstraintData constraint = skeletonData.FindIkConstraint(timelineMap.Key);
-					IkConstraintTimeline timeline = new IkConstraintTimeline(timelineMapValues.Count, timelineMapValues.Count << 1,
+					IkConstraintTimeline timeline = new IkConstraintTimeline(values.Count, values.Count << 1,
 						skeletonData.IkConstraints.IndexOf(constraint));
 					float time = GetFloat(keyMap, "time", 0);
 					float mix = GetFloat(keyMap, "mix", 1), softness = GetFloat(keyMap, "softness", 0) * scale;
@@ -810,7 +845,7 @@ namespace Spine {
 							timeline.Shrink(bezier);
 							break;
 						}
-						var nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+						Dictionary<string, object> nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 						float time2 = GetFloat(nextMap, "time", 0);
 						float mix2 = GetFloat(nextMap, "mix", 1), softness2 = GetFloat(nextMap, "softness", 0) * scale;
 						if (keyMap.ContainsKey("curve")) {
@@ -830,12 +865,12 @@ namespace Spine {
 			// Transform constraint timelines.
 			if (map.ContainsKey("transform")) {
 				foreach (KeyValuePair<string, Object> timelineMap in (Dictionary<string, Object>)map["transform"]) {
-					var timelineMapValues = (List<Object>)timelineMap.Value;
-					var keyMapEnumerator = timelineMapValues.GetEnumerator();
+					List<object> values = (List<Object>)timelineMap.Value;
+					List<object>.Enumerator keyMapEnumerator = values.GetEnumerator();
 					if (!keyMapEnumerator.MoveNext()) continue;
-					var keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+					Dictionary<string, object> keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 					TransformConstraintData constraint = skeletonData.FindTransformConstraint(timelineMap.Key);
-					TransformConstraintTimeline timeline = new TransformConstraintTimeline(timelineMapValues.Count, timelineMapValues.Count << 2,
+					TransformConstraintTimeline timeline = new TransformConstraintTimeline(values.Count, values.Count * 6,
 						skeletonData.TransformConstraints.IndexOf(constraint));
 					float time = GetFloat(keyMap, "time", 0);
 					float mixRotate = GetFloat(keyMap, "mixRotate", 1), mixShearY = GetFloat(keyMap, "mixShearY", 1);
@@ -847,7 +882,7 @@ namespace Spine {
 							timeline.Shrink(bezier);
 							break;
 						}
-						var nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+						Dictionary<string, object> nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 						float time2 = GetFloat(nextMap, "time", 0);
 						float mixRotate2 = GetFloat(nextMap, "mixRotate", 1), mixShearY2 = GetFloat(nextMap, "mixShearY", 1);
 						float mixX2 = GetFloat(nextMap, "mixX", 1), mixY2 = GetFloat(nextMap, "mixY", mixX2);
@@ -867,7 +902,7 @@ namespace Spine {
 						mixY = mixY2;
 						mixScaleX = mixScaleX2;
 						mixScaleY = mixScaleY2;
-						mixScaleX = mixScaleX2;
+						mixShearY = mixShearY2;
 						keyMap = nextMap;
 					}
 					timelines.Add(timeline);
@@ -877,25 +912,27 @@ namespace Spine {
 			// Path constraint timelines.
 			if (map.ContainsKey("path")) {
 				foreach (KeyValuePair<string, Object> constraintMap in (Dictionary<string, Object>)map["path"]) {
-					int index = skeletonData.FindPathConstraintIndex(constraintMap.Key);
-					if (index == -1) throw new Exception("Path constraint not found: " + constraintMap.Key);
-					PathConstraintData data = skeletonData.pathConstraints.Items[index];
-					var timelineMap = (Dictionary<string, Object>)constraintMap.Value;
+					PathConstraintData constraint = skeletonData.FindPathConstraint(constraintMap.Key);
+					if (constraint == null) throw new Exception("Path constraint not found: " + constraintMap.Key);
+					int constraintIndex = skeletonData.pathConstraints.IndexOf(constraint);
+					Dictionary<string, object> timelineMap = (Dictionary<string, Object>)constraintMap.Value;
 					foreach (KeyValuePair<string, Object> timelineEntry in timelineMap) {
-						var values = (List<Object>)timelineEntry.Value;
-						var keyMapEnumerator = values.GetEnumerator();
+						List<object> values = (List<Object>)timelineEntry.Value;
+						List<object>.Enumerator keyMapEnumerator = values.GetEnumerator();
 						if (!keyMapEnumerator.MoveNext()) continue;
-						var timelineName = (string)timelineEntry.Key;
+
+						int frames = values.Count;
+						string timelineName = (string)timelineEntry.Key;
 						if (timelineName == "position") {
-							CurveTimeline1 timeline = new PathConstraintPositionTimeline(values.Count, values.Count, index);
-							timelines.Add(ReadTimeline(ref keyMapEnumerator, timeline, 0, data.positionMode == PositionMode.Fixed ? scale : 1));
+							CurveTimeline1 timeline = new PathConstraintPositionTimeline(frames, frames, constraintIndex);
+							timelines.Add(ReadTimeline(ref keyMapEnumerator, timeline, 0, constraint.positionMode == PositionMode.Fixed ? scale : 1));
 						} else if (timelineName == "spacing") {
-							CurveTimeline1 timeline = new PathConstraintSpacingTimeline(values.Count, values.Count, index);
+							CurveTimeline1 timeline = new PathConstraintSpacingTimeline(frames, frames, constraintIndex);
 							timelines.Add(ReadTimeline(ref keyMapEnumerator, timeline, 0,
-								data.spacingMode == SpacingMode.Length || data.spacingMode == SpacingMode.Fixed ? scale : 1));
+								constraint.spacingMode == SpacingMode.Length || constraint.spacingMode == SpacingMode.Fixed ? scale : 1));
 						} else if (timelineName == "mix") {
-							PathConstraintMixTimeline timeline = new PathConstraintMixTimeline(values.Count, values.Count * 3, index);
-							var keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+							PathConstraintMixTimeline timeline = new PathConstraintMixTimeline(frames, frames * 3, constraintIndex);
+							Dictionary<string, object> keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 							float time = GetFloat(keyMap, "time", 0);
 							float mixRotate = GetFloat(keyMap, "mixRotate", 1);
 							float mixX = GetFloat(keyMap, "mixX", 1), mixY = GetFloat(keyMap, "mixY", mixX);
@@ -905,7 +942,7 @@ namespace Spine {
 									timeline.Shrink(bezier);
 									break;
 								}
-								var nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+								Dictionary<string, object> nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 								float time2 = GetFloat(nextMap, "time", 0);
 								float mixRotate2 = GetFloat(nextMap, "mixRotate", 1);
 								float mixX2 = GetFloat(nextMap, "mixX", 1), mixY2 = GetFloat(nextMap, "mixY", mixX2);
@@ -927,60 +964,82 @@ namespace Spine {
 				}
 			}
 
-			// Deform timelines.
-			if (map.ContainsKey("deform")) {
-				foreach (KeyValuePair<string, Object> deformMap in (Dictionary<string, Object>)map["deform"]) {
-					Skin skin = skeletonData.FindSkin(deformMap.Key);
-					foreach (KeyValuePair<string, Object> slotMap in (Dictionary<string, Object>)deformMap.Value) {
-						int slotIndex = skeletonData.FindSlotIndex(slotMap.Key);
-						if (slotIndex == -1) throw new Exception("Slot not found: " + slotMap.Key);
-						foreach (KeyValuePair<string, Object> timelineMap in (Dictionary<string, Object>)slotMap.Value) {
-							var timelineMapValues = (List<Object>)timelineMap.Value;
-							var keyMapEnumerator = timelineMapValues.GetEnumerator();
-							if (!keyMapEnumerator.MoveNext()) continue;
-							var keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
-							VertexAttachment attachment = (VertexAttachment)skin.GetAttachment(slotIndex, timelineMap.Key);
-							if (attachment == null) throw new Exception("Deform attachment not found: " + timelineMap.Key);
-							bool weighted = attachment.bones != null;
-							float[] vertices = attachment.vertices;
-							int deformLength = weighted ? (vertices.Length / 3) << 1 : vertices.Length;
-							DeformTimeline timeline = new DeformTimeline(timelineMapValues.Count, timelineMapValues.Count, slotIndex, attachment);
-							float time = GetFloat(keyMap, "time", 0);
-							for (int frame = 0, bezier = 0; ; frame++) {
-								float[] deform;
-								if (!keyMap.ContainsKey("vertices")) {
-									deform = weighted ? new float[deformLength] : vertices;
-								} else {
-									deform = new float[deformLength];
-									int start = GetInt(keyMap, "offset", 0);
-									float[] verticesValue = GetFloatArray(keyMap, "vertices", 1);
-									Array.Copy(verticesValue, 0, deform, start, verticesValue.Length);
-									if (scale != 1) {
-										for (int i = start, n = i + verticesValue.Length; i < n; i++)
-											deform[i] *= scale;
-									}
+			// Attachment timelines.
+			if (map.ContainsKey("attachments")) {
+				foreach (KeyValuePair<string, Object> attachmentsMap in (Dictionary<string, Object>)map["attachments"]) {
+					Skin skin = skeletonData.FindSkin(attachmentsMap.Key);
+					foreach (KeyValuePair<string, Object> slotMap in (Dictionary<string, Object>)attachmentsMap.Value) {
+						SlotData slot = skeletonData.FindSlot(slotMap.Key);
+						if (slot == null) throw new Exception("Slot not found: " + slotMap.Key);
+						foreach (KeyValuePair<string, Object> attachmentMap in (Dictionary<string, Object>)slotMap.Value) {
+							Attachment attachment = skin.GetAttachment(slot.index, attachmentMap.Key);
+							if (attachment == null) throw new Exception("Timeline attachment not found: " + attachmentMap.Key);
+							foreach (KeyValuePair<string, Object> timelineMap in (Dictionary<string, Object>)attachmentMap.Value) {
+								List<object> values = (List<Object>)timelineMap.Value;
+								List<object>.Enumerator keyMapEnumerator = values.GetEnumerator();
+								if (!keyMapEnumerator.MoveNext()) continue;
+								Dictionary<string, object> keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+								int frames = values.Count;
+								string timelineName = timelineMap.Key;
+								if (timelineName == "deform") {
+									VertexAttachment vertexAttachment = (VertexAttachment)attachment;
+									bool weighted = vertexAttachment.bones != null;
+									float[] vertices = vertexAttachment.vertices;
+									int deformLength = weighted ? (vertices.Length / 3) << 1 : vertices.Length;
 
-									if (!weighted) {
-										for (int i = 0; i < deformLength; i++)
-											deform[i] += vertices[i];
-									}
-								}
+									DeformTimeline timeline = new DeformTimeline(frames, frames, slot.Index, vertexAttachment);
+									float time = GetFloat(keyMap, "time", 0);
+									for (int frame = 0, bezier = 0; ; frame++) {
+										float[] deform;
+										if (!keyMap.ContainsKey("vertices")) {
+											deform = weighted ? new float[deformLength] : vertices;
+										} else {
+											deform = new float[deformLength];
+											int start = GetInt(keyMap, "offset", 0);
+											float[] verticesValue = GetFloatArray(keyMap, "vertices", 1);
+											Array.Copy(verticesValue, 0, deform, start, verticesValue.Length);
+											if (scale != 1) {
+												for (int i = start, n = i + verticesValue.Length; i < n; i++)
+													deform[i] *= scale;
+											}
 
-								timeline.SetFrame(frame, time, deform);
-								if (!keyMapEnumerator.MoveNext()) {
-									timeline.Shrink(bezier);
-									break;
+											if (!weighted) {
+												for (int i = 0; i < deformLength; i++)
+													deform[i] += vertices[i];
+											}
+										}
+
+										timeline.SetFrame(frame, time, deform);
+										if (!keyMapEnumerator.MoveNext()) {
+											timeline.Shrink(bezier);
+											break;
+										}
+										Dictionary<string, object> nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+										float time2 = GetFloat(nextMap, "time", 0);
+										if (keyMap.ContainsKey("curve")) {
+											object curve = keyMap["curve"];
+											bezier = ReadCurve(curve, timeline, bezier, frame, 0, time, time2, 0, 1, 1);
+										}
+										time = time2;
+										keyMap = nextMap;
+									}
+									timelines.Add(timeline);
+								} else if (timelineName == "sequence") {
+									SequenceTimeline timeline = new SequenceTimeline(frames, slot.index, attachment);
+									float lastDelay = 0;
+									for (int frame = 0; keyMap != null; keyMap = keyMapEnumerator.MoveNext() ?
+										(Dictionary<string, Object>)keyMapEnumerator.Current : null, frame++) {
+
+										float delay = GetFloat(keyMap, "delay", lastDelay);
+										SequenceMode sequenceMode = (SequenceMode)Enum.Parse(typeof(SequenceMode),
+											GetString(keyMap, "mode", "hold"), true);
+										timeline.SetFrame(frame, GetFloat(keyMap, "time", 0),
+											sequenceMode, GetInt(keyMap, "index", 0), delay);
+										lastDelay = delay;
+									}
+									timelines.Add(timeline);
 								}
-								var nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
-								float time2 = GetFloat(nextMap, "time", 0);
-								if (keyMap.ContainsKey("curve")) {
-									object curve = keyMap["curve"];
-									bezier = ReadCurve(curve, timeline, bezier, frame, 0, time, time2, 0, 1, 1);
-								}
-								time = time2;
-								keyMap = nextMap;
 							}
-							timelines.Add(timeline);
 						}
 					}
 				}
@@ -988,8 +1047,8 @@ namespace Spine {
 
 			// Draw order timeline.
 			if (map.ContainsKey("drawOrder")) {
-				var values = (List<Object>)map["drawOrder"];
-				var timeline = new DrawOrderTimeline(values.Count);
+				List<object> values = (List<Object>)map["drawOrder"];
+				DrawOrderTimeline timeline = new DrawOrderTimeline(values.Count);
 				int slotCount = skeletonData.slots.Count;
 				int frame = 0;
 				foreach (Dictionary<string, Object> drawOrderMap in values) {
@@ -998,12 +1057,11 @@ namespace Spine {
 						drawOrder = new int[slotCount];
 						for (int i = slotCount - 1; i >= 0; i--)
 							drawOrder[i] = -1;
-						var offsets = (List<Object>)drawOrderMap["offsets"];
+						List<object> offsets = (List<Object>)drawOrderMap["offsets"];
 						int[] unchanged = new int[slotCount - offsets.Count];
 						int originalIndex = 0, unchangedIndex = 0;
 						foreach (Dictionary<string, Object> offsetMap in offsets) {
-							int slotIndex = skeletonData.FindSlotIndex((string)offsetMap["slot"]);
-							if (slotIndex == -1) throw new Exception("Slot not found: " + offsetMap["slot"]);
+							int slotIndex = FindSlotIndex(skeletonData, (string)offsetMap["slot"]);
 							// Collect unchanged items.
 							while (originalIndex != slotIndex)
 								unchanged[unchangedIndex++] = originalIndex++;
@@ -1026,13 +1084,13 @@ namespace Spine {
 
 			// Event timeline.
 			if (map.ContainsKey("events")) {
-				var eventsMap = (List<Object>)map["events"];
-				var timeline = new EventTimeline(eventsMap.Count);
+				List<object> eventsMap = (List<Object>)map["events"];
+				EventTimeline timeline = new EventTimeline(eventsMap.Count);
 				int frame = 0;
 				foreach (Dictionary<string, Object> eventMap in eventsMap) {
 					EventData eventData = skeletonData.FindEvent((string)eventMap["name"]);
 					if (eventData == null) throw new Exception("Event not found: " + eventMap["name"]);
-					var e = new Event(GetFloat(eventMap, "time", 0), eventData) {
+					Event e = new Event(GetFloat(eventMap, "time", 0), eventData) {
 						intValue = GetInt(eventMap, "int", eventData.Int),
 						floatValue = GetFloat(eventMap, "float", eventData.Float),
 						stringValue = GetString(eventMap, "string", eventData.String)
@@ -1048,14 +1106,14 @@ namespace Spine {
 			}
 			timelines.TrimExcess();
 			float duration = 0;
-			var items = timelines.Items;
+			Timeline[] items = timelines.Items;
 			for (int i = 0, n = timelines.Count; i < n; i++)
 				duration = Math.Max(duration, items[i].Duration);
 			skeletonData.animations.Add(new Animation(name, timelines, duration));
 		}
 
 		static Timeline ReadTimeline (ref List<object>.Enumerator keyMapEnumerator, CurveTimeline1 timeline, float defaultValue, float scale) {
-			var keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+			Dictionary<string, object> keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 			float time = GetFloat(keyMap, "time", 0);
 			float value = GetFloat(keyMap, "value", defaultValue) * scale;
 			for (int frame = 0, bezier = 0; ; frame++) {
@@ -1064,7 +1122,7 @@ namespace Spine {
 					timeline.Shrink(bezier);
 					return timeline;
 				}
-				var nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+				Dictionary<string, object> nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 				float time2 = GetFloat(nextMap, "time", 0);
 				float value2 = GetFloat(nextMap, "value", defaultValue) * scale;
 				if (keyMap.ContainsKey("curve")) {
@@ -1080,7 +1138,7 @@ namespace Spine {
 		static Timeline ReadTimeline (ref List<object>.Enumerator keyMapEnumerator, CurveTimeline2 timeline, String name1, String name2, float defaultValue,
 			float scale) {
 
-			var keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+			Dictionary<string, object> keyMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 			float time = GetFloat(keyMap, "time", 0);
 			float value1 = GetFloat(keyMap, name1, defaultValue) * scale, value2 = GetFloat(keyMap, name2, defaultValue) * scale;
 			for (int frame = 0, bezier = 0; ; frame++) {
@@ -1089,7 +1147,7 @@ namespace Spine {
 					timeline.Shrink(bezier);
 					return timeline;
 				}
-				var nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
+				Dictionary<string, object> nextMap = (Dictionary<string, Object>)keyMapEnumerator.Current;
 				float time2 = GetFloat(nextMap, "time", 0);
 				float nvalue1 = GetFloat(nextMap, name1, defaultValue) * scale, nvalue2 = GetFloat(nextMap, name2, defaultValue) * scale;
 				if (keyMap.ContainsKey("curve")) {
@@ -1112,7 +1170,7 @@ namespace Spine {
 				if (curveString == "stepped") timeline.SetStepped(frame);
 				return bezier;
 			}
-			var curveValues = (List<object>)curve;
+			List<object> curveValues = (List<object>)curve;
 			int i = value << 2;
 			float cx1 = (float)curveValues[i];
 			float cy1 = (float)curveValues[i + 1] * scale;
@@ -1127,9 +1185,9 @@ namespace Spine {
 			timeline.SetBezier(bezier, frame, value, time1, value1, cx1, cy1, cx2, cy2, time2, value2);
 		}
 
-		static float[] GetFloatArray(Dictionary<string, Object> map, string name, float scale) {
-			var list = (List<Object>)map[name];
-			var values = new float[list.Count];
+		static float[] GetFloatArray (Dictionary<string, Object> map, string name, float scale) {
+			List<object> list = (List<Object>)map[name];
+			float[] values = new float[list.Count];
 			if (scale == 1) {
 				for (int i = 0, n = list.Count; i < n; i++)
 					values[i] = (float)list[i];
@@ -1140,35 +1198,40 @@ namespace Spine {
 			return values;
 		}
 
-		static int[] GetIntArray(Dictionary<string, Object> map, string name) {
-			var list = (List<Object>)map[name];
-			var values = new int[list.Count];
+		static int[] GetIntArray (Dictionary<string, Object> map, string name) {
+			List<object> list = (List<Object>)map[name];
+			int[] values = new int[list.Count];
 			for (int i = 0, n = list.Count; i < n; i++)
 				values[i] = (int)(float)list[i];
 			return values;
 		}
 
-		static float GetFloat(Dictionary<string, Object> map, string name, float defaultValue) {
+		static float GetFloat (Dictionary<string, Object> map, string name, float defaultValue) {
 			if (!map.ContainsKey(name)) return defaultValue;
 			return (float)map[name];
 		}
 
-		static int GetInt(Dictionary<string, Object> map, string name, int defaultValue) {
+		static int GetInt (Dictionary<string, Object> map, string name, int defaultValue) {
 			if (!map.ContainsKey(name)) return defaultValue;
 			return (int)(float)map[name];
 		}
 
-		static bool GetBoolean(Dictionary<string, Object> map, string name, bool defaultValue) {
+		static int GetInt (Dictionary<string, Object> map, string name) {
+			if (!map.ContainsKey(name)) throw new ArgumentException("Named value not found: " + name);
+			return (int)(float)map[name];
+		}
+
+		static bool GetBoolean (Dictionary<string, Object> map, string name, bool defaultValue) {
 			if (!map.ContainsKey(name)) return defaultValue;
 			return (bool)map[name];
 		}
 
-		static string GetString(Dictionary<string, Object> map, string name, string defaultValue) {
+		static string GetString (Dictionary<string, Object> map, string name, string defaultValue) {
 			if (!map.ContainsKey(name)) return defaultValue;
 			return (string)map[name];
 		}
 
-		static float ToColor(string hexString, int colorIndex, int expectedLength = 8) {
+		static float ToColor (string hexString, int colorIndex, int expectedLength = 8) {
 			if (hexString.Length != expectedLength)
 				throw new ArgumentException("Color hexidecimal length must be " + expectedLength + ", recieved: " + hexString, "hexString");
 			return Convert.ToInt32(hexString.Substring(colorIndex * 2, 2), 16) / (float)255;

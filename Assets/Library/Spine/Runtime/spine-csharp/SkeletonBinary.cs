@@ -1,16 +1,16 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated July 28, 2023. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2023, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
  * conditions of Section 2 of the Spine Editor License Agreement:
  * http://esotericsoftware.com/spine-editor-license
  *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software or
+ * otherwise create derivative works of the Spine Runtimes (collectively,
  * "Products"), provided that each user of the Products must obtain their own
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
@@ -23,8 +23,8 @@
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
  * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE
+ * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 #if (UNITY_5 || UNITY_5_3_OR_NEWER || UNITY_WSA || UNITY_WP8 || UNITY_WP8_1)
@@ -32,8 +32,8 @@
 #endif
 
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
 
 #if WINDOWS_STOREAPP
@@ -61,6 +61,9 @@ namespace Spine {
 		public const int SLOT_RGB2 = 4;
 		public const int SLOT_ALPHA = 5;
 
+		public const int ATTACHMENT_DEFORM = 0;
+		public const int ATTACHMENT_SEQUENCE = 1;
+
 		public const int PATH_POSITION = 0;
 		public const int PATH_SPACING = 1;
 		public const int PATH_MIX = 2;
@@ -70,7 +73,7 @@ namespace Spine {
 		public const int CURVE_BEZIER = 2;
 
 		public SkeletonBinary (AttachmentLoader attachmentLoader)
-			:base(attachmentLoader) {
+			: base(attachmentLoader) {
 		}
 
 		public SkeletonBinary (params Atlas[] atlasArray)
@@ -80,7 +83,7 @@ namespace Spine {
 #if !ISUNITY && WINDOWS_STOREAPP
 		private async Task<SkeletonData> ReadFile(string path) {
 			var folder = Windows.ApplicationModel.Package.Current.InstalledLocation;
-			using (var input = new BufferedStream(await folder.GetFileAsync(path).AsTask().ConfigureAwait(false))) {
+			using (BufferedStream input = new BufferedStream(await folder.GetFileAsync(path).AsTask().ConfigureAwait(false))) {
 				SkeletonData skeletonData = ReadSkeletonData(input);
 				skeletonData.Name = Path.GetFileNameWithoutExtension(path);
 				return skeletonData;
@@ -92,17 +95,17 @@ namespace Spine {
 		}
 #else
 		public override SkeletonData ReadSkeletonData (string path) {
-		#if WINDOWS_PHONE
-			using (var input = new BufferedStream(Microsoft.Xna.Framework.TitleContainer.OpenStream(path))) {
-		#else
-			using (var input = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-		#endif
+#if WINDOWS_PHONE
+			using (BufferedStream input = new BufferedStream(Microsoft.Xna.Framework.TitleContainer.OpenStream(path))) {
+#else
+			using (FileStream input = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+#endif
 				SkeletonData skeletonData = ReadSkeletonData(input);
 				skeletonData.name = Path.GetFileNameWithoutExtension(path);
 				return skeletonData;
 			}
 		}
-		#endif // WINDOWS_STOREAPP
+#endif // WINDOWS_STOREAPP
 
 		public static readonly TransformMode[] TransformModeValues = {
 			TransformMode.Normal,
@@ -124,7 +127,7 @@ namespace Spine {
 			if (file == null) throw new ArgumentNullException("file");
 			float scale = this.scale;
 
-			var skeletonData = new SkeletonData();
+			SkeletonData skeletonData = new SkeletonData();
 			SkeletonInput input = new SkeletonInput(file);
 
 			long hash = input.ReadLong();
@@ -159,7 +162,7 @@ namespace Spine {
 				o[i] = input.ReadString();
 
 			// Bones.
-			var bones = skeletonData.bones.Resize(n = input.ReadInt(true)).Items;
+			BoneData[] bones = skeletonData.bones.Resize(n = input.ReadInt(true)).Items;
 			for (int i = 0; i < n; i++) {
 				String name = input.ReadString();
 				BoneData parent = i == 0 ? null : bones[input.ReadInt(true)];
@@ -179,7 +182,7 @@ namespace Spine {
 			}
 
 			// Slots.
-			var slots = skeletonData.slots.Resize(n = input.ReadInt(true)).Items;
+			SlotData[] slots = skeletonData.slots.Resize(n = input.ReadInt(true)).Items;
 			for (int i = 0; i < n; i++) {
 				String slotName = input.ReadString();
 				BoneData boneData = bones[input.ReadInt(true)];
@@ -209,7 +212,7 @@ namespace Spine {
 				IkConstraintData data = new IkConstraintData(input.ReadString());
 				data.order = input.ReadInt(true);
 				data.skinRequired = input.ReadBoolean();
-				var constraintBones = data.bones.Resize(nn = input.ReadInt(true)).Items;
+				BoneData[] constraintBones = data.bones.Resize(nn = input.ReadInt(true)).Items;
 				for (int ii = 0; ii < nn; ii++)
 					constraintBones[ii] = bones[input.ReadInt(true)];
 				data.target = bones[input.ReadInt(true)];
@@ -228,7 +231,7 @@ namespace Spine {
 				TransformConstraintData data = new TransformConstraintData(input.ReadString());
 				data.order = input.ReadInt(true);
 				data.skinRequired = input.ReadBoolean();
-				var constraintBones = data.bones.Resize(nn = input.ReadInt(true)).Items;
+				BoneData[] constraintBones = data.bones.Resize(nn = input.ReadInt(true)).Items;
 				for (int ii = 0; ii < nn; ii++)
 					constraintBones[ii] = bones[input.ReadInt(true)];
 				data.target = bones[input.ReadInt(true)];
@@ -296,9 +299,9 @@ namespace Spine {
 				if (skin == null) throw new Exception("Skin not found: " + linkedMesh.skin);
 				Attachment parent = skin.GetAttachment(linkedMesh.slotIndex, linkedMesh.parent);
 				if (parent == null) throw new Exception("Parent mesh not found: " + linkedMesh.parent);
-				linkedMesh.mesh.DeformAttachment = linkedMesh.inheritDeform ? (VertexAttachment)parent : linkedMesh.mesh;
+				linkedMesh.mesh.TimelineAttachment = linkedMesh.inheritTimelines ? (VertexAttachment)parent : linkedMesh.mesh;
 				linkedMesh.mesh.ParentMesh = (MeshAttachment)parent;
-				linkedMesh.mesh.UpdateUVs();
+				if (linkedMesh.mesh.Sequence == null) linkedMesh.mesh.UpdateRegion();
 			}
 			linkedMeshes.Clear();
 
@@ -338,17 +341,17 @@ namespace Spine {
 			} else {
 				skin = new Skin(input.ReadStringRef());
 				Object[] bones = skin.bones.Resize(input.ReadInt(true)).Items;
-				var bonesItems = skeletonData.bones.Items;
+				BoneData[] bonesItems = skeletonData.bones.Items;
 				for (int i = 0, n = skin.bones.Count; i < n; i++)
 					bones[i] = bonesItems[input.ReadInt(true)];
 
-				var ikConstraintsItems = skeletonData.ikConstraints.Items;
+				IkConstraintData[] ikConstraintsItems = skeletonData.ikConstraints.Items;
 				for (int i = 0, n = input.ReadInt(true); i < n; i++)
 					skin.constraints.Add(ikConstraintsItems[input.ReadInt(true)]);
-				var transformConstraintsItems = skeletonData.transformConstraints.Items;
+				TransformConstraintData[] transformConstraintsItems = skeletonData.transformConstraints.Items;
 				for (int i = 0, n = input.ReadInt(true); i < n; i++)
 					skin.constraints.Add(transformConstraintsItems[input.ReadInt(true)]);
-				var pathConstraintsItems = skeletonData.pathConstraints.Items;
+				PathConstraintData[] pathConstraintsItems = skeletonData.pathConstraints.Items;
 				for (int i = 0, n = input.ReadInt(true); i < n; i++)
 					skin.constraints.Add(pathConstraintsItems[input.ReadInt(true)]);
 				skin.constraints.TrimExcess();
@@ -384,9 +387,10 @@ namespace Spine {
 				float width = input.ReadFloat();
 				float height = input.ReadFloat();
 				int color = input.ReadInt();
+				Sequence sequence = ReadSequence(input);
 
 				if (path == null) path = name;
-				RegionAttachment region = attachmentLoader.NewRegionAttachment(skin, name, path);
+				RegionAttachment region = attachmentLoader.NewRegionAttachment(skin, name, path, sequence);
 				if (region == null) return null;
 				region.Path = path;
 				region.x = x * scale;
@@ -400,7 +404,8 @@ namespace Spine {
 				region.g = ((color & 0x00ff0000) >> 16) / 255f;
 				region.b = ((color & 0x0000ff00) >> 8) / 255f;
 				region.a = ((color & 0x000000ff)) / 255f;
-				region.UpdateOffset();
+				region.sequence = sequence;
+				if (sequence == null) region.UpdateRegion();
 				return region;
 			}
 			case AttachmentType.Boundingbox: {
@@ -424,6 +429,7 @@ namespace Spine {
 				int[] triangles = ReadShortArray(input);
 				Vertices vertices = ReadVertices(input, vertexCount);
 				int hullLength = input.ReadInt(true);
+				Sequence sequence = ReadSequence(input);
 				int[] edges = null;
 				float width = 0, height = 0;
 				if (nonessential) {
@@ -433,7 +439,7 @@ namespace Spine {
 				}
 
 				if (path == null) path = name;
-				MeshAttachment mesh = attachmentLoader.NewMeshAttachment(skin, name, path);
+				MeshAttachment mesh = attachmentLoader.NewMeshAttachment(skin, name, path, sequence);
 				if (mesh == null) return null;
 				mesh.Path = path;
 				mesh.r = ((color & 0xff000000) >> 24) / 255f;
@@ -445,8 +451,9 @@ namespace Spine {
 				mesh.WorldVerticesLength = vertexCount << 1;
 				mesh.triangles = triangles;
 				mesh.regionUVs = uvs;
-				mesh.UpdateUVs();
+				if (sequence == null) mesh.UpdateRegion();
 				mesh.HullLength = hullLength << 1;
+				mesh.Sequence = sequence;
 				if (nonessential) {
 					mesh.Edges = edges;
 					mesh.Width = width * scale;
@@ -459,7 +466,8 @@ namespace Spine {
 				int color = input.ReadInt();
 				String skinName = input.ReadStringRef();
 				String parent = input.ReadStringRef();
-				bool inheritDeform = input.ReadBoolean();
+				bool inheritTimelines = input.ReadBoolean();
+				Sequence sequence = ReadSequence(input);
 				float width = 0, height = 0;
 				if (nonessential) {
 					width = input.ReadFloat();
@@ -467,18 +475,19 @@ namespace Spine {
 				}
 
 				if (path == null) path = name;
-				MeshAttachment mesh = attachmentLoader.NewMeshAttachment(skin, name, path);
+				MeshAttachment mesh = attachmentLoader.NewMeshAttachment(skin, name, path, sequence);
 				if (mesh == null) return null;
 				mesh.Path = path;
 				mesh.r = ((color & 0xff000000) >> 24) / 255f;
 				mesh.g = ((color & 0x00ff0000) >> 16) / 255f;
 				mesh.b = ((color & 0x0000ff00) >> 8) / 255f;
 				mesh.a = ((color & 0x000000ff)) / 255f;
+				mesh.Sequence = sequence;
 				if (nonessential) {
 					mesh.Width = width * scale;
 					mesh.Height = height * scale;
 				}
-				linkedMeshes.Add(new SkeletonJson.LinkedMesh(mesh, skinName, slotIndex, parent, inheritDeform));
+				linkedMeshes.Add(new SkeletonJson.LinkedMesh(mesh, skinName, slotIndex, parent, inheritTimelines));
 				return mesh;
 			}
 			case AttachmentType.Path: {
@@ -535,16 +544,25 @@ namespace Spine {
 			return null;
 		}
 
+		private Sequence ReadSequence (SkeletonInput input) {
+			if (!input.ReadBoolean()) return null;
+			Sequence sequence = new Sequence(input.ReadInt(true));
+			sequence.Start = input.ReadInt(true);
+			sequence.Digits = input.ReadInt(true);
+			sequence.SetupIndex = input.ReadInt(true);
+			return sequence;
+		}
+
 		private Vertices ReadVertices (SkeletonInput input, int vertexCount) {
 			float scale = this.scale;
 			int verticesLength = vertexCount << 1;
 			Vertices vertices = new Vertices();
-			if(!input.ReadBoolean()) {
+			if (!input.ReadBoolean()) {
 				vertices.vertices = ReadFloatArray(input, verticesLength, scale);
 				return vertices;
 			}
-			var weights = new ExposedList<float>(verticesLength * 3 * 3);
-			var bonesArray = new ExposedList<int>(verticesLength * 3);
+			ExposedList<float> weights = new ExposedList<float>(verticesLength * 3 * 3);
+			ExposedList<int> bonesArray = new ExposedList<int>(verticesLength * 3);
 			for (int i = 0; i < vertexCount; i++) {
 				int boneCount = input.ReadInt(true);
 				bonesArray.Add(boneCount);
@@ -584,7 +602,7 @@ namespace Spine {
 		/// <exception cref="SerializationException">SerializationException will be thrown when a Vertex attachment is not found.</exception>
 		/// <exception cref="IOException">Throws IOException when a read operation fails.</exception>
 		private Animation ReadAnimation (String name, SkeletonInput input, SkeletonData skeletonData) {
-			var timelines = new ExposedList<Timeline>(input.ReadInt(true));
+			ExposedList<Timeline> timelines = new ExposedList<Timeline>(input.ReadInt(true));
 			float scale = this.scale;
 
 			// Slot timelines.
@@ -593,167 +611,167 @@ namespace Spine {
 				for (int ii = 0, nn = input.ReadInt(true); ii < nn; ii++) {
 					int timelineType = input.ReadByte(), frameCount = input.ReadInt(true), frameLast = frameCount - 1;
 					switch (timelineType) {
-						case SLOT_ATTACHMENT: {
-								AttachmentTimeline timeline = new AttachmentTimeline(frameCount, slotIndex);
-								for (int frame = 0; frame < frameCount; frame++)
-									timeline.SetFrame(frame, input.ReadFloat(), input.ReadStringRef());
-								timelines.Add(timeline);
+					case SLOT_ATTACHMENT: {
+						AttachmentTimeline timeline = new AttachmentTimeline(frameCount, slotIndex);
+						for (int frame = 0; frame < frameCount; frame++)
+							timeline.SetFrame(frame, input.ReadFloat(), input.ReadStringRef());
+						timelines.Add(timeline);
+						break;
+					}
+					case SLOT_RGBA: {
+						RGBATimeline timeline = new RGBATimeline(frameCount, input.ReadInt(true), slotIndex);
+						float time = input.ReadFloat();
+						float r = input.Read() / 255f, g = input.Read() / 255f;
+						float b = input.Read() / 255f, a = input.Read() / 255f;
+						for (int frame = 0, bezier = 0; ; frame++) {
+							timeline.SetFrame(frame, time, r, g, b, a);
+							if (frame == frameLast) break;
+							float time2 = input.ReadFloat();
+							float r2 = input.Read() / 255f, g2 = input.Read() / 255f;
+							float b2 = input.Read() / 255f, a2 = input.Read() / 255f;
+							switch (input.ReadByte()) {
+							case CURVE_STEPPED:
+								timeline.SetStepped(frame);
+								break;
+							case CURVE_BEZIER:
+								SetBezier(input, timeline, bezier++, frame, 0, time, time2, r, r2, 1);
+								SetBezier(input, timeline, bezier++, frame, 1, time, time2, g, g2, 1);
+								SetBezier(input, timeline, bezier++, frame, 2, time, time2, b, b2, 1);
+								SetBezier(input, timeline, bezier++, frame, 3, time, time2, a, a2, 1);
 								break;
 							}
-						case SLOT_RGBA: {
-								RGBATimeline timeline = new RGBATimeline(frameCount, input.ReadInt(true), slotIndex);
-								float time = input.ReadFloat();
-								float r = input.Read() / 255f, g = input.Read() / 255f;
-								float b = input.Read() / 255f, a = input.Read() / 255f;
-								for (int frame = 0, bezier = 0; ; frame++) {
-									timeline.SetFrame(frame, time, r, g, b, a);
-									if (frame == frameLast) break;
-									float time2 = input.ReadFloat();
-									float r2 = input.Read() / 255f, g2 = input.Read() / 255f;
-									float b2 = input.Read() / 255f, a2 = input.Read() / 255f;
-									switch (input.ReadByte()) {
-										case CURVE_STEPPED:
-											timeline.SetStepped(frame);
-											break;
-										case CURVE_BEZIER:
-											SetBezier(input, timeline, bezier++, frame, 0, time, time2, r, r2, 1);
-											SetBezier(input, timeline, bezier++, frame, 1, time, time2, g, g2, 1);
-											SetBezier(input, timeline, bezier++, frame, 2, time, time2, b, b2, 1);
-											SetBezier(input, timeline, bezier++, frame, 3, time, time2, a, a2, 1);
-											break;
-									}
-									time = time2;
-									r = r2;
-									g = g2;
-									b = b2;
-									a = a2;
-								}
-								timelines.Add(timeline);
+							time = time2;
+							r = r2;
+							g = g2;
+							b = b2;
+							a = a2;
+						}
+						timelines.Add(timeline);
+						break;
+					}
+					case SLOT_RGB: {
+						RGBTimeline timeline = new RGBTimeline(frameCount, input.ReadInt(true), slotIndex);
+						float time = input.ReadFloat();
+						float r = input.Read() / 255f, g = input.Read() / 255f, b = input.Read() / 255f;
+						for (int frame = 0, bezier = 0; ; frame++) {
+							timeline.SetFrame(frame, time, r, g, b);
+							if (frame == frameLast) break;
+							float time2 = input.ReadFloat();
+							float r2 = input.Read() / 255f, g2 = input.Read() / 255f, b2 = input.Read() / 255f;
+							switch (input.ReadByte()) {
+							case CURVE_STEPPED:
+								timeline.SetStepped(frame);
+								break;
+							case CURVE_BEZIER:
+								SetBezier(input, timeline, bezier++, frame, 0, time, time2, r, r2, 1);
+								SetBezier(input, timeline, bezier++, frame, 1, time, time2, g, g2, 1);
+								SetBezier(input, timeline, bezier++, frame, 2, time, time2, b, b2, 1);
 								break;
 							}
-						case SLOT_RGB: {
-								RGBTimeline timeline = new RGBTimeline(frameCount, input.ReadInt(true), slotIndex);
-								float time = input.ReadFloat();
-								float r = input.Read() / 255f, g = input.Read() / 255f, b = input.Read() / 255f;
-								for (int frame = 0, bezier = 0; ; frame++) {
-									timeline.SetFrame(frame, time, r, g, b);
-									if (frame == frameLast) break;
-									float time2 = input.ReadFloat();
-									float r2 = input.Read() / 255f, g2 = input.Read() / 255f, b2 = input.Read() / 255f;
-									switch (input.ReadByte()) {
-										case CURVE_STEPPED:
-											timeline.SetStepped(frame);
-											break;
-										case CURVE_BEZIER:
-											SetBezier(input, timeline, bezier++, frame, 0, time, time2, r, r2, 1);
-											SetBezier(input, timeline, bezier++, frame, 1, time, time2, g, g2, 1);
-											SetBezier(input, timeline, bezier++, frame, 2, time, time2, b, b2, 1);
-											break;
-									}
-									time = time2;
-									r = r2;
-									g = g2;
-									b = b2;
-								}
-								timelines.Add(timeline);
+							time = time2;
+							r = r2;
+							g = g2;
+							b = b2;
+						}
+						timelines.Add(timeline);
+						break;
+					}
+					case SLOT_RGBA2: {
+						RGBA2Timeline timeline = new RGBA2Timeline(frameCount, input.ReadInt(true), slotIndex);
+						float time = input.ReadFloat();
+						float r = input.Read() / 255f, g = input.Read() / 255f;
+						float b = input.Read() / 255f, a = input.Read() / 255f;
+						float r2 = input.Read() / 255f, g2 = input.Read() / 255f, b2 = input.Read() / 255f;
+						for (int frame = 0, bezier = 0; ; frame++) {
+							timeline.SetFrame(frame, time, r, g, b, a, r2, g2, b2);
+							if (frame == frameLast) break;
+							float time2 = input.ReadFloat();
+							float nr = input.Read() / 255f, ng = input.Read() / 255f;
+							float nb = input.Read() / 255f, na = input.Read() / 255f;
+							float nr2 = input.Read() / 255f, ng2 = input.Read() / 255f, nb2 = input.Read() / 255f;
+							switch (input.ReadByte()) {
+							case CURVE_STEPPED:
+								timeline.SetStepped(frame);
+								break;
+							case CURVE_BEZIER:
+								SetBezier(input, timeline, bezier++, frame, 0, time, time2, r, nr, 1);
+								SetBezier(input, timeline, bezier++, frame, 1, time, time2, g, ng, 1);
+								SetBezier(input, timeline, bezier++, frame, 2, time, time2, b, nb, 1);
+								SetBezier(input, timeline, bezier++, frame, 3, time, time2, a, na, 1);
+								SetBezier(input, timeline, bezier++, frame, 4, time, time2, r2, nr2, 1);
+								SetBezier(input, timeline, bezier++, frame, 5, time, time2, g2, ng2, 1);
+								SetBezier(input, timeline, bezier++, frame, 6, time, time2, b2, nb2, 1);
 								break;
 							}
-						case SLOT_RGBA2: {
-								RGBA2Timeline timeline = new RGBA2Timeline(frameCount, input.ReadInt(true), slotIndex);
-								float time = input.ReadFloat();
-								float r = input.Read() / 255f, g = input.Read() / 255f;
-								float b = input.Read() / 255f, a = input.Read() / 255f;
-								float r2 = input.Read() / 255f, g2 = input.Read() / 255f, b2 = input.Read() / 255f;
-								for (int frame = 0, bezier = 0; ; frame++) {
-									timeline.SetFrame(frame, time, r, g, b, a, r2, g2, b2);
-									if (frame == frameLast) break;
-									float time2 = input.ReadFloat();
-									float nr = input.Read() / 255f, ng = input.Read() / 255f;
-									float nb = input.Read() / 255f, na = input.Read() / 255f;
-									float nr2 = input.Read() / 255f, ng2 = input.Read() / 255f, nb2 = input.Read() / 255f;
-									switch (input.ReadByte()) {
-										case CURVE_STEPPED:
-											timeline.SetStepped(frame);
-											break;
-										case CURVE_BEZIER:
-											SetBezier(input, timeline, bezier++, frame, 0, time, time2, r, nr, 1);
-											SetBezier(input, timeline, bezier++, frame, 1, time, time2, g, ng, 1);
-											SetBezier(input, timeline, bezier++, frame, 2, time, time2, b, nb, 1);
-											SetBezier(input, timeline, bezier++, frame, 3, time, time2, a, na, 1);
-											SetBezier(input, timeline, bezier++, frame, 4, time, time2, r2, nr2, 1);
-											SetBezier(input, timeline, bezier++, frame, 5, time, time2, g2, ng2, 1);
-											SetBezier(input, timeline, bezier++, frame, 6, time, time2, b2, nb2, 1);
-											break;
-									}
-									time = time2;
-									r = nr;
-									g = ng;
-									b = nb;
-									a = na;
-									r2 = nr2;
-									g2 = ng2;
-									b2 = nb2;
-								}
-								timelines.Add(timeline);
+							time = time2;
+							r = nr;
+							g = ng;
+							b = nb;
+							a = na;
+							r2 = nr2;
+							g2 = ng2;
+							b2 = nb2;
+						}
+						timelines.Add(timeline);
+						break;
+					}
+					case SLOT_RGB2: {
+						RGB2Timeline timeline = new RGB2Timeline(frameCount, input.ReadInt(true), slotIndex);
+						float time = input.ReadFloat();
+						float r = input.Read() / 255f, g = input.Read() / 255f, b = input.Read() / 255f;
+						float r2 = input.Read() / 255f, g2 = input.Read() / 255f, b2 = input.Read() / 255f;
+						for (int frame = 0, bezier = 0; ; frame++) {
+							timeline.SetFrame(frame, time, r, g, b, r2, g2, b2);
+							if (frame == frameLast) break;
+							float time2 = input.ReadFloat();
+							float nr = input.Read() / 255f, ng = input.Read() / 255f, nb = input.Read() / 255f;
+							float nr2 = input.Read() / 255f, ng2 = input.Read() / 255f, nb2 = input.Read() / 255f;
+							switch (input.ReadByte()) {
+							case CURVE_STEPPED:
+								timeline.SetStepped(frame);
+								break;
+							case CURVE_BEZIER:
+								SetBezier(input, timeline, bezier++, frame, 0, time, time2, r, nr, 1);
+								SetBezier(input, timeline, bezier++, frame, 1, time, time2, g, ng, 1);
+								SetBezier(input, timeline, bezier++, frame, 2, time, time2, b, nb, 1);
+								SetBezier(input, timeline, bezier++, frame, 3, time, time2, r2, nr2, 1);
+								SetBezier(input, timeline, bezier++, frame, 4, time, time2, g2, ng2, 1);
+								SetBezier(input, timeline, bezier++, frame, 5, time, time2, b2, nb2, 1);
 								break;
 							}
-						case SLOT_RGB2: {
-								RGB2Timeline timeline = new RGB2Timeline(frameCount, input.ReadInt(true), slotIndex);
-								float time = input.ReadFloat();
-								float r = input.Read() / 255f, g = input.Read() / 255f, b = input.Read() / 255f;
-								float r2 = input.Read() / 255f, g2 = input.Read() / 255f, b2 = input.Read() / 255f;
-								for (int frame = 0, bezier = 0; ; frame++) {
-									timeline.SetFrame(frame, time, r, g, b, r2, g2, b2);
-									if (frame == frameLast) break;
-									float time2 = input.ReadFloat();
-									float nr = input.Read() / 255f, ng = input.Read() / 255f, nb = input.Read() / 255f;
-									float nr2 = input.Read() / 255f, ng2 = input.Read() / 255f, nb2 = input.Read() / 255f;
-									switch (input.ReadByte()) {
-										case CURVE_STEPPED:
-											timeline.SetStepped(frame);
-											break;
-										case CURVE_BEZIER:
-											SetBezier(input, timeline, bezier++, frame, 0, time, time2, r, nr, 1);
-											SetBezier(input, timeline, bezier++, frame, 1, time, time2, g, ng, 1);
-											SetBezier(input, timeline, bezier++, frame, 2, time, time2, b, nb, 1);
-											SetBezier(input, timeline, bezier++, frame, 3, time, time2, r2, nr2, 1);
-											SetBezier(input, timeline, bezier++, frame, 4, time, time2, g2, ng2, 1);
-											SetBezier(input, timeline, bezier++, frame, 5, time, time2, b2, nb2, 1);
-											break;
-									}
-									time = time2;
-									r = nr;
-									g = ng;
-									b = nb;
-									r2 = nr2;
-									g2 = ng2;
-									b2 = nb2;
-								}
-								timelines.Add(timeline);
+							time = time2;
+							r = nr;
+							g = ng;
+							b = nb;
+							r2 = nr2;
+							g2 = ng2;
+							b2 = nb2;
+						}
+						timelines.Add(timeline);
+						break;
+					}
+					case SLOT_ALPHA: {
+						AlphaTimeline timeline = new AlphaTimeline(frameCount, input.ReadInt(true), slotIndex);
+						float time = input.ReadFloat(), a = input.Read() / 255f;
+						for (int frame = 0, bezier = 0; ; frame++) {
+							timeline.SetFrame(frame, time, a);
+							if (frame == frameLast) break;
+							float time2 = input.ReadFloat();
+							float a2 = input.Read() / 255f;
+							switch (input.ReadByte()) {
+							case CURVE_STEPPED:
+								timeline.SetStepped(frame);
+								break;
+							case CURVE_BEZIER:
+								SetBezier(input, timeline, bezier++, frame, 0, time, time2, a, a2, 1);
 								break;
 							}
-						case SLOT_ALPHA: {
-								AlphaTimeline timeline = new AlphaTimeline(frameCount, input.ReadInt(true), slotIndex);
-								float time = input.ReadFloat(), a = input.Read() / 255f;
-								for (int frame = 0, bezier = 0; ; frame++) {
-									timeline.SetFrame(frame, time, a);
-									if (frame == frameLast) break;
-									float time2 = input.ReadFloat();
-									float a2 = input.Read() / 255f;
-									switch (input.ReadByte()) {
-										case CURVE_STEPPED:
-											timeline.SetStepped(frame);
-											break;
-										case CURVE_BEZIER:
-											SetBezier(input, timeline, bezier++, frame, 0, time, time2, a, a2, 1);
-											break;
-									}
-									time = time2;
-									a = a2;
-								}
-								timelines.Add(timeline);
-								break;
-							}
+							time = time2;
+							a = a2;
+						}
+						timelines.Add(timeline);
+						break;
+					}
 					}
 				}
 			}
@@ -764,36 +782,36 @@ namespace Spine {
 				for (int ii = 0, nn = input.ReadInt(true); ii < nn; ii++) {
 					int type = input.ReadByte(), frameCount = input.ReadInt(true), bezierCount = input.ReadInt(true);
 					switch (type) {
-						case BONE_ROTATE:
-							timelines.Add(ReadTimeline(input, new RotateTimeline(frameCount, bezierCount, boneIndex), 1));
-							break;
-						case BONE_TRANSLATE:
-							timelines.Add(ReadTimeline(input, new TranslateTimeline(frameCount, bezierCount, boneIndex), scale));
-							break;
-						case BONE_TRANSLATEX:
-							timelines.Add(ReadTimeline(input, new TranslateXTimeline(frameCount, bezierCount, boneIndex), scale));
-							break;
-						case BONE_TRANSLATEY:
-							timelines.Add(ReadTimeline(input, new TranslateYTimeline(frameCount, bezierCount, boneIndex), scale));
-							break;
-						case BONE_SCALE:
-							timelines.Add(ReadTimeline(input, new ScaleTimeline(frameCount, bezierCount, boneIndex), 1));
-							break;
-						case BONE_SCALEX:
-							timelines.Add(ReadTimeline(input, new ScaleXTimeline(frameCount, bezierCount, boneIndex), 1));
-							break;
-						case BONE_SCALEY:
-							timelines.Add(ReadTimeline(input, new ScaleYTimeline(frameCount, bezierCount, boneIndex), 1));
-							break;
-						case BONE_SHEAR:
-							timelines.Add(ReadTimeline(input, new ShearTimeline(frameCount, bezierCount, boneIndex), 1));
-							break;
-						case BONE_SHEARX:
-							timelines.Add(ReadTimeline(input, new ShearXTimeline(frameCount, bezierCount, boneIndex), 1));
-							break;
-						case BONE_SHEARY:
-							timelines.Add(ReadTimeline(input, new ShearYTimeline(frameCount, bezierCount, boneIndex), 1));
-							break;
+					case BONE_ROTATE:
+						timelines.Add(ReadTimeline(input, new RotateTimeline(frameCount, bezierCount, boneIndex), 1));
+						break;
+					case BONE_TRANSLATE:
+						timelines.Add(ReadTimeline(input, new TranslateTimeline(frameCount, bezierCount, boneIndex), scale));
+						break;
+					case BONE_TRANSLATEX:
+						timelines.Add(ReadTimeline(input, new TranslateXTimeline(frameCount, bezierCount, boneIndex), scale));
+						break;
+					case BONE_TRANSLATEY:
+						timelines.Add(ReadTimeline(input, new TranslateYTimeline(frameCount, bezierCount, boneIndex), scale));
+						break;
+					case BONE_SCALE:
+						timelines.Add(ReadTimeline(input, new ScaleTimeline(frameCount, bezierCount, boneIndex), 1));
+						break;
+					case BONE_SCALEX:
+						timelines.Add(ReadTimeline(input, new ScaleXTimeline(frameCount, bezierCount, boneIndex), 1));
+						break;
+					case BONE_SCALEY:
+						timelines.Add(ReadTimeline(input, new ScaleYTimeline(frameCount, bezierCount, boneIndex), 1));
+						break;
+					case BONE_SHEAR:
+						timelines.Add(ReadTimeline(input, new ShearTimeline(frameCount, bezierCount, boneIndex), 1));
+						break;
+					case BONE_SHEARX:
+						timelines.Add(ReadTimeline(input, new ShearXTimeline(frameCount, bezierCount, boneIndex), 1));
+						break;
+					case BONE_SHEARY:
+						timelines.Add(ReadTimeline(input, new ShearYTimeline(frameCount, bezierCount, boneIndex), 1));
+						break;
 					}
 				}
 			}
@@ -808,13 +826,13 @@ namespace Spine {
 					if (frame == frameLast) break;
 					float time2 = input.ReadFloat(), mix2 = input.ReadFloat(), softness2 = input.ReadFloat() * scale;
 					switch (input.ReadByte()) {
-						case CURVE_STEPPED:
-							timeline.SetStepped(frame);
-							break;
-						case CURVE_BEZIER:
-							SetBezier(input, timeline, bezier++, frame, 0, time, time2, mix, mix2, 1);
-							SetBezier(input, timeline, bezier++, frame, 1, time, time2, softness, softness2, scale);
-							break;
+					case CURVE_STEPPED:
+						timeline.SetStepped(frame);
+						break;
+					case CURVE_BEZIER:
+						SetBezier(input, timeline, bezier++, frame, 0, time, time2, mix, mix2, 1);
+						SetBezier(input, timeline, bezier++, frame, 1, time, time2, softness, softness2, scale);
+						break;
 					}
 					time = time2;
 					mix = mix2;
@@ -835,17 +853,17 @@ namespace Spine {
 					float time2 = input.ReadFloat(), mixRotate2 = input.ReadFloat(), mixX2 = input.ReadFloat(), mixY2 = input.ReadFloat(),
 					mixScaleX2 = input.ReadFloat(), mixScaleY2 = input.ReadFloat(), mixShearY2 = input.ReadFloat();
 					switch (input.ReadByte()) {
-						case CURVE_STEPPED:
-							timeline.SetStepped(frame);
-							break;
-						case CURVE_BEZIER:
-							SetBezier(input, timeline, bezier++, frame, 0, time, time2, mixRotate, mixRotate2, 1);
-							SetBezier(input, timeline, bezier++, frame, 1, time, time2, mixX, mixX2, 1);
-							SetBezier(input, timeline, bezier++, frame, 2, time, time2, mixY, mixY2, 1);
-							SetBezier(input, timeline, bezier++, frame, 3, time, time2, mixScaleX, mixScaleX2, 1);
-							SetBezier(input, timeline, bezier++, frame, 4, time, time2, mixScaleY, mixScaleY2, 1);
-							SetBezier(input, timeline, bezier++, frame, 5, time, time2, mixShearY, mixShearY2, 1);
-							break;
+					case CURVE_STEPPED:
+						timeline.SetStepped(frame);
+						break;
+					case CURVE_BEZIER:
+						SetBezier(input, timeline, bezier++, frame, 0, time, time2, mixRotate, mixRotate2, 1);
+						SetBezier(input, timeline, bezier++, frame, 1, time, time2, mixX, mixX2, 1);
+						SetBezier(input, timeline, bezier++, frame, 2, time, time2, mixY, mixY2, 1);
+						SetBezier(input, timeline, bezier++, frame, 3, time, time2, mixScaleX, mixScaleX2, 1);
+						SetBezier(input, timeline, bezier++, frame, 4, time, time2, mixScaleY, mixScaleY2, 1);
+						SetBezier(input, timeline, bezier++, frame, 5, time, time2, mixShearY, mixShearY2, 1);
+						break;
 					}
 					time = time2;
 					mixRotate = mixRotate2;
@@ -884,14 +902,14 @@ namespace Spine {
 							float time2 = input.ReadFloat(), mixRotate2 = input.ReadFloat(), mixX2 = input.ReadFloat(),
 								mixY2 = input.ReadFloat();
 							switch (input.ReadByte()) {
-								case CURVE_STEPPED:
-									timeline.SetStepped(frame);
-									break;
-								case CURVE_BEZIER:
-									SetBezier(input, timeline, bezier++, frame, 0, time, time2, mixRotate, mixRotate2, 1);
-									SetBezier(input, timeline, bezier++, frame, 1, time, time2, mixX, mixX2, 1);
-									SetBezier(input, timeline, bezier++, frame, 2, time, time2, mixY, mixY2, 1);
-									break;
+							case CURVE_STEPPED:
+								timeline.SetStepped(frame);
+								break;
+							case CURVE_BEZIER:
+								SetBezier(input, timeline, bezier++, frame, 0, time, time2, mixRotate, mixRotate2, 1);
+								SetBezier(input, timeline, bezier++, frame, 1, time, time2, mixX, mixX2, 1);
+								SetBezier(input, timeline, bezier++, frame, 2, time, time2, mixY, mixY2, 1);
+								break;
 							}
 							time = time2;
 							mixRotate = mixRotate2;
@@ -904,58 +922,76 @@ namespace Spine {
 				}
 			}
 
-			// Deform timelines.
+			// Attachment timelines.
 			for (int i = 0, n = input.ReadInt(true); i < n; i++) {
 				Skin skin = skeletonData.skins.Items[input.ReadInt(true)];
 				for (int ii = 0, nn = input.ReadInt(true); ii < nn; ii++) {
 					int slotIndex = input.ReadInt(true);
 					for (int iii = 0, nnn = input.ReadInt(true); iii < nnn; iii++) {
 						String attachmentName = input.ReadStringRef();
-						VertexAttachment attachment = (VertexAttachment)skin.GetAttachment(slotIndex, attachmentName);
-						if (attachment == null) throw new SerializationException("Vertex attachment not found: " + attachmentName);
-						bool weighted = attachment.Bones != null;
-						float[] vertices = attachment.Vertices;
-						int deformLength = weighted ? (vertices.Length / 3) << 1 : vertices.Length;
+						Attachment attachment = skin.GetAttachment(slotIndex, attachmentName);
+						if (attachment == null) throw new SerializationException("Timeline attachment not found: " + attachmentName);
 
-						int frameCount = input.ReadInt(true), frameLast = frameCount - 1;
-						DeformTimeline timeline = new DeformTimeline(frameCount, input.ReadInt(true), slotIndex, attachment);
+						int timelineType = input.ReadByte(), frameCount = input.ReadInt(true), frameLast = frameCount - 1;
+						switch (timelineType) {
+						case ATTACHMENT_DEFORM: {
+							VertexAttachment vertexAttachment = (VertexAttachment)attachment;
+							bool weighted = vertexAttachment.Bones != null;
+							float[] vertices = vertexAttachment.Vertices;
+							int deformLength = weighted ? (vertices.Length / 3) << 1 : vertices.Length;
 
-						float time = input.ReadFloat();
-						for (int frame = 0, bezier = 0; ; frame++) {
-							float[] deform;
-							int end = input.ReadInt(true);
-							if (end == 0)
-								deform = weighted ? new float[deformLength] : vertices;
-							else {
-								deform = new float[deformLength];
-								int start = input.ReadInt(true);
-								end += start;
-								if (scale == 1) {
-									for (int v = start; v < end; v++)
-										deform[v] = input.ReadFloat();
-								} else {
-									for (int v = start; v < end; v++)
-										deform[v] = input.ReadFloat() * scale;
+							DeformTimeline timeline = new DeformTimeline(frameCount, input.ReadInt(true), slotIndex, vertexAttachment);
+
+							float time = input.ReadFloat();
+							for (int frame = 0, bezier = 0; ; frame++) {
+								float[] deform;
+								int end = input.ReadInt(true);
+								if (end == 0)
+									deform = weighted ? new float[deformLength] : vertices;
+								else {
+									deform = new float[deformLength];
+									int start = input.ReadInt(true);
+									end += start;
+									if (scale == 1) {
+										for (int v = start; v < end; v++)
+											deform[v] = input.ReadFloat();
+									} else {
+										for (int v = start; v < end; v++)
+											deform[v] = input.ReadFloat() * scale;
+									}
+									if (!weighted) {
+										for (int v = 0, vn = deform.Length; v < vn; v++)
+											deform[v] += vertices[v];
+									}
 								}
-								if (!weighted) {
-									for (int v = 0, vn = deform.Length; v < vn; v++)
-										deform[v] += vertices[v];
+								timeline.SetFrame(frame, time, deform);
+								if (frame == frameLast) break;
+								float time2 = input.ReadFloat();
+								switch (input.ReadByte()) {
+								case CURVE_STEPPED:
+									timeline.SetStepped(frame);
+									break;
+								case CURVE_BEZIER:
+									SetBezier(input, timeline, bezier++, frame, 0, time, time2, 0, 1, 1);
+									break;
 								}
+								time = time2;
 							}
-							timeline.SetFrame(frame, time, deform);
-							if (frame == frameLast) break;
-							float time2 = input.ReadFloat();
-							switch (input.ReadByte()) {
-							case CURVE_STEPPED:
-								timeline.SetStepped(frame);
-								break;
-							case CURVE_BEZIER:
-								SetBezier(input, timeline, bezier++, frame, 0, time, time2, 0, 1, 1);
-								break;
-							}
-							time = time2;
+							timelines.Add(timeline);
+							break;
 						}
-						timelines.Add(timeline);
+						case ATTACHMENT_SEQUENCE: {
+							SequenceTimeline timeline = new SequenceTimeline(frameCount, slotIndex, attachment);
+							for (int frame = 0; frame < frameCount; frame++) {
+								float time = input.ReadFloat();
+								int modeAndIndex = input.ReadInt();
+								timeline.SetFrame(frame, time, (SequenceMode)(modeAndIndex & 0xf), modeAndIndex >> 4,
+									input.ReadFloat());
+							}
+							timelines.Add(timeline);
+							break;
+						} // end case
+						} // end switch
 					}
 				}
 			}
@@ -1013,7 +1049,7 @@ namespace Spine {
 			}
 
 			float duration = 0;
-			var items = timelines.Items;
+			Timeline[] items = timelines.Items;
 			for (int i = 0, n = timelines.Count; i < n; i++)
 				duration = Math.Max(duration, items[i].Duration);
 			return new Animation(name, timelines, duration);
@@ -1022,7 +1058,7 @@ namespace Spine {
 		/// <exception cref="IOException">Throws IOException when a read operation fails.</exception>
 		private Timeline ReadTimeline (SkeletonInput input, CurveTimeline1 timeline, float scale) {
 			float time = input.ReadFloat(), value = input.ReadFloat() * scale;
-			for (int frame = 0, bezier = 0, frameLast = timeline.FrameCount - 1;; frame++) {
+			for (int frame = 0, bezier = 0, frameLast = timeline.FrameCount - 1; ; frame++) {
 				timeline.SetFrame(frame, time, value);
 				if (frame == frameLast) break;
 				float time2 = input.ReadFloat(), value2 = input.ReadFloat() * scale;
@@ -1031,8 +1067,8 @@ namespace Spine {
 					timeline.SetStepped(frame);
 					break;
 				case CURVE_BEZIER:
-					SetBezier (input, timeline, bezier++, frame, 0, time, time2, value, value2, scale);
-						break;
+					SetBezier(input, timeline, bezier++, frame, 0, time, time2, value, value2, scale);
+					break;
 				}
 				time = time2;
 				value = value2;
@@ -1043,18 +1079,18 @@ namespace Spine {
 		/// <exception cref="IOException">Throws IOException when a read operation fails.</exception>
 		private Timeline ReadTimeline (SkeletonInput input, CurveTimeline2 timeline, float scale) {
 			float time = input.ReadFloat(), value1 = input.ReadFloat() * scale, value2 = input.ReadFloat() * scale;
-			for (int frame = 0, bezier = 0, frameLast = timeline.FrameCount - 1;; frame++) {
+			for (int frame = 0, bezier = 0, frameLast = timeline.FrameCount - 1; ; frame++) {
 				timeline.SetFrame(frame, time, value1, value2);
 				if (frame == frameLast) break;
 				float time2 = input.ReadFloat(), nvalue1 = input.ReadFloat() * scale, nvalue2 = input.ReadFloat() * scale;
 				switch (input.ReadByte()) {
-					case CURVE_STEPPED:
-						timeline.SetStepped(frame);
-						break;
-					case CURVE_BEZIER:
-						SetBezier(input, timeline, bezier++, frame, 0, time, time2, value1, nvalue1, scale);
-						SetBezier(input, timeline, bezier++, frame, 1, time, time2, value2, nvalue2, scale);
-						break;
+				case CURVE_STEPPED:
+					timeline.SetStepped(frame);
+					break;
+				case CURVE_BEZIER:
+					SetBezier(input, timeline, bezier++, frame, 0, time, time2, value1, nvalue1, scale);
+					SetBezier(input, timeline, bezier++, frame, 1, time, time2, value2, nvalue2, scale);
+					break;
 				}
 				time = time2;
 				value1 = nvalue1;
@@ -1070,8 +1106,7 @@ namespace Spine {
 					input.ReadFloat() * scale, time2, value2);
 		}
 
-		internal class Vertices
-		{
+		internal class Vertices {
 			public int[] bones;
 			public float[] vertices;
 		}
@@ -1186,10 +1221,10 @@ namespace Spine {
 			public string GetVersionString () {
 				try {
 					// try reading 4.0+ format
-					var initialPosition = input.Position;
+					long initialPosition = input.Position;
 					ReadLong(); // long hash
 
-					var stringPosition = input.Position;
+					long stringPosition = input.Position;
 					int stringByteCount = ReadInt(true);
 					input.Position = stringPosition;
 					if (stringByteCount <= 13) {
@@ -1201,7 +1236,7 @@ namespace Spine {
 					input.Position = initialPosition;
 					return GetVersionStringOld3X();
 				} catch (Exception e) {
-					throw new ArgumentException("Stream does not contain a valid binary Skeleton Data.\n" + e, "input");
+					throw new ArgumentException("Stream does not contain valid binary Skeleton Data.\n" + e, "input");
 				}
 			}
 
@@ -1213,13 +1248,13 @@ namespace Spine {
 
 				// Version.
 				byteCount = ReadInt(true);
-				if (byteCount > 1) {
+				if (byteCount > 1 && byteCount <= 13) {
 					byteCount--;
-					var buffer = new byte[byteCount];
+					byte[] buffer = new byte[byteCount];
 					ReadFully(buffer, 0, byteCount);
 					return System.Text.Encoding.UTF8.GetString(buffer, 0, byteCount);
 				}
-				return null;
+				throw new ArgumentException("Stream does not contain valid binary Skeleton Data.");
 			}
 		}
 	}

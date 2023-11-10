@@ -56,6 +56,10 @@ PrefabInstance:
       value: Warlock
       objectReference: {fileID: 0}
     - target: {fileID: 4324291783896325304, guid: d2994458f80388f47ae6694b6ad0f82a, type: 3}
+      propertyPath: Config
+      value: 
+      objectReference: {fileID: 11400000, guid: 4fff1ce9e5493c548966ee08227222f4, type: 2}
+    - target: {fileID: 4324291783896325304, guid: d2994458f80388f47ae6694b6ad0f82a, type: 3}
       propertyPath: MaxDamage
       value: 120
       objectReference: {fileID: 0}

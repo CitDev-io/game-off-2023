@@ -1,16 +1,16 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated July 28, 2023. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2023, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
  * conditions of Section 2 of the Spine Editor License Agreement:
  * http://esotericsoftware.com/spine-editor-license
  *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software or
+ * otherwise create derivative works of the Spine Runtimes (collectively,
  * "Products"), provided that each user of the Products must obtain their own
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
@@ -23,8 +23,8 @@
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
  * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE
+ * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 using System;
@@ -121,8 +121,6 @@ namespace Spine {
 		/// <summary>Returns the magnitide (always positive) of the world scale Y.</summary>
 		public float WorldScaleY { get { return (float)Math.Sqrt(b * b + d * d); } }
 
-		/// <summary>Copy constructor. Does not copy the <see cref="Children"/> bones.</summary>
-		/// <param name="parent">May be null.</param>
 		public Bone (BoneData data, Skeleton skeleton, Bone parent) {
 			if (data == null) throw new ArgumentNullException("data", "data cannot be null.");
 			if (skeleton == null) throw new ArgumentNullException("skeleton", "skeleton cannot be null.");
@@ -130,6 +128,23 @@ namespace Spine {
 			this.skeleton = skeleton;
 			this.parent = parent;
 			SetToSetupPose();
+		}
+
+		/// <summary>Copy constructor. Does not copy the <see cref="Children"/> bones.</summary>
+		/// <param name="parent">May be null.</param>
+		public Bone (Bone bone, Skeleton skeleton, Bone parent) {
+			if (bone == null) throw new ArgumentNullException("bone", "bone cannot be null.");
+			if (skeleton == null) throw new ArgumentNullException("skeleton", "skeleton cannot be null.");
+			this.skeleton = skeleton;
+			this.parent = parent;
+			data = bone.data;
+			x = bone.x;
+			y = bone.y;
+			rotation = bone.rotation;
+			scaleX = bone.scaleX;
+			scaleY = bone.scaleY;
+			shearX = bone.shearX;
+			shearY = bone.shearY;
 		}
 
 		/// <summary>Computes the world transform using the parent bone and this bone's local applied transform.</summary>
@@ -274,11 +289,11 @@ namespace Spine {
 		///  Some information is ambiguous in the world transform, such as -1,-1 scale versus 180 rotation. The applied transform after
 		/// calling this method is equivalent to the local transform used to compute the world transform, but may not be identical.
 		/// </para></summary>
-		internal void UpdateAppliedTransform () {
+		public void UpdateAppliedTransform () {
 			Bone parent = this.parent;
 			if (parent == null) {
-				ax = worldX;
-				ay = worldY;
+				ax = worldX - skeleton.x;
+				ay = worldY - skeleton.y;
 				arotation = MathUtils.Atan2(c, a) * MathUtils.RadDeg;
 				ascaleX = (float)Math.Sqrt(a * a + c * c);
 				ascaleY = (float)Math.Sqrt(b * b + d * d);

@@ -36,6 +36,10 @@ PrefabInstance:
       value: 2.03
       objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
+      propertyPath: Config
+      value: 
+      objectReference: {fileID: 11400000, guid: daff1d6cbeae45e4796862a86f2886f8, type: 2}
+    - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: MaxDamage
       value: 120
       objectReference: {fileID: 0}
@@ -49,19 +53,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: currentHealth
-      value: 300
+      value: 1200
       objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: maximumHealth
-      value: 300
+      value: 1200
       objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: currentStagger
-      value: 300
+      value: 650
       objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029474, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: maximumStagger
-      value: 300
+      value: 650
       objectReference: {fileID: 0}
     - target: {fileID: 2592222073781029475, guid: a5060331ec297fe408a9d1caf62c7b1a, type: 3}
       propertyPath: m_RootOrder

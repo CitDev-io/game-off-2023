@@ -1,16 +1,16 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated July 28, 2023. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2023, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
  * conditions of Section 2 of the Spine Editor License Agreement:
  * http://esotericsoftware.com/spine-editor-license
  *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software or
+ * otherwise create derivative works of the Spine Runtimes (collectively,
  * "Products"), provided that each user of the Products must obtain their own
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
@@ -23,8 +23,8 @@
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
  * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE
+ * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 #pragma warning disable 0219
@@ -50,14 +50,18 @@
 #define BUILT_IN_SPRITE_MASK_COMPONENT
 #endif
 
-using UnityEngine;
-using UnityEditor;
+#if UNITY_2020_2_OR_NEWER
+#define HAS_ON_POSTPROCESS_PREFAB
+#endif
+
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Linq;
 using System.Reflection;
-using System.Globalization;
+using System.Text;
+using UnityEditor;
+using UnityEngine;
 
 namespace Spine.Unity.Editor {
 	using EventType = UnityEngine.EventType;
@@ -73,11 +77,11 @@ namespace Spine.Unity.Editor {
 
 		// Auto-import entry point for textures
 		void OnPreprocessTexture () {
-		#if UNITY_2018_1_OR_NEWER
+#if UNITY_2018_1_OR_NEWER
 			bool customTextureSettingsExist = !assetImporter.importSettingsMissing;
-		#else
+#else
 			bool customTextureSettingsExist = System.IO.File.Exists(assetImporter.assetPath + ".meta");
-		#endif
+#endif
 			if (!customTextureSettingsExist) {
 				texturesWithoutMetaFile.Add(assetImporter.assetPath);
 			}
@@ -90,12 +94,69 @@ namespace Spine.Unity.Editor {
 
 			// we copy the list here to prevent nested calls to OnPostprocessAllAssets() triggering a Clear() of the list
 			// in the middle of execution.
-			var texturesWithoutMetaFileCopy = new List<string>(texturesWithoutMetaFile);
+			List<string> texturesWithoutMetaFileCopy = new List<string>(texturesWithoutMetaFile);
 			AssetUtility.HandleOnPostprocessAllAssets(imported, texturesWithoutMetaFileCopy);
 			texturesWithoutMetaFile.Clear();
 		}
 
-#region Initialization
+#if HAS_ON_POSTPROCESS_PREFAB
+		// Post process prefabs for setting the MeshFilter to not cause constant Prefab override changes.
+		void OnPostprocessPrefab (GameObject g) {
+			if (SpineBuildProcessor.isBuilding)
+				return;
+
+			SetupSpinePrefabMesh(g, context);
+		}
+
+		public static bool SetupSpinePrefabMesh (GameObject g, UnityEditor.AssetImporters.AssetImportContext context) {
+			Dictionary<string, int> nameUsageCount = new Dictionary<string, int>();
+			bool wasModified = false;
+			SkeletonRenderer[] skeletonRenderers = g.GetComponentsInChildren<SkeletonRenderer>(true);
+			foreach (SkeletonRenderer renderer in skeletonRenderers) {
+				wasModified = true;
+				MeshFilter meshFilter = renderer.GetComponent<MeshFilter>();
+				if (meshFilter == null)
+					meshFilter = renderer.gameObject.AddComponent<MeshFilter>();
+
+				renderer.EditorUpdateMeshFilterHideFlags();
+				renderer.Initialize(true, true);
+				renderer.LateUpdateMesh();
+				Mesh mesh = meshFilter.sharedMesh;
+				if (mesh == null) continue;
+
+				string meshName = string.Format("Skeleton Prefab Mesh \"{0}\"", renderer.name);
+				if (nameUsageCount.ContainsKey(meshName)) {
+					nameUsageCount[meshName]++;
+					meshName = string.Format("Skeleton Prefab Mesh \"{0} ({1})\"", renderer.name, nameUsageCount[meshName]);
+				} else {
+					nameUsageCount.Add(meshName, 0);
+				}
+				mesh.name = meshName;
+				mesh.hideFlags = HideFlags.None;
+				if (context != null)
+					context.AddObjectToAsset(meshFilter.sharedMesh.name, meshFilter.sharedMesh);
+			}
+			return wasModified;
+		}
+
+		public static bool CleanupSpinePrefabMesh (GameObject g) {
+			bool wasModified = false;
+			SkeletonRenderer[] skeletonRenderers = g.GetComponentsInChildren<SkeletonRenderer>(true);
+			foreach (SkeletonRenderer renderer in skeletonRenderers) {
+				MeshFilter meshFilter = renderer.GetComponent<MeshFilter>();
+				if (meshFilter != null) {
+					if (meshFilter.sharedMesh) {
+						wasModified = true;
+						meshFilter.sharedMesh = null;
+						meshFilter.hideFlags = HideFlags.None;
+					}
+				}
+			}
+			return wasModified;
+		}
+#endif
+
+		#region Initialization
 		static SpineEditorUtilities () {
 			EditorApplication.delayCall += Initialize; // delayed so that AssetDatabase is ready.
 		}
@@ -103,62 +164,71 @@ namespace Spine.Unity.Editor {
 		static void Initialize () {
 			// Note: Preferences need to be loaded when changing play mode
 			// to initialize handle scale correctly.
-			#if !NEW_PREFERENCES_SETTINGS_PROVIDER
+#if !NEW_PREFERENCES_SETTINGS_PROVIDER
 			Preferences.Load();
-			#else
+#else
 			SpinePreferences.Load();
-			#endif
+#endif
 
 			if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 
-			string[] assets = AssetDatabase.FindAssets("t:script SpineEditorUtilities");
-			string assetPath = AssetDatabase.GUIDToAssetPath(assets[0]);
-			editorPath = Path.GetDirectoryName(assetPath).Replace('\\', '/');
-
-			assets = AssetDatabase.FindAssets("t:texture icon-subMeshRenderer");
+			string[] folders = { "Assets", "Packages" };
+			string[] assets;
+			string assetPath;
+			assets = AssetDatabase.FindAssets("t:texture icon-subMeshRenderer", folders);
 			if (assets.Length > 0) {
 				assetPath = AssetDatabase.GUIDToAssetPath(assets[0]);
 				editorGUIPath = Path.GetDirectoryName(assetPath).Replace('\\', '/');
 			}
-			else {
-				editorGUIPath = editorPath.Replace("/Utility", "/GUI");
+			assets = AssetDatabase.FindAssets("t:script SpineEditorUtilities", folders);
+			if (assets.Length > 0) {
+				assetPath = AssetDatabase.GUIDToAssetPath(assets[0]);
+				editorPath = Path.GetDirectoryName(assetPath).Replace('\\', '/');
+				if (string.IsNullOrEmpty(editorGUIPath))
+					editorGUIPath = editorPath.Replace("/Utility", "/GUI");
 			}
+			if (string.IsNullOrEmpty(editorGUIPath))
+				return;
 			Icons.Initialize();
 
 			// Drag and Drop
-		#if UNITY_2019_1_OR_NEWER
+#if UNITY_2019_1_OR_NEWER
 			SceneView.duringSceneGui -= DragAndDropInstantiation.SceneViewDragAndDrop;
 			SceneView.duringSceneGui += DragAndDropInstantiation.SceneViewDragAndDrop;
-		#else
+#else
 			SceneView.onSceneGUIDelegate -= DragAndDropInstantiation.SceneViewDragAndDrop;
 			SceneView.onSceneGUIDelegate += DragAndDropInstantiation.SceneViewDragAndDrop;
-		#endif
+#endif
 
+#if UNITY_2021_2_OR_NEWER
+			DragAndDrop.RemoveDropHandler(HierarchyHandler.HandleDragAndDrop);
+			DragAndDrop.AddDropHandler(HierarchyHandler.HandleDragAndDrop);
+#else
 			EditorApplication.hierarchyWindowItemOnGUI -= HierarchyHandler.HandleDragAndDrop;
 			EditorApplication.hierarchyWindowItemOnGUI += HierarchyHandler.HandleDragAndDrop;
-
+#endif
 			// Hierarchy Icons
-			#if NEWPLAYMODECALLBACKS
+#if NEWPLAYMODECALLBACKS
 			EditorApplication.playModeStateChanged -= HierarchyHandler.IconsOnPlaymodeStateChanged;
 			EditorApplication.playModeStateChanged += HierarchyHandler.IconsOnPlaymodeStateChanged;
 			HierarchyHandler.IconsOnPlaymodeStateChanged(PlayModeStateChange.EnteredEditMode);
-			#else
+#else
 			EditorApplication.playmodeStateChanged -= HierarchyHandler.IconsOnPlaymodeStateChanged;
 			EditorApplication.playmodeStateChanged += HierarchyHandler.IconsOnPlaymodeStateChanged;
 			HierarchyHandler.IconsOnPlaymodeStateChanged();
-			#endif
+#endif
 
 			// Data Refresh Edit Mode.
 			// This prevents deserialized SkeletonData from persisting from play mode to edit mode.
-			#if NEWPLAYMODECALLBACKS
+#if NEWPLAYMODECALLBACKS
 			EditorApplication.playModeStateChanged -= DataReloadHandler.OnPlaymodeStateChanged;
 			EditorApplication.playModeStateChanged += DataReloadHandler.OnPlaymodeStateChanged;
 			DataReloadHandler.OnPlaymodeStateChanged(PlayModeStateChange.EnteredEditMode);
-			#else
+#else
 			EditorApplication.playmodeStateChanged -= DataReloadHandler.OnPlaymodeStateChanged;
 			EditorApplication.playmodeStateChanged += DataReloadHandler.OnPlaymodeStateChanged;
 			DataReloadHandler.OnPlaymodeStateChanged();
-			#endif
+#endif
 
 			if (SpineEditorUtilities.Preferences.textureImporterWarning) {
 				IssueWarningsForUnrecommendedTextureSettings();
@@ -168,11 +238,11 @@ namespace Spine.Unity.Editor {
 		}
 
 		public static void ConfirmInitialization () {
-			if (!initialized || Icons.skeleton == null)
+			if (!initialized)
 				Initialize();
 		}
 
-		public static void IssueWarningsForUnrecommendedTextureSettings() {
+		public static void IssueWarningsForUnrecommendedTextureSettings () {
 
 			string[] atlasDescriptionGUIDs = AssetDatabase.FindAssets("t:textasset .atlas"); // Note: finds ".atlas.txt" but also ".atlas 1.txt" files.
 			for (int i = 0; i < atlasDescriptionGUIDs.Length; ++i) {
@@ -206,21 +276,30 @@ namespace Spine.Unity.Editor {
 			ReinitializeComponent(component);
 		}
 
-		public static void ReloadSkeletonDataAsset (SkeletonDataAsset skeletonDataAsset) {
-			if (skeletonDataAsset != null) {
+		public static void ClearSkeletonDataAsset (SkeletonDataAsset skeletonDataAsset) {
+			skeletonDataAsset.Clear();
+			DataReloadHandler.ClearAnimationReferenceAssets(skeletonDataAsset);
+		}
+
+		public static void ReloadSkeletonDataAsset (SkeletonDataAsset skeletonDataAsset, bool clearAtlasAssets = true) {
+			if (skeletonDataAsset == null)
+				return;
+
+			if (clearAtlasAssets) {
 				foreach (AtlasAssetBase aa in skeletonDataAsset.atlasAssets) {
 					if (aa != null) aa.Clear();
 				}
-				skeletonDataAsset.Clear();
 			}
+			ClearSkeletonDataAsset(skeletonDataAsset);
 			skeletonDataAsset.GetSkeletonData(true);
+			DataReloadHandler.ReloadAnimationReferenceAssets(skeletonDataAsset);
 		}
 
 		public static void ReinitializeComponent (SkeletonRenderer component) {
 			if (component == null) return;
 			if (!SkeletonDataAssetIsValid(component.SkeletonDataAsset)) return;
 
-			var stateComponent = component as IAnimationStateComponent;
+			IAnimationStateComponent stateComponent = component as IAnimationStateComponent;
 			AnimationState oldAnimationState = null;
 			if (stateComponent != null) {
 				oldAnimationState = stateComponent.AnimationState;
@@ -231,10 +310,16 @@ namespace Spine.Unity.Editor {
 			if (oldAnimationState != null) {
 				stateComponent.AnimationState.AssignEventSubscribersFrom(oldAnimationState);
 			}
+			if (stateComponent != null) {
+				// Any set animation needs to be applied as well since it might set attachments,
+				// having an effect on generated SpriteMaskMaterials below.
+				stateComponent.AnimationState.Apply(component.skeleton);
+				component.LateUpdate();
+			}
 
-		#if BUILT_IN_SPRITE_MASK_COMPONENT
+#if BUILT_IN_SPRITE_MASK_COMPONENT
 			SpineMaskUtilities.EditorAssignSpriteMaskMaterials(component);
-		#endif
+#endif
 			component.LateUpdate();
 		}
 
@@ -249,8 +334,7 @@ namespace Spine.Unity.Editor {
 			return asset != null && asset.GetSkeletonData(quiet: true) != null;
 		}
 
-		public static bool IssueWarningsForUnrecommendedTextureSettings(string texturePath)
-		{
+		public static bool IssueWarningsForUnrecommendedTextureSettings (string texturePath) {
 			TextureImporter texImporter = (TextureImporter)TextureImporter.GetAtPath(texturePath);
 			if (texImporter == null) {
 				return false;
@@ -265,7 +349,7 @@ namespace Spine.Unity.Editor {
 
 			string errorMessage = null;
 			if (MaterialChecks.IsTextureSetupProblematic(material, PlayerSettings.colorSpace,
-				texImporter. sRGBTexture, texImporter. mipmapEnabled, texImporter. alphaIsTransparency,
+				texImporter.sRGBTexture, texImporter.mipmapEnabled, texImporter.alphaIsTransparency,
 				texturePath, materialPath, ref errorMessage)) {
 				Debug.LogWarning(errorMessage, material);
 			}
@@ -372,23 +456,49 @@ namespace Spine.Unity.Editor {
 				}
 			}
 
+#if UNITY_2021_2_OR_NEWER
+			internal static DragAndDropVisualMode HandleDragAndDrop (int dropTargetInstanceID, HierarchyDropFlags dropMode, Transform parentForDraggedObjects, bool perform) {
+				SkeletonDataAsset skeletonDataAsset = DragAndDrop.objectReferences.Length == 0 ? null :
+					DragAndDrop.objectReferences[0] as SkeletonDataAsset;
+				if (skeletonDataAsset == null)
+					return DragAndDropVisualMode.None;
+				if (!perform)
+					return DragAndDropVisualMode.Copy;
+
+				GameObject dropTargetObject = UnityEditor.EditorUtility.InstanceIDToObject(dropTargetInstanceID) as GameObject;
+				Transform dropTarget = dropTargetObject != null ? dropTargetObject.transform : null;
+				Transform parent = dropTarget;
+				int siblingIndex = 0;
+				if (parent != null) {
+					if (dropMode == HierarchyDropFlags.DropBetween) {
+						parent = dropTarget.parent;
+						siblingIndex = dropTarget ? dropTarget.GetSiblingIndex() + 1 : 0;
+					} else if (dropMode == HierarchyDropFlags.DropAbove) {
+						parent = dropTarget.parent;
+						siblingIndex = dropTarget ? dropTarget.GetSiblingIndex() : 0;
+					}
+				}
+				DragAndDropInstantiation.ShowInstantiateContextMenu(skeletonDataAsset, Vector3.zero, parent, siblingIndex);
+				return DragAndDropVisualMode.Copy;
+			}
+#else
 			internal static void HandleDragAndDrop (int instanceId, Rect selectionRect) {
 				// HACK: Uses EditorApplication.hierarchyWindowItemOnGUI.
 				// Only works when there is at least one item in the scene.
-				var current = UnityEngine.Event.current;
-				var eventType = current.type;
+				UnityEngine.Event current = UnityEngine.Event.current;
+				EventType eventType = current.type;
 				bool isDraggingEvent = eventType == EventType.DragUpdated;
 				bool isDropEvent = eventType == EventType.DragPerform;
 				UnityEditor.DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
 
 				if (isDraggingEvent || isDropEvent) {
-					var mouseOverWindow = EditorWindow.mouseOverWindow;
+					EditorWindow mouseOverWindow = EditorWindow.mouseOverWindow;
 					if (mouseOverWindow != null) {
 
 						// One, existing, valid SkeletonDataAsset
-						var references = UnityEditor.DragAndDrop.objectReferences;
+						Object[] references = UnityEditor.DragAndDrop.objectReferences;
 						if (references.Length == 1) {
-							var skeletonDataAsset = references[0] as SkeletonDataAsset;
+							SkeletonDataAsset skeletonDataAsset = references[0] as SkeletonDataAsset;
 							if (skeletonDataAsset != null && skeletonDataAsset.GetSkeletonData(true) != null) {
 
 								// Allow drag-and-dropping anywhere in the Hierarchy Window.
@@ -397,17 +507,17 @@ namespace Spine.Unity.Editor {
 								const string GenericDataTargetID = "target";
 								if (HierarchyWindow.Equals(mouseOverWindow.GetType().ToString(), System.StringComparison.Ordinal)) {
 									if (isDraggingEvent) {
-										var mouseOverTarget = UnityEditor.EditorUtility.InstanceIDToObject(instanceId);
+										UnityEngine.Object mouseOverTarget = UnityEditor.EditorUtility.InstanceIDToObject(instanceId);
 										if (mouseOverTarget)
 											DragAndDrop.SetGenericData(GenericDataTargetID, mouseOverTarget);
 										// Note: do not call current.Use(), otherwise we get the wrong drop-target parent.
 									} else if (isDropEvent) {
-										var parentGameObject = DragAndDrop.GetGenericData(GenericDataTargetID) as UnityEngine.GameObject;
+										GameObject parentGameObject = DragAndDrop.GetGenericData(GenericDataTargetID) as UnityEngine.GameObject;
 										Transform parent = parentGameObject != null ? parentGameObject.transform : null;
 										// when dragging into empty space in hierarchy below last node, last node would be parent.
 										if (IsLastNodeInHierarchy(parent))
 											parent = null;
-										DragAndDropInstantiation.ShowInstantiateContextMenu(skeletonDataAsset, Vector3.zero, parent);
+										DragAndDropInstantiation.ShowInstantiateContextMenu(skeletonDataAsset, Vector3.zero, parent, 0);
 										UnityEditor.DragAndDrop.AcceptDrag();
 										current.Use();
 										return;
@@ -429,17 +539,16 @@ namespace Spine.Unity.Editor {
 					node = node.parent;
 				}
 
-				var rootNodes = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+				GameObject[] rootNodes = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
 				bool isLastNode = (rootNodes.Length > 0 && rootNodes[rootNodes.Length - 1].transform == node);
 				return isLastNode;
 			}
+#endif
 		}
 	}
 
-	public class TextureModificationWarningProcessor : UnityEditor.AssetModificationProcessor
-	{
-		static string[] OnWillSaveAssets(string[] paths)
-		{
+	public class TextureModificationWarningProcessor : UnityEditor.AssetModificationProcessor {
+		static string[] OnWillSaveAssets (string[] paths) {
 			if (SpineEditorUtilities.Preferences.textureImporterWarning) {
 				foreach (string path in paths) {
 					if ((path != null) &&

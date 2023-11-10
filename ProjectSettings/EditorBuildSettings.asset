@@ -9,6 +9,12 @@ EditorBuildSettings:
     path: Assets/Game/3 - Title/Title.unity
     guid: ad93bf8cd02f51c4287c6aca3ce159cf
   - enabled: 1
+    path: Assets/Game/CutScene.unity
+    guid: e1be98b31a94a5c459a036cc4be084a8
+  - enabled: 1
     path: Assets/Game/CombatScene/CombatScene.unity
     guid: d68d5308d3da6c6428b4040042bbde56
+  - enabled: 1
+    path: Assets/Game/HowToPlay.unity
+    guid: cdeeb17977147ed4492f69338f47142b
   m_configObjects: {}

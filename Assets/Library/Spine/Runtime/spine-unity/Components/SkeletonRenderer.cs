@@ -1,16 +1,16 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated July 28, 2023. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2023, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
  * conditions of Section 2 of the Spine Editor License Agreement:
  * http://esotericsoftware.com/spine-editor-license
  *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software or
+ * otherwise create derivative works of the Spine Runtimes (collectively,
  * "Products"), provided that each user of the Products must obtain their own
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
@@ -23,8 +23,8 @@
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
  * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE
+ * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 #if UNITY_2018_3 || UNITY_2019 || UNITY_2018_3_OR_NEWER
@@ -43,37 +43,88 @@
 #define CONFIGURABLE_ENTER_PLAY_MODE
 #endif
 
+#if UNITY_2020_1_OR_NEWER
+#define REVERT_HAS_OVERLOADS
+#endif
+
 #define SPINE_OPTIONAL_RENDEROVERRIDE
 #define SPINE_OPTIONAL_MATERIALOVERRIDE
+#define SPINE_OPTIONAL_ON_DEMAND_LOADING
 
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor.SceneManagement;
+#endif
 
 namespace Spine.Unity {
 	/// <summary>Base class of animated Spine skeleton components. This component manages and renders a skeleton.</summary>
-	#if NEW_PREFAB_SYSTEM
+#if NEW_PREFAB_SYSTEM
 	[ExecuteAlways]
-	#else
+#else
 	[ExecuteInEditMode]
-	#endif
-	[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer)), DisallowMultipleComponent]
+#endif
+	[RequireComponent(typeof(MeshRenderer)), DisallowMultipleComponent]
 	[HelpURL("http://esotericsoftware.com/spine-unity#SkeletonRenderer-Component")]
 	public class SkeletonRenderer : MonoBehaviour, ISkeletonComponent, IHasSkeletonDataAsset {
 		public SkeletonDataAsset skeletonDataAsset;
 
 		#region Initialization settings
 		/// <summary>Skin name to use when the Skeleton is initialized.</summary>
-		[SpineSkin(defaultAsEmptyString:true)] public string initialSkinName;
+		[SpineSkin(defaultAsEmptyString: true)] public string initialSkinName;
 
 		/// <summary>Enable this parameter when overwriting the Skeleton's skin from an editor script.
 		/// Otherwise any changes will be overwritten by the next inspector update.</summary>
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 		public bool EditorSkipSkinSync {
 			get { return editorSkipSkinSync; }
 			set { editorSkipSkinSync = value; }
 		}
 		protected bool editorSkipSkinSync = false;
-		#endif
+
+		/// <summary>Sets the MeshFilter's hide flags to DontSaveInEditor which fixes the prefab
+		/// always being marked as changed, but at the cost of references to the MeshFilter by other
+		/// components being lost.</summary>
+		public SettingsTriState fixPrefabOverrideViaMeshFilter = SettingsTriState.UseGlobalSetting;
+		public static bool fixPrefabOverrideViaMeshFilterGlobal = false;
+		public void EditorUpdateMeshFilterHideFlags () {
+			if (!meshFilter) {
+				meshFilter = GetComponent<MeshFilter>();
+				if (meshFilter == null)
+					meshFilter = gameObject.AddComponent<MeshFilter>();
+			}
+
+			bool dontSaveInEditor = false;
+			if (fixPrefabOverrideViaMeshFilter == SettingsTriState.Enable ||
+				(fixPrefabOverrideViaMeshFilter == SettingsTriState.UseGlobalSetting &&
+					fixPrefabOverrideViaMeshFilterGlobal))
+				dontSaveInEditor = true;
+
+			if (dontSaveInEditor) {
+#if NEW_PREFAB_SYSTEM
+				if (UnityEditor.PrefabUtility.IsPartOfAnyPrefab(meshFilter)) {
+					GameObject instanceRoot = UnityEditor.PrefabUtility.GetOutermostPrefabInstanceRoot(meshFilter);
+					if (instanceRoot != null) {
+						List<ObjectOverride> objectOverrides = UnityEditor.PrefabUtility.GetObjectOverrides(instanceRoot);
+						foreach (ObjectOverride objectOverride in objectOverrides) {
+							if (objectOverride.instanceObject == meshFilter) {
+#if REVERT_HAS_OVERLOADS
+								objectOverride.Revert(UnityEditor.InteractionMode.AutomatedAction);
+#else
+								objectOverride.Revert();
+#endif
+								break;
+							}
+						}
+					}
+				}
+#endif
+				meshFilter.hideFlags = HideFlags.DontSaveInEditor;
+			} else {
+				meshFilter.hideFlags = HideFlags.None;
+			}
+		}
+#endif
 		/// <summary>Flip X and Y to use when the Skeleton is initialized.</summary>
 		public bool initialFlipX, initialFlipY;
 		#endregion
@@ -91,7 +142,7 @@ namespace Spine.Unity {
 
 		// Submesh Separation
 		/// <summary>Slot names used to populate separatorSlots list when the Skeleton is initialized. Changing this after initialization does nothing.</summary>
-		[UnityEngine.Serialization.FormerlySerializedAs("submeshSeparators")][SerializeField][SpineSlot] protected string[] separatorSlotNames = new string[0];
+		[UnityEngine.Serialization.FormerlySerializedAs("submeshSeparators")] [SerializeField] [SpineSlot] protected string[] separatorSlotNames = new string[0];
 
 		/// <summary>Slots that determine where the render is split. This is used by components such as SkeletonRenderSeparator so that the skeleton can be rendered by two separate renderers on different GameObjects.</summary>
 		[System.NonSerialized] public readonly List<Slot> separatorSlots = new List<Slot>();
@@ -117,7 +168,7 @@ namespace Spine.Unity {
 		/// <remarks>This disables SkeletonRenderSeparator functionality.</remarks>
 		public bool singleSubmesh = false;
 
-		#if PER_MATERIAL_PROPERTY_BLOCKS
+#if PER_MATERIAL_PROPERTY_BLOCKS
 		/// <summary> Applies only when 3+ submeshes are used (2+ materials with alternating order, e.g. "A B A").
 		/// If true, GPU instancing is disabled at all materials and MaterialPropertyBlocks are assigned at each
 		/// material to prevent aggressive batching of submeshes by e.g. the LWRP renderer, leading to incorrect
@@ -125,7 +176,7 @@ namespace Spine.Unity {
 		/// You can disable this parameter when everything is drawn correctly to save the additional performance cost.
 		/// </summary>
 		public bool fixDrawOrder = false;
-		#endif
+#endif
 
 		/// <summary>If true, the mesh generator adds normals to the output mesh. For better performance and reduced memory requirements, use a shader that assumes the desired normal.</summary>
 		[UnityEngine.Serialization.FormerlySerializedAs("calculateNormals")] public bool addNormals = false;
@@ -133,7 +184,7 @@ namespace Spine.Unity {
 		/// <summary>If true, tangents are calculated every frame and added to the Mesh. Enable this when using a shader that uses lighting that requires tangents.</summary>
 		public bool calculateTangents = false;
 
-		#if BUILT_IN_SPRITE_MASK_COMPONENT
+#if BUILT_IN_SPRITE_MASK_COMPONENT
 		/// <summary>This enum controls the mode under which the sprite will interact with the masking system.</summary>
 		/// <remarks>Interaction modes with <see cref="UnityEngine.SpriteMask"/> components are identical to Unity's <see cref="UnityEngine.SpriteRenderer"/>,
 		/// see https://docs.unity3d.com/ScriptReference/SpriteMaskInteraction.html. </remarks>
@@ -167,14 +218,14 @@ namespace Spine.Unity {
 		public const UnityEngine.Rendering.CompareFunction STENCIL_COMP_MASKINTERACTION_VISIBLE_INSIDE = UnityEngine.Rendering.CompareFunction.LessEqual;
 		/// <summary>Shader property value used as Stencil comparison function for <see cref="SpriteMaskInteraction.VisibleOutsideMask"/>.</summary>
 		public const UnityEngine.Rendering.CompareFunction STENCIL_COMP_MASKINTERACTION_VISIBLE_OUTSIDE = UnityEngine.Rendering.CompareFunction.Greater;
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 		private static bool haveStencilParametersBeenFixed = false;
-		#endif
-		#endif // #if BUILT_IN_SPRITE_MASK_COMPONENT
+#endif
+#endif // #if BUILT_IN_SPRITE_MASK_COMPONENT
 		#endregion
 
 		#region Overrides
-		#if SPINE_OPTIONAL_RENDEROVERRIDE
+#if SPINE_OPTIONAL_RENDEROVERRIDE
 		// These are API for anything that wants to take over rendering for a SkeletonRenderer.
 		public bool disableRenderingOnOverride = true;
 		public delegate void InstructionDelegate (SkeletonRendererInstruction instruction);
@@ -202,13 +253,13 @@ namespace Spine.Unity {
 
 		/// <summary> Occurs after the vertex data is populated every frame, before the vertices are pushed into the mesh.</summary>
 		public event Spine.Unity.MeshGeneratorDelegate OnPostProcessVertices;
-		#endif
+#endif
 
-		#if SPINE_OPTIONAL_MATERIALOVERRIDE
+#if SPINE_OPTIONAL_MATERIALOVERRIDE
 		[System.NonSerialized] readonly Dictionary<Material, Material> customMaterialOverride = new Dictionary<Material, Material>();
 		/// <summary>Use this Dictionary to override a Material with a different Material.</summary>
 		public Dictionary<Material, Material> CustomMaterialOverride { get { return customMaterialOverride; } }
-		#endif
+#endif
 
 		[System.NonSerialized] readonly Dictionary<Slot, Material> customSlotMaterials = new Dictionary<Slot, Material>();
 		/// <summary>Use this Dictionary to use a different Material to render specific Slots.</summary>
@@ -256,7 +307,7 @@ namespace Spine.Unity {
 		/// <summary>Add and prepare a Spine component that derives from SkeletonRenderer to a GameObject at runtime.</summary>
 		/// <typeparam name="T">T should be SkeletonRenderer or any of its derived classes.</typeparam>
 		public static T AddSpineComponent<T> (GameObject gameObject, SkeletonDataAsset skeletonDataAsset, bool quiet = false) where T : SkeletonRenderer {
-			var c = gameObject.AddComponent<T>();
+			T c = gameObject.AddComponent<T>();
 			if (skeletonDataAsset != null) {
 				c.skeletonDataAsset = skeletonDataAsset;
 				c.Initialize(false, quiet);
@@ -283,11 +334,18 @@ namespace Spine.Unity {
 			updateMode = updateWhenInvisible;
 		}
 
-	#if UNITY_EDITOR && CONFIGURABLE_ENTER_PLAY_MODE
+#if UNITY_EDITOR && CONFIGURABLE_ENTER_PLAY_MODE
 		public virtual void Start () {
 			Initialize(false);
 		}
-	#endif
+#endif
+
+#if UNITY_EDITOR
+		void OnEnable () {
+			if (!Application.isPlaying)
+				LateUpdate();
+		}
+#endif
 
 		void OnDisable () {
 			if (clearStateOnDisable && valid)
@@ -302,7 +360,7 @@ namespace Spine.Unity {
 		/// <summary>
 		/// Clears the previously generated mesh and resets the skeleton's pose.</summary>
 		public virtual void ClearState () {
-			var meshFilter = GetComponent<MeshFilter>();
+			MeshFilter meshFilter = GetComponent<MeshFilter>();
 			if (meshFilter != null) meshFilter.sharedMesh = null;
 			currentInstructions.Clear();
 			if (skeleton != null) skeleton.SetToSetupPose();
@@ -321,7 +379,10 @@ namespace Spine.Unity {
 		public virtual void Initialize (bool overwrite, bool quiet = false) {
 			if (valid && !overwrite)
 				return;
-
+#if UNITY_EDITOR
+			if (BuildUtilities.IsInSkeletonAssetBuildPreProcessing)
+				return;
+#endif
 			// Clear
 			{
 				// Note: do not reset meshFilter.sharedMesh or meshRenderer.sharedMaterial to null,
@@ -341,6 +402,9 @@ namespace Spine.Unity {
 			valid = true;
 
 			meshFilter = GetComponent<MeshFilter>();
+			if (meshFilter == null)
+				meshFilter = gameObject.AddComponent<MeshFilter>();
+
 			meshRenderer = GetComponent<MeshRenderer>();
 			rendererBuffers.Initialize();
 
@@ -366,13 +430,13 @@ namespace Spine.Unity {
 			if (OnRebuild != null)
 				OnRebuild(this);
 
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 			if (!Application.isPlaying) {
 				string errorMessage = null;
 				if (!quiet && MaterialChecks.IsMaterialSetupProblematic(this, ref errorMessage))
 					Debug.LogWarningFormat(this, "Problematic material setup at {0}: {1}", this.name, errorMessage);
 			}
-			#endif
+#endif
 		}
 
 		/// <summary>
@@ -380,27 +444,32 @@ namespace Spine.Unity {
 		public virtual void LateUpdate () {
 			if (!valid) return;
 
-			#if UNITY_EDITOR && NEW_PREFAB_SYSTEM
+#if UNITY_EDITOR && NEW_PREFAB_SYSTEM
 			// Don't store mesh or material at the prefab, otherwise it will permanently reload
-			var prefabType = UnityEditor.PrefabUtility.GetPrefabAssetType(this);
+			UnityEditor.PrefabAssetType prefabType = UnityEditor.PrefabUtility.GetPrefabAssetType(this);
 			if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(this) &&
 				(prefabType == UnityEditor.PrefabAssetType.Regular || prefabType == UnityEditor.PrefabAssetType.Variant)) {
 				return;
 			}
-			#endif
+			EditorUpdateMeshFilterHideFlags();
+#endif
 
 			if (updateMode != UpdateMode.FullUpdate) return;
 
-			#if SPINE_OPTIONAL_RENDEROVERRIDE
+			LateUpdateMesh();
+		}
+
+		public virtual void LateUpdateMesh () {
+#if SPINE_OPTIONAL_RENDEROVERRIDE
 			bool doMeshOverride = generateMeshOverride != null;
-			if ((!meshRenderer.enabled)	&& !doMeshOverride) return;
-			#else
+			if ((!meshRenderer || !meshRenderer.enabled) && !doMeshOverride) return;
+#else
 			const bool doMeshOverride = false;
 			if (!meshRenderer.enabled) return;
-			#endif
-			var currentInstructions = this.currentInstructions;
-			var workingSubmeshInstructions = currentInstructions.submeshInstructions;
-			var currentSmartMesh = rendererBuffers.GetNextMesh(); // Double-buffer for performance.
+#endif
+			SkeletonRendererInstruction currentInstructions = this.currentInstructions;
+			ExposedList<SubmeshInstruction> workingSubmeshInstructions = currentInstructions.submeshInstructions;
+			MeshRendererBuffers.SmartMesh currentSmartMesh = rendererBuffers.GetNextMesh(); // Double-buffer for performance.
 
 			bool updateTriangles;
 
@@ -409,10 +478,10 @@ namespace Spine.Unity {
 				MeshGenerator.GenerateSingleSubmeshInstruction(currentInstructions, skeleton, skeletonDataAsset.atlasAssets[0].PrimaryMaterial);
 
 				// STEP 1.9. Post-process workingInstructions. ==================================================================================
-				#if SPINE_OPTIONAL_MATERIALOVERRIDE
+#if SPINE_OPTIONAL_MATERIALOVERRIDE
 				if (customMaterialOverride.Count > 0) // isCustomMaterialOverridePopulated
 					MeshGenerator.TryReplaceMaterials(workingSubmeshInstructions, customMaterialOverride);
-				#endif
+#endif
 
 				// STEP 2. Update vertex buffer based on verts from the attachments. ===========================================================
 				meshGenerator.settings = new MeshGenerator.Settings {
@@ -469,7 +538,7 @@ namespace Spine.Unity {
 			if (OnPostProcessVertices != null) OnPostProcessVertices.Invoke(this.meshGenerator.Buffers);
 
 			// STEP 3. Move the mesh data into a UnityEngine.Mesh ===========================================================================
-			var currentMesh = currentSmartMesh.mesh;
+			Mesh currentMesh = currentSmartMesh.mesh;
 			meshGenerator.FillVertexData(currentMesh);
 
 			rendererBuffers.UpdateSharedMaterials(workingSubmeshInstructions);
@@ -488,30 +557,37 @@ namespace Spine.Unity {
 			meshGenerator.FillLateVertexData(currentMesh);
 
 			// STEP 4. The UnityEngine.Mesh is ready. Set it as the MeshFilter's mesh. Store the instructions used for that mesh. ===========
-			meshFilter.sharedMesh = currentMesh;
+			if (meshFilter)
+				meshFilter.sharedMesh = currentMesh;
 			currentSmartMesh.instructionUsed.Set(currentInstructions);
 
-			#if BUILT_IN_SPRITE_MASK_COMPONENT
+#if BUILT_IN_SPRITE_MASK_COMPONENT
 			if (meshRenderer != null) {
 				AssignSpriteMaskMaterials();
 			}
-			#endif
+#endif
+#if SPINE_OPTIONAL_ON_DEMAND_LOADING
+			if (Application.isPlaying)
+				HandleOnDemandLoading();
+#endif
 
-			#if PER_MATERIAL_PROPERTY_BLOCKS
+#if PER_MATERIAL_PROPERTY_BLOCKS
 			if (fixDrawOrder && meshRenderer.sharedMaterials.Length > 2) {
 				SetMaterialSettingsToFixDrawOrder();
 			}
-			#endif
+#endif
 
 			if (OnMeshAndMaterialsUpdated != null)
 				OnMeshAndMaterialsUpdated(this);
 		}
 
-		public void OnBecameVisible () {
+		public virtual void OnBecameVisible () {
 			UpdateMode previousUpdateMode = updateMode;
 			updateMode = UpdateMode.FullUpdate;
+
+			// OnBecameVisible is called after LateUpdate()
 			if (previousUpdateMode != UpdateMode.FullUpdate)
-				LateUpdate(); // OnBecameVisible is called after LateUpdate()
+				LateUpdate();
 		}
 
 		public void OnBecameInvisible () {
@@ -535,16 +611,16 @@ namespace Spine.Unity {
 			if (clearExistingSeparators)
 				separatorSlots.Clear();
 
-			var slots = skeleton.slots;
-			foreach (var slot in slots) {
-				if (slotNamePredicate.Invoke(slot.data.name))
+			ExposedList<Slot> slots = skeleton.Slots;
+			foreach (Slot slot in slots) {
+				if (slotNamePredicate.Invoke(slot.Data.Name))
 					separatorSlots.Add(slot);
 			}
 
 			if (updateStringArray) {
-				var detectedSeparatorNames = new List<string>();
-				foreach (var slot in skeleton.slots) {
-					string slotName = slot.data.name;
+				List<string> detectedSeparatorNames = new List<string>();
+				foreach (Slot slot in skeleton.Slots) {
+					string slotName = slot.Data.Name;
 					if (slotNamePredicate.Invoke(slotName))
 						detectedSeparatorNames.Add(slotName);
 				}
@@ -565,27 +641,25 @@ namespace Spine.Unity {
 
 			separatorSlots.Clear();
 			for (int i = 0, n = separatorSlotNames.Length; i < n; i++) {
-				var slot = skeleton.FindSlot(separatorSlotNames[i]);
+				Slot slot = skeleton.FindSlot(separatorSlotNames[i]);
 				if (slot != null) {
 					separatorSlots.Add(slot);
 				}
-				#if UNITY_EDITOR
-				else if (!string.IsNullOrEmpty(separatorSlotNames[i]))
-				{
+#if UNITY_EDITOR
+				else if (!string.IsNullOrEmpty(separatorSlotNames[i])) {
 					Debug.LogWarning(separatorSlotNames[i] + " is not a slot in " + skeletonDataAsset.skeletonJSON.name);
 				}
-				#endif
+#endif
 			}
 		}
 
-		#if BUILT_IN_SPRITE_MASK_COMPONENT
-		private void AssignSpriteMaskMaterials()
-		{
-			#if UNITY_EDITOR
+#if BUILT_IN_SPRITE_MASK_COMPONENT
+		private void AssignSpriteMaskMaterials () {
+#if UNITY_EDITOR
 			if (!Application.isPlaying && !UnityEditor.EditorApplication.isUpdating) {
 				EditorFixStencilCompParameters();
 			}
-			#endif
+#endif
 
 			if (Application.isPlaying) {
 				if (maskInteraction != SpriteMaskInteraction.None && maskMaterials.materialsMaskDisabled.Length == 0)
@@ -595,15 +669,13 @@ namespace Spine.Unity {
 			if (maskMaterials.materialsMaskDisabled.Length > 0 && maskMaterials.materialsMaskDisabled[0] != null &&
 				maskInteraction == SpriteMaskInteraction.None) {
 				this.meshRenderer.materials = maskMaterials.materialsMaskDisabled;
-			}
-			else if (maskInteraction == SpriteMaskInteraction.VisibleInsideMask) {
+			} else if (maskInteraction == SpriteMaskInteraction.VisibleInsideMask) {
 				if (maskMaterials.materialsInsideMask.Length == 0 || maskMaterials.materialsInsideMask[0] == null) {
 					if (!InitSpriteMaskMaterialsInsideMask())
 						return;
 				}
 				this.meshRenderer.materials = maskMaterials.materialsInsideMask;
-			}
-			else if (maskInteraction == SpriteMaskInteraction.VisibleOutsideMask) {
+			} else if (maskInteraction == SpriteMaskInteraction.VisibleOutsideMask) {
 				if (maskMaterials.materialsOutsideMask.Length == 0 || maskMaterials.materialsOutsideMask[0] == null) {
 					if (!InitSpriteMaskMaterialsOutsideMask())
 						return;
@@ -612,25 +684,21 @@ namespace Spine.Unity {
 			}
 		}
 
-		private bool InitSpriteMaskMaterialsInsideMask()
-		{
+		private bool InitSpriteMaskMaterialsInsideMask () {
 			return InitSpriteMaskMaterialsForMaskType(STENCIL_COMP_MASKINTERACTION_VISIBLE_INSIDE, ref maskMaterials.materialsInsideMask);
 		}
 
-		private bool InitSpriteMaskMaterialsOutsideMask()
-		{
+		private bool InitSpriteMaskMaterialsOutsideMask () {
 			return InitSpriteMaskMaterialsForMaskType(STENCIL_COMP_MASKINTERACTION_VISIBLE_OUTSIDE, ref maskMaterials.materialsOutsideMask);
 		}
 
-		private bool InitSpriteMaskMaterialsForMaskType(UnityEngine.Rendering.CompareFunction maskFunction, ref Material[] materialsToFill)
-		{
-			#if UNITY_EDITOR
+		private bool InitSpriteMaskMaterialsForMaskType (UnityEngine.Rendering.CompareFunction maskFunction, ref Material[] materialsToFill) {
+#if UNITY_EDITOR
 			if (!Application.isPlaying) {
 				return false;
 			}
-			#endif
-
-			var originalMaterials = maskMaterials.materialsMaskDisabled;
+#endif
+			Material[] originalMaterials = maskMaterials.materialsMaskDisabled;
 			materialsToFill = new Material[originalMaterials.Length];
 			for (int i = 0; i < originalMaterials.Length; i++) {
 				Material newMaterial = new Material(originalMaterials[i]);
@@ -640,22 +708,22 @@ namespace Spine.Unity {
 			return true;
 		}
 
-		#if UNITY_EDITOR
-		private void EditorFixStencilCompParameters() {
+#if UNITY_EDITOR
+		private void EditorFixStencilCompParameters () {
 			if (!haveStencilParametersBeenFixed && HasAnyStencilComp0Material()) {
 				haveStencilParametersBeenFixed = true;
 				FixAllProjectMaterialsStencilCompParameters();
 			}
 		}
 
-		private void FixAllProjectMaterialsStencilCompParameters() {
+		private void FixAllProjectMaterialsStencilCompParameters () {
 			string[] materialGUIDS = UnityEditor.AssetDatabase.FindAssets("t:material");
-			foreach (var guid in materialGUIDS) {
+			foreach (string guid in materialGUIDS) {
 				string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
 				if (!string.IsNullOrEmpty(path)) {
-					var mat = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(path);
-					if (mat.HasProperty(STENCIL_COMP_PARAM_ID) && mat.GetFloat(STENCIL_COMP_PARAM_ID) == 0) {
-						mat.SetFloat(STENCIL_COMP_PARAM_ID, (int)STENCIL_COMP_MASKINTERACTION_NONE);
+					Material material = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(path);
+					if (material.HasProperty(STENCIL_COMP_PARAM_ID) && material.GetFloat(STENCIL_COMP_PARAM_ID) == 0) {
+						material.SetFloat(STENCIL_COMP_PARAM_ID, (int)STENCIL_COMP_MASKINTERACTION_NONE);
 					}
 				}
 			}
@@ -663,24 +731,41 @@ namespace Spine.Unity {
 			UnityEditor.AssetDatabase.SaveAssets();
 		}
 
-		private bool HasAnyStencilComp0Material() {
+		private bool HasAnyStencilComp0Material () {
 			if (meshRenderer == null)
 				return false;
 
-			foreach (var mat in meshRenderer.sharedMaterials) {
-				if (mat != null && mat.HasProperty(STENCIL_COMP_PARAM_ID)) {
-					float currentCompValue = mat.GetFloat(STENCIL_COMP_PARAM_ID);
+			foreach (Material material in meshRenderer.sharedMaterials) {
+				if (material != null && material.HasProperty(STENCIL_COMP_PARAM_ID)) {
+					float currentCompValue = material.GetFloat(STENCIL_COMP_PARAM_ID);
 					if (currentCompValue == 0)
 						return true;
 				}
 			}
 			return false;
 		}
-		#endif // UNITY_EDITOR
+#endif // UNITY_EDITOR
 
-		#endif //#if BUILT_IN_SPRITE_MASK_COMPONENT
+#endif //#if BUILT_IN_SPRITE_MASK_COMPONENT
 
-		#if PER_MATERIAL_PROPERTY_BLOCKS
+#if SPINE_OPTIONAL_ON_DEMAND_LOADING
+		void HandleOnDemandLoading () {
+			foreach (AtlasAssetBase atlasAsset in skeletonDataAsset.atlasAssets) {
+				if (atlasAsset.TextureLoadingMode != AtlasAssetBase.LoadingMode.Normal) {
+					atlasAsset.BeginCustomTextureLoading();
+					for (int i = 0, count = meshRenderer.sharedMaterials.Length; i < count; ++i) {
+						Material overrideMaterial = null;
+						atlasAsset.RequireTexturesLoaded(meshRenderer.sharedMaterials[i], ref overrideMaterial);
+						if (overrideMaterial != null)
+							meshRenderer.sharedMaterials[i] = overrideMaterial;
+					}
+					atlasAsset.EndCustomTextureLoading();
+				}
+			}
+		}
+#endif
+
+#if PER_MATERIAL_PROPERTY_BLOCKS
 		private MaterialPropertyBlock reusedPropertyBlock;
 		public static readonly int SUBMESH_DUMMY_PARAM_ID = Shader.PropertyToID("_Submesh");
 
@@ -690,7 +775,7 @@ namespace Spine.Unity {
 		/// Otherwise, e.g. when using Lightweight Render Pipeline, deliberately separated draw calls
 		/// "A1 B A2" are reordered to "A1A2 B", regardless of batching-related project settings.
 		/// </summary>
-		private void SetMaterialSettingsToFixDrawOrder() {
+		private void SetMaterialSettingsToFixDrawOrder () {
 			if (reusedPropertyBlock == null) reusedPropertyBlock = new MaterialPropertyBlock();
 
 			bool hasPerRendererBlock = meshRenderer.HasPropertyBlock();
@@ -711,6 +796,6 @@ namespace Spine.Unity {
 				meshRenderer.sharedMaterials[i].enableInstancing = false;
 			}
 		}
-		#endif
+#endif
 	}
 }

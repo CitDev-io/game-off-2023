@@ -1,16 +1,16 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated July 28, 2023. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2023, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
  * conditions of Section 2 of the Spine Editor License Agreement:
  * http://esotericsoftware.com/spine-editor-license
  *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software or
+ * otherwise create derivative works of the Spine Runtimes (collectively,
  * "Products"), provided that each user of the Products must obtain their own
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
@@ -23,8 +23,8 @@
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
  * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE
+ * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 using System;
@@ -42,16 +42,16 @@ namespace Spine {
 		const int NONE = -1, BEFORE = -2, AFTER = -3;
 		const float Epsilon = 0.00001f;
 
-		internal PathConstraintData data;
-		internal ExposedList<Bone> bones;
+		internal readonly PathConstraintData data;
+		internal readonly ExposedList<Bone> bones;
 		internal Slot target;
 		internal float position, spacing, mixRotate, mixX, mixY;
 
 		internal bool active;
 
-		internal ExposedList<float> spaces = new ExposedList<float>(), positions = new ExposedList<float>();
-		internal ExposedList<float> world = new ExposedList<float>(), curves = new ExposedList<float>(), lengths = new ExposedList<float>();
-		internal float[] segments = new float[10];
+		internal readonly ExposedList<float> spaces = new ExposedList<float>(), positions = new ExposedList<float>();
+		internal readonly ExposedList<float> world = new ExposedList<float>(), curves = new ExposedList<float>(), lengths = new ExposedList<float>();
+		internal readonly float[] segments = new float[10];
 
 		public PathConstraint (PathConstraintData data, Skeleton skeleton) {
 			if (data == null) throw new ArgumentNullException("data", "data cannot be null.");
@@ -59,8 +59,8 @@ namespace Spine {
 			this.data = data;
 			bones = new ExposedList<Bone>(data.Bones.Count);
 			foreach (BoneData boneData in data.bones)
-				bones.Add(skeleton.FindBone(boneData.name));
-			target = skeleton.FindSlot(data.target.name);
+				bones.Add(skeleton.bones.Items[boneData.index]);
+			target = skeleton.slots.Items[data.target.index];
 			position = data.position;
 			spacing = data.spacing;
 			mixRotate = data.mixRotate;
@@ -73,9 +73,9 @@ namespace Spine {
 			if (constraint == null) throw new ArgumentNullException("constraint cannot be null.");
 			if (skeleton == null) throw new ArgumentNullException("skeleton cannot be null.");
 			data = constraint.data;
-			bones = new ExposedList<Bone>(constraint.Bones.Count);
-			foreach (Bone bone in constraint.Bones)
-				bones.Add(skeleton.Bones.Items[bone.data.index]);
+			bones = new ExposedList<Bone>(constraint.bones.Count);
+			foreach (Bone bone in constraint.bones)
+				bones.Add(skeleton.bones.Items[bone.data.index]);
 			target = skeleton.slots.Items[constraint.target.data.index];
 			position = constraint.position;
 			spacing = constraint.spacing;
@@ -272,7 +272,7 @@ namespace Spine {
 					}
 
 					// Determine curve containing position.
-					for (;; curve++) {
+					for (; ; curve++) {
 						float length = lengths[curve];
 						if (p > length) continue;
 						if (curve == 0)
@@ -383,7 +383,7 @@ namespace Spine {
 				}
 
 				// Determine curve containing position.
-				for (;; curve++) {
+				for (; ; curve++) {
 					float length = curves[curve];
 					if (p > length) continue;
 					if (curve == 0)
@@ -438,7 +438,7 @@ namespace Spine {
 
 				// Weight by segment length.
 				p *= curveLength;
-				for (;; segment++) {
+				for (; ; segment++) {
 					float length = segments[segment];
 					if (p > length) continue;
 					if (segment == 0)
@@ -506,5 +506,9 @@ namespace Spine {
 		public bool Active { get { return active; } }
 		/// <summary>The path constraint's setup pose data.</summary>
 		public PathConstraintData Data { get { return data; } }
+
+		override public string ToString () {
+			return data.name;
+		}
 	}
 }

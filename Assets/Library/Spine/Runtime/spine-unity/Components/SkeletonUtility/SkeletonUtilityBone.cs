@@ -1,16 +1,16 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated July 28, 2023. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2023, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
  * conditions of Section 2 of the Spine Editor License Agreement:
  * http://esotericsoftware.com/spine-editor-license
  *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software or
+ * otherwise create derivative works of the Spine Runtimes (collectively,
  * "Products"), provided that each user of the Products must obtain their own
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
@@ -23,8 +23,8 @@
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
  * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE
+ * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 #if UNITY_2018_3 || UNITY_2019 || UNITY_2018_3_OR_NEWER
@@ -35,11 +35,11 @@ using UnityEngine;
 
 namespace Spine.Unity {
 	/// <summary>Sets a GameObject's transform to match a bone on a Spine skeleton.</summary>
-	#if NEW_PREFAB_SYSTEM
+#if NEW_PREFAB_SYSTEM
 	[ExecuteAlways]
-	#else
+#else
 	[ExecuteInEditMode]
-	#endif
+#endif
 	[AddComponentMenu("Spine/SkeletonUtilityBone")]
 	[HelpURL("http://esotericsoftware.com/spine-unity#SkeletonUtilityBone")]
 	public class SkeletonUtilityBone : MonoBehaviour {
@@ -110,7 +110,7 @@ namespace Spine.Unity {
 				return;
 			}
 
-			var skeleton = hierarchy.Skeleton;
+			Skeleton skeleton = hierarchy.Skeleton;
 
 			if (bone == null) {
 				if (string.IsNullOrEmpty(boneName)) return;
@@ -124,47 +124,47 @@ namespace Spine.Unity {
 
 			float positionScale = hierarchy.PositionScale;
 
-			var thisTransform = cachedTransform;
+			Transform thisTransform = cachedTransform;
 			float skeletonFlipRotation = Mathf.Sign(skeleton.ScaleX * skeleton.ScaleY);
 			if (mode == Mode.Follow) {
 				switch (phase) {
-					case UpdatePhase.Local:
-						if (position)
-							thisTransform.localPosition = new Vector3(bone.x * positionScale, bone.y * positionScale, 0);
+				case UpdatePhase.Local:
+					if (position)
+						thisTransform.localPosition = new Vector3(bone.X * positionScale, bone.Y * positionScale, 0);
 
-						if (rotation) {
-							if (bone.data.transformMode.InheritsRotation()) {
-								thisTransform.localRotation = Quaternion.Euler(0, 0, bone.rotation);
-							} else {
-								Vector3 euler = skeletonTransform.rotation.eulerAngles;
-								thisTransform.rotation = Quaternion.Euler(euler.x, euler.y, euler.z + (bone.WorldRotationX * skeletonFlipRotation));
-							}
+					if (rotation) {
+						if (bone.Data.TransformMode.InheritsRotation()) {
+							thisTransform.localRotation = Quaternion.Euler(0, 0, bone.Rotation);
+						} else {
+							Vector3 euler = skeletonTransform.rotation.eulerAngles;
+							thisTransform.rotation = Quaternion.Euler(euler.x, euler.y, euler.z + (bone.WorldRotationX * skeletonFlipRotation));
 						}
+					}
 
-						if (scale) {
-							thisTransform.localScale = new Vector3(bone.scaleX, bone.scaleY, 1f);
-							incompatibleTransformMode = BoneTransformModeIncompatible(bone);
-						}
-						break;
-					case UpdatePhase.World:
-					case UpdatePhase.Complete:
-						if (position)
-							thisTransform.localPosition = new Vector3(bone.ax * positionScale, bone.ay * positionScale, 0);
+					if (scale) {
+						thisTransform.localScale = new Vector3(bone.ScaleX, bone.ScaleY, 1f);
+						incompatibleTransformMode = BoneTransformModeIncompatible(bone);
+					}
+					break;
+				case UpdatePhase.World:
+				case UpdatePhase.Complete:
+					if (position)
+						thisTransform.localPosition = new Vector3(bone.AX * positionScale, bone.AY * positionScale, 0);
 
-						if (rotation) {
-							if (bone.data.transformMode.InheritsRotation()) {
-								thisTransform.localRotation = Quaternion.Euler(0, 0, bone.AppliedRotation);
-							} else {
-								Vector3 euler = skeletonTransform.rotation.eulerAngles;
-								thisTransform.rotation = Quaternion.Euler(euler.x, euler.y, euler.z + (bone.WorldRotationX * skeletonFlipRotation));
-							}
+					if (rotation) {
+						if (bone.Data.TransformMode.InheritsRotation()) {
+							thisTransform.localRotation = Quaternion.Euler(0, 0, bone.AppliedRotation);
+						} else {
+							Vector3 euler = skeletonTransform.rotation.eulerAngles;
+							thisTransform.rotation = Quaternion.Euler(euler.x, euler.y, euler.z + (bone.WorldRotationX * skeletonFlipRotation));
 						}
+					}
 
-						if (scale) {
-							thisTransform.localScale = new Vector3(bone.ascaleX, bone.ascaleY, 1f);
-							incompatibleTransformMode = BoneTransformModeIncompatible(bone);
-						}
-						break;
+					if (scale) {
+						thisTransform.localScale = new Vector3(bone.AScaleX, bone.AScaleY, 1f);
+						incompatibleTransformMode = BoneTransformModeIncompatible(bone);
+					}
+					break;
 				}
 
 			} else if (mode == Mode.Override) {
@@ -174,8 +174,8 @@ namespace Spine.Unity {
 				if (parentReference == null) {
 					if (position) {
 						Vector3 clp = thisTransform.localPosition / positionScale;
-						bone.x = Mathf.Lerp(bone.x, clp.x, overrideAlpha);
-						bone.y = Mathf.Lerp(bone.y, clp.y, overrideAlpha);
+						bone.X = Mathf.Lerp(bone.X, clp.x, overrideAlpha);
+						bone.Y = Mathf.Lerp(bone.Y, clp.y, overrideAlpha);
 					}
 
 					if (rotation) {
@@ -186,8 +186,8 @@ namespace Spine.Unity {
 
 					if (scale) {
 						Vector3 cls = thisTransform.localScale;
-						bone.scaleX = Mathf.Lerp(bone.scaleX, cls.x, overrideAlpha);
-						bone.scaleY = Mathf.Lerp(bone.scaleY, cls.y, overrideAlpha);
+						bone.ScaleX = Mathf.Lerp(bone.ScaleX, cls.x, overrideAlpha);
+						bone.ScaleY = Mathf.Lerp(bone.ScaleY, cls.y, overrideAlpha);
 					}
 
 				} else {
@@ -196,8 +196,8 @@ namespace Spine.Unity {
 
 					if (position) {
 						Vector3 pos = parentReference.InverseTransformPoint(thisTransform.position) / positionScale;
-						bone.x = Mathf.Lerp(bone.x, pos.x, overrideAlpha);
-						bone.y = Mathf.Lerp(bone.y, pos.y, overrideAlpha);
+						bone.X = Mathf.Lerp(bone.X, pos.x, overrideAlpha);
+						bone.Y = Mathf.Lerp(bone.Y, pos.y, overrideAlpha);
 					}
 
 					if (rotation) {
@@ -208,8 +208,8 @@ namespace Spine.Unity {
 
 					if (scale) {
 						Vector3 cls = thisTransform.localScale;
-						bone.scaleX = Mathf.Lerp(bone.scaleX, cls.x, overrideAlpha);
-						bone.scaleY = Mathf.Lerp(bone.scaleY, cls.y, overrideAlpha);
+						bone.ScaleX = Mathf.Lerp(bone.ScaleX, cls.x, overrideAlpha);
+						bone.ScaleY = Mathf.Lerp(bone.ScaleY, cls.y, overrideAlpha);
 					}
 
 					incompatibleTransformMode = BoneTransformModeIncompatible(bone);
@@ -220,12 +220,12 @@ namespace Spine.Unity {
 		}
 
 		public static bool BoneTransformModeIncompatible (Bone bone) {
-			return !bone.data.transformMode.InheritsScale();
+			return !bone.Data.TransformMode.InheritsScale();
 		}
 
 		public void AddBoundingBox (string skinName, string slotName, string attachmentName) {
 			SkeletonUtility.AddBoneRigidbody2D(transform.gameObject);
-			SkeletonUtility.AddBoundingBoxGameObject(bone.skeleton, skinName, slotName, attachmentName, transform);
+			SkeletonUtility.AddBoundingBoxGameObject(bone.Skeleton, skinName, slotName, attachmentName, transform);
 		}
 
 #if UNITY_EDITOR
@@ -233,6 +233,6 @@ namespace Spine.Unity {
 			if (IncompatibleTransformMode)
 				Gizmos.DrawIcon(transform.position + new Vector3(0, 0.128f, 0), "icon-warning");
 		}
-		#endif
+#endif
 	}
 }

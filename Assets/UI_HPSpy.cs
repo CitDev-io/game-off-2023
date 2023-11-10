@@ -18,7 +18,7 @@ public class UI_HPSpy : MonoBehaviour
         if (combatant == null) {
             _text.text = "";
         } else {
-            _text.text = combatant.currentHealth + "/" + combatant.maximumHealth;
+            _text.text = combatant.currentHealth + "/" + combatant.Config.BaseHP;
         }
 
     }

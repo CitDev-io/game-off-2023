@@ -1,16 +1,16 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated July 28, 2023. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2023, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
  * conditions of Section 2 of the Spine Editor License Agreement:
  * http://esotericsoftware.com/spine-editor-license
  *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software or
+ * otherwise create derivative works of the Spine Runtimes (collectively,
  * "Products"), provided that each user of the Products must obtain their own
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
@@ -23,15 +23,14 @@
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
  * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE
+ * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using Spine;
 
 namespace Spine.Unity {
 	/// <summary>Loads and stores a Spine atlas and list of materials.</summary>
@@ -39,6 +38,7 @@ namespace Spine.Unity {
 	public class SpineAtlasAsset : AtlasAssetBase {
 		public TextAsset atlasFile;
 		public Material[] materials;
+		public TextureLoader customTextureLoader;
 		protected Atlas atlas;
 
 		public override bool IsLoaded { get { return this.atlas != null; } }
@@ -50,11 +50,19 @@ namespace Spine.Unity {
 		#region Runtime Instantiation
 		/// <summary>
 		/// Creates a runtime AtlasAsset</summary>
-		public static SpineAtlasAsset CreateRuntimeInstance (TextAsset atlasText, Material[] materials, bool initialize) {
+		/// <param name="newCustomTextureLoader">When not null, a function instantiating
+		/// a custom <c>TextureLoader</c> with the newly created <c>SpineAtlasAsset</c> as argument
+		/// is used instead of instantiating the default <c>MaterialsTextureLoader</c>.
+		/// A valid parameter is e.g. <c>(a) => new CustomTextureLoader(a)</c></param>
+		public static SpineAtlasAsset CreateRuntimeInstance (TextAsset atlasText, Material[] materials, bool initialize,
+			Func<SpineAtlasAsset, TextureLoader> newCustomTextureLoader = null) {
+
 			SpineAtlasAsset atlasAsset = ScriptableObject.CreateInstance<SpineAtlasAsset>();
 			atlasAsset.Reset();
 			atlasAsset.atlasFile = atlasText;
 			atlasAsset.materials = materials;
+			if (newCustomTextureLoader != null)
+				atlasAsset.customTextureLoader = newCustomTextureLoader(atlasAsset);
 
 			if (initialize)
 				atlasAsset.GetAtlas();
@@ -63,13 +71,23 @@ namespace Spine.Unity {
 		}
 
 		/// <summary>
-		/// Creates a runtime AtlasAsset. Only providing the textures is slower because it has to search for atlas page matches. <seealso cref="Spine.Unity.SpineAtlasAsset.CreateRuntimeInstance(TextAsset, Material[], bool)"/></summary>
-		public static SpineAtlasAsset CreateRuntimeInstance (TextAsset atlasText, Texture2D[] textures, Material materialPropertySource, bool initialize) {
+		/// Creates a runtime AtlasAsset. Only providing the textures is slower
+		/// because it has to search for atlas page matches.
+		/// </summary>
+		/// <param name="textures">An array of all textures referenced in the provided <c>atlasText</c>
+		/// atlas asset JSON file. When procedurally creating textures, each <c>Texture.name</c>
+		/// needs to be set to the atlas page texture filename without the .png extension,
+		/// e.g. 'my_skeleton' if the png filename listed in the atlas asset file is 'my_skeleton.png'.</param>
+		/// <seealso cref="SpineAtlasAsset.CreateRuntimeInstance(TextAsset, Material[], bool, Func{SpineAtlasAsset, TextureLoader})"/>
+		public static SpineAtlasAsset CreateRuntimeInstance (TextAsset atlasText, Texture2D[] textures,
+			Material materialPropertySource, bool initialize,
+			Func<SpineAtlasAsset, TextureLoader> newCustomTextureLoader = null) {
+
 			// Get atlas page names.
 			string atlasString = atlasText.text;
 			atlasString = atlasString.Replace("\r", "");
 			string[] atlasLines = atlasString.Split('\n');
-			var pages = new List<string>();
+			List<string> pages = new List<string>();
 			for (int i = 0; i < atlasLines.Length - 1; i++) {
 				string line = atlasLines[i].Trim();
 				if (line.EndsWith(".png"))
@@ -77,7 +95,7 @@ namespace Spine.Unity {
 			}
 
 			// Populate Materials[] by matching texture names with page names.
-			var materials = new Material[pages.Count];
+			Material[] materials = new Material[pages.Count];
 			for (int i = 0, n = pages.Count; i < n; i++) {
 				Material mat = null;
 
@@ -99,19 +117,26 @@ namespace Spine.Unity {
 			}
 
 			// Create AtlasAsset normally
-			return CreateRuntimeInstance(atlasText, materials, initialize);
+			return CreateRuntimeInstance(atlasText, materials, initialize, newCustomTextureLoader);
 		}
 
 		/// <summary>
-		/// Creates a runtime AtlasAsset. Only providing the textures is slower because it has to search for atlas page matches. <seealso cref="Spine.Unity.AtlasAssetBase.CreateRuntimeInstance(TextAsset, Material[], bool)"/></summary>
-		public static SpineAtlasAsset CreateRuntimeInstance (TextAsset atlasText, Texture2D[] textures, Shader shader, bool initialize) {
+		/// Creates a runtime AtlasAsset. Only providing the textures is slower because
+		/// it has to search for atlas page matches.
+		/// <param name="textures">An array of all textures referenced in the provided <c>atlasText</c>
+		/// atlas asset JSON file. When procedurally creating textures, each <c>Texture.name</c>
+		/// needs to be set to the atlas page texture filename without the .png extension,
+		/// e.g. 'my_skeleton' if the png filename listed in the atlas asset file is 'my_skeleton.png'.</param>
+		/// <seealso cref="SpineAtlasAsset.CreateRuntimeInstance(TextAsset, Material[], bool, Func{SpineAtlasAsset, TextureLoader})"/>
+		public static SpineAtlasAsset CreateRuntimeInstance (TextAsset atlasText,
+			Texture2D[] textures, Shader shader, bool initialize,
+			Func<SpineAtlasAsset, TextureLoader> newCustomTextureLoader = null) {
+
 			if (shader == null)
 				shader = Shader.Find("Spine/Skeleton");
 
 			Material materialProperySource = new Material(shader);
-			var oa = CreateRuntimeInstance(atlasText, textures, materialProperySource, initialize);
-
-			return oa;
+			return CreateRuntimeInstance(atlasText, textures, materialProperySource, initialize, newCustomTextureLoader);
 		}
 		#endregion
 
@@ -142,7 +167,7 @@ namespace Spine.Unity {
 			try {
 				TextureLoader loader;
 				if (!onlyMetaData)
-					loader = new MaterialsTextureLoader(this);
+					loader = customTextureLoader == null ? new MaterialsTextureLoader(this) : customTextureLoader;
 				else
 					loader = new NoOpTextureLoader();
 				atlas = new Atlas(new StringReader(atlasFile.text), "", loader);
@@ -214,8 +239,8 @@ namespace Spine.Unity {
 	}
 
 	public class NoOpTextureLoader : TextureLoader {
-		public void Load (AtlasPage page, string path) {}
-		public void Unload (object texture) {}
+		public void Load (AtlasPage page, string path) { }
+		public void Unload (object texture) { }
 	}
 
 	public class MaterialsTextureLoader : TextureLoader {
@@ -226,6 +251,11 @@ namespace Spine.Unity {
 		}
 
 		public void Load (AtlasPage page, string path) {
+#if UNITY_EDITOR
+			if (BuildUtilities.IsInSkeletonAssetBuildPreProcessing ||
+				BuildUtilities.IsInSkeletonAssetBuildPostProcessing)
+				return;
+#endif
 			String name = Path.GetFileNameWithoutExtension(path);
 			Material material = null;
 			foreach (Material other in atlasAsset.materials) {
@@ -233,7 +263,10 @@ namespace Spine.Unity {
 					Debug.LogError("Material is missing texture: " + other.name, other);
 					return;
 				}
-				if (other.mainTexture.name == name) {
+				string textureName = other.mainTexture.name;
+				if (textureName == name ||
+					(atlasAsset.OnDemandTextureLoader != null &&
+					textureName == atlasAsset.OnDemandTextureLoader.GetPlaceholderTextureName(name))) {
 					material = other;
 					break;
 				}

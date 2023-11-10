@@ -1,16 +1,16 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated July 28, 2023. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2023, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
  * conditions of Section 2 of the Spine Editor License Agreement:
  * http://esotericsoftware.com/spine-editor-license
  *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software or
+ * otherwise create derivative works of the Spine Runtimes (collectively,
  * "Products"), provided that each user of the Products must obtain their own
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
@@ -23,14 +23,14 @@
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
  * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE
+ * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using System;
 #if UNITY_EDITOR
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -40,13 +40,13 @@ namespace Spine.Unity {
 
 	public static class SkeletonDataCompatibility {
 
-	#if UNITY_EDITOR
-		static readonly int[][] compatibleBinaryVersions = { new[] { 4, 0, 0 } };
-		static readonly int[][] compatibleJsonVersions = { new[] { 4, 0, 0 } };
+#if UNITY_EDITOR
+		static readonly int[][] compatibleBinaryVersions = { new[] { 4, 1, 0 } };
+		static readonly int[][] compatibleJsonVersions = { new[] { 4, 1, 0 } };
 
 		static bool wasVersionDialogShown = false;
 		static readonly Regex jsonVersionRegex = new Regex(@"""spine""\s*:\s*""([^""]+)""", RegexOptions.CultureInvariant);
-	#endif
+#endif
 
 		public enum SourceType {
 			Json,
@@ -81,7 +81,7 @@ namespace Spine.Unity {
 			}
 		}
 
-	#if UNITY_EDITOR
+#if UNITY_EDITOR
 		public static VersionInfo GetVersionInfo (TextAsset asset, out bool isSpineSkeletonData, ref string problemDescription) {
 			isSpineSkeletonData = false;
 			if (asset == null)
@@ -96,8 +96,7 @@ namespace Spine.Unity {
 				if (hasBinaryExtension) {
 					problemDescription = string.Format("Failed to read '{0}'. Extension is '.skel.bytes' but content looks like a '.json' file.\n"
 						+ "Did you choose the wrong extension upon export?\n", asset.name);
-				}
-				else {
+				} else {
 					problemDescription = string.Format("Failed to read '{0}'. Extension is '.json' but content looks like binary 'skel.bytes' file.\n"
 						+ "Did you choose the wrong extension upon export?\n", asset.name);
 				}
@@ -107,22 +106,19 @@ namespace Spine.Unity {
 
 			if (fileVersion.sourceType == SourceType.Binary) {
 				try {
-					using (var memStream = new MemoryStream(asset.bytes)) {
+					using (MemoryStream memStream = new MemoryStream(asset.bytes)) {
 						fileVersion.rawVersion = SkeletonBinary.GetVersionString(memStream);
 					}
-				}
-				catch (System.Exception e) {
+				} catch (System.Exception e) {
 					problemDescription = string.Format("Failed to read '{0}'. It is likely not a binary Spine SkeletonData file.\n{1}", asset.name, e);
 					isSpineSkeletonData = false;
 					return null;
 				}
-			}
-			else {
+			} else {
 				Match match = jsonVersionRegex.Match(asset.text);
 				if (match != null) {
 					fileVersion.rawVersion = match.Groups[1].Value;
-				}
-				else {
+				} else {
 					object obj = Json.Deserialize(new StringReader(asset.text));
 					if (obj == null) {
 						problemDescription = string.Format("'{0}' is not valid JSON.", asset.name);
@@ -130,7 +126,7 @@ namespace Spine.Unity {
 						return null;
 					}
 
-					var root = obj as Dictionary<string, object>;
+					Dictionary<string, object> root = obj as Dictionary<string, object>;
 					if (root == null) {
 						problemDescription = string.Format("'{0}' is not compatible JSON. Parser returned an incorrect type while parsing version info.", asset.name);
 						isSpineSkeletonData = false;
@@ -138,7 +134,7 @@ namespace Spine.Unity {
 					}
 
 					if (root.ContainsKey("skeleton")) {
-						var skeletonInfo = (Dictionary<string, object>)root["skeleton"];
+						Dictionary<string, object> skeletonInfo = (Dictionary<string, object>)root["skeleton"];
 						object jv;
 						skeletonInfo.TryGetValue("spine", out jv);
 						fileVersion.rawVersion = jv as string;
@@ -152,12 +148,11 @@ namespace Spine.Unity {
 				return null;
 			}
 
-			var versionSplit = fileVersion.rawVersion.Split('.');
+			string[] versionSplit = fileVersion.rawVersion.Split('.');
 			try {
 				fileVersion.version = new[]{ int.Parse(versionSplit[0], CultureInfo.InvariantCulture),
 									int.Parse(versionSplit[1], CultureInfo.InvariantCulture) };
-			}
-			catch (System.Exception e) {
+			} catch (System.Exception e) {
 				problemDescription = string.Format("Failed to read version info at skeleton '{0}'. It is likely not a valid Spine SkeletonData file.\n{1}", asset.name, e);
 				isSpineSkeletonData = false;
 				return null;
@@ -173,11 +168,18 @@ namespace Spine.Unity {
 			int i = 0;
 			if (content.Length >= 3 && content[0] == 0xEF && content[1] == 0xBB && content[2] == 0xBF) // skip potential BOM
 				i = 3;
+			bool openingBraceFound = false;
 			for (; i < numCharsToCheck; ++i) {
 				char c = (char)content[i];
 				if (char.IsWhiteSpace(c))
 					continue;
-				return c == '{';
+				if (!openingBraceFound) {
+					if (c == '{' || c == '[') openingBraceFound = true;
+					else return false;
+				} else if (c == '{' || c == '[' || c == ']' || c == '}' || c == ',')
+					continue;
+				else
+					return c == '"';
 			}
 			return true;
 		}
@@ -192,7 +194,7 @@ namespace Spine.Unity {
 			info.compatibleVersions = (fileVersion.sourceType == SourceType.Binary) ? compatibleBinaryVersions
 				: compatibleJsonVersions;
 
-			foreach (var compatibleVersion in info.compatibleVersions) {
+			foreach (int[] compatibleVersion in info.compatibleVersions) {
 				bool majorMatch = fileVersion.version[0] == compatibleVersion[0];
 				bool minorMatch = fileVersion.version[1] == compatibleVersion[1];
 				if (majorMatch && minorMatch) {
@@ -210,6 +212,6 @@ namespace Spine.Unity {
 			Debug.LogError(string.Format("Error importing skeleton '{0}': {1}",
 				spineJson.name, descriptionString), spineJson);
 		}
-	#endif // UNITY_EDITOR
+#endif // UNITY_EDITOR
 	}
 }

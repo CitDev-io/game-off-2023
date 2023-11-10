@@ -8,18 +8,20 @@ public class CpuCharacter : Combatant
     [SerializeField]
     public TMP_Text StaggerTicker; 
     [SerializeField]
-    public int maximumStagger = 0;
-    [SerializeField]
     public int currentStagger = 0;
 
     internal override void MoreFixedUpdate(){
         if (StaggerTicker != null) {
-            StaggerTicker.text = currentStagger.ToString() + "/" + maximumStagger.ToString();
+            StaggerTicker.text = currentStagger.ToString() + "/" + Config.BaseSP.ToString();
         }
     }
 
+    internal override void MoreStart() {
+        currentStagger = Config.BaseSP;
+    }
+
     public void RestoreStagger() {
-        currentStagger = maximumStagger;
+        currentStagger = Config.BaseSP;
     }
 
     internal override int CalculateFinalDamage(PowerType sourcePowerType, Combatant source, int rawDamage, int unmitigatedDamage) {
@@ -29,7 +31,7 @@ public class CpuCharacter : Combatant
             return unmitigatedDamage;
         }
 
-        bool SourceAffectsStagger = sourcePowerType != powerType;
+        bool SourceAffectsStagger = sourcePowerType != Config.PowerType;
 
         int DamageDealtToStagger = SourceAffectsStagger ? rawDamage : 0;
 

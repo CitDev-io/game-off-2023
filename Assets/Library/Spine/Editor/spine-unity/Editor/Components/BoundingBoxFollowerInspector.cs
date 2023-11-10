@@ -1,16 +1,16 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated July 28, 2023. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2023, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
  * conditions of Section 2 of the Spine Editor License Agreement:
  * http://esotericsoftware.com/spine-editor-license
  *
- * Otherwise, it is permitted to integrate the Spine Runtimes into software
- * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software or
+ * otherwise create derivative works of the Spine Runtimes (collectively,
  * "Products"), provided that each user of the Products must obtain their own
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
@@ -23,17 +23,17 @@
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
  * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE
+ * SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 #if UNITY_2018_3 || UNITY_2019 || UNITY_2018_3_OR_NEWER
 #define NEW_PREFAB_SYSTEM
 #endif
 
-using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
 namespace Spine.Unity.Editor {
 	using Event = UnityEngine.Event;
@@ -41,7 +41,8 @@ namespace Spine.Unity.Editor {
 
 	[CustomEditor(typeof(BoundingBoxFollower))]
 	public class BoundingBoxFollowerInspector : UnityEditor.Editor {
-		SerializedProperty skeletonRenderer, slotName, isTrigger, clearStateOnDisable;
+		SerializedProperty skeletonRenderer, slotName,
+			isTrigger, usedByEffector, usedByComposite, clearStateOnDisable;
 		BoundingBoxFollower follower;
 		bool rebuildRequired = false;
 		bool addBoneFollower = false;
@@ -60,17 +61,19 @@ namespace Spine.Unity.Editor {
 			skeletonRenderer = serializedObject.FindProperty("skeletonRenderer");
 			slotName = serializedObject.FindProperty("slotName");
 			isTrigger = serializedObject.FindProperty("isTrigger");
+			usedByEffector = serializedObject.FindProperty("usedByEffector");
+			usedByComposite = serializedObject.FindProperty("usedByComposite");
 			clearStateOnDisable = serializedObject.FindProperty("clearStateOnDisable");
 			follower = (BoundingBoxFollower)target;
 		}
 
 		public override void OnInspectorGUI () {
 
-			#if !NEW_PREFAB_SYSTEM
+#if !NEW_PREFAB_SYSTEM
 			bool isInspectingPrefab = (PrefabUtility.GetPrefabType(target) == PrefabType.Prefab);
-			#else
+#else
 			bool isInspectingPrefab = false;
-			#endif
+#endif
 
 			// Note: when calling InitializeEditor() in OnEnable, it throws exception
 			// "SerializedObjectNotCreatableException: Object at index 0 is null".
@@ -78,7 +81,7 @@ namespace Spine.Unity.Editor {
 
 			// Try to auto-assign SkeletonRenderer field.
 			if (skeletonRenderer.objectReferenceValue == null) {
-				var foundSkeletonRenderer = follower.GetComponentInParent<SkeletonRenderer>();
+				SkeletonRenderer foundSkeletonRenderer = follower.GetComponentInParent<SkeletonRenderer>();
 				if (foundSkeletonRenderer != null)
 					Debug.Log("BoundingBoxFollower automatically assigned: " + foundSkeletonRenderer.gameObject.name);
 				else if (Event.current.type == EventType.Repaint)
@@ -89,7 +92,7 @@ namespace Spine.Unity.Editor {
 				InitializeEditor();
 			}
 
-			var skeletonRendererValue = skeletonRenderer.objectReferenceValue as SkeletonRenderer;
+			SkeletonRenderer skeletonRendererValue = skeletonRenderer.objectReferenceValue as SkeletonRenderer;
 			if (skeletonRendererValue != null && skeletonRendererValue.gameObject == follower.gameObject) {
 				using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox)) {
 					EditorGUILayout.HelpBox("It's ideal to add BoundingBoxFollower to a separate child GameObject of the Spine GameObject.", MessageType.Warning);
@@ -109,27 +112,32 @@ namespace Spine.Unity.Editor {
 			if (EditorGUI.EndChangeCheck()) {
 				serializedObject.ApplyModifiedProperties();
 				InitializeEditor();
-				#if !NEW_PREFAB_SYSTEM
+#if !NEW_PREFAB_SYSTEM
 				if (!isInspectingPrefab)
 					rebuildRequired = true;
-				#endif
+#endif
 			}
 
 			using (new SpineInspectorUtility.LabelWidthScope(150f)) {
 				EditorGUI.BeginChangeCheck();
 				EditorGUILayout.PropertyField(isTrigger);
-				bool triggerChanged = EditorGUI.EndChangeCheck();
+				EditorGUILayout.PropertyField(usedByEffector);
+				EditorGUILayout.PropertyField(usedByComposite);
+				bool colliderParamChanged = EditorGUI.EndChangeCheck();
 
 				EditorGUI.BeginChangeCheck();
 				EditorGUILayout.PropertyField(clearStateOnDisable, new GUIContent(clearStateOnDisable.displayName, "Enable this if you are pooling your Spine GameObject"));
 				bool clearStateChanged = EditorGUI.EndChangeCheck();
 
-				if (clearStateChanged || triggerChanged) {
+				if (clearStateChanged || colliderParamChanged) {
 					serializedObject.ApplyModifiedProperties();
 					InitializeEditor();
-					if (triggerChanged)
-						foreach (var col in follower.colliderTable.Values)
+					if (colliderParamChanged)
+						foreach (PolygonCollider2D col in follower.colliderTable.Values) {
 							col.isTrigger = isTrigger.boolValue;
+							col.usedByEffector = usedByEffector.boolValue;
+							col.usedByComposite = usedByComposite.boolValue;
+						}
 				}
 			}
 
@@ -139,7 +147,7 @@ namespace Spine.Unity.Editor {
 				EditorGUILayout.HelpBox("BoundingBoxAttachments cannot be previewed in prefabs.", MessageType.Info);
 
 				// How do you prevent components from being saved into the prefab? No such HideFlag. DontSaveInEditor | DontSaveInBuild does not work. DestroyImmediate does not work.
-				var collider = follower.GetComponent<PolygonCollider2D>();
+				PolygonCollider2D collider = follower.GetComponent<PolygonCollider2D>();
 				if (collider != null) Debug.LogWarning("Found BoundingBoxFollower collider components in prefab. These are disposed and regenerated at runtime.");
 
 			} else {
@@ -148,11 +156,11 @@ namespace Spine.Unity.Editor {
 						EditorGUI.indentLevel++;
 						EditorGUILayout.LabelField(string.Format("Attachment Names ({0} PolygonCollider2D)", follower.colliderTable.Count));
 						EditorGUI.BeginChangeCheck();
-						foreach (var kp in follower.nameTable) {
-							string attachmentName = kp.Value;
-							var collider = follower.colliderTable[kp.Key];
-							bool isPlaceholder = attachmentName != kp.Key.Name;
-							collider.enabled = EditorGUILayout.ToggleLeft(new GUIContent(!isPlaceholder ? attachmentName : string.Format("{0} [{1}]", attachmentName, kp.Key.Name), isPlaceholder ? Icons.skinPlaceholder : Icons.boundingBox), collider.enabled);
+						foreach (KeyValuePair<BoundingBoxAttachment, string> pair in follower.nameTable) {
+							string attachmentName = pair.Value;
+							PolygonCollider2D collider = follower.colliderTable[pair.Key];
+							bool isPlaceholder = attachmentName != pair.Key.Name;
+							collider.enabled = EditorGUILayout.ToggleLeft(new GUIContent(!isPlaceholder ? attachmentName : string.Format("{0} [{1}]", attachmentName, pair.Key.Name), isPlaceholder ? Icons.skinPlaceholder : Icons.boundingBox), collider.enabled);
 						}
 						sceneRepaintRequired |= EditorGUI.EndChangeCheck();
 						EditorGUI.indentLevel--;
@@ -175,7 +183,7 @@ namespace Spine.Unity.Editor {
 
 			if (Event.current.type == EventType.Repaint) {
 				if (addBoneFollower) {
-					var boneFollower = follower.gameObject.AddComponent<BoneFollower>();
+					BoneFollower boneFollower = follower.gameObject.AddComponent<BoneFollower>();
 					boneFollower.skeletonRenderer = skeletonRendererValue;
 					boneFollower.SetBone(follower.Slot.Data.BoneData.Name);
 					addBoneFollower = false;
@@ -196,14 +204,14 @@ namespace Spine.Unity.Editor {
 		#region Menus
 		[MenuItem("CONTEXT/SkeletonRenderer/Add BoundingBoxFollower GameObject")]
 		static void AddBoundingBoxFollowerChild (MenuCommand command) {
-			var go = AddBoundingBoxFollowerChild((SkeletonRenderer)command.context);
+			GameObject go = AddBoundingBoxFollowerChild((SkeletonRenderer)command.context);
 			Undo.RegisterCreatedObjectUndo(go, "Add BoundingBoxFollower");
 		}
 
 		[MenuItem("CONTEXT/SkeletonRenderer/Add all BoundingBoxFollower GameObjects")]
 		static void AddAllBoundingBoxFollowerChildren (MenuCommand command) {
-			var objects = AddAllBoundingBoxFollowerChildren((SkeletonRenderer)command.context);
-			foreach (var go in objects)
+			List<GameObject> objects = AddAllBoundingBoxFollowerChildren((SkeletonRenderer)command.context);
+			foreach (GameObject go in objects)
 				Undo.RegisterCreatedObjectUndo(go, "Add BoundingBoxFollower");
 		}
 		#endregion
@@ -212,13 +220,15 @@ namespace Spine.Unity.Editor {
 			BoundingBoxFollower original = null, string name = "BoundingBoxFollower",
 			string slotName = null) {
 
-			var go = EditorInstantiation.NewGameObject(name, true);
+			GameObject go = EditorInstantiation.NewGameObject(name, true);
 			go.transform.SetParent(skeletonRenderer.transform, false);
-			var newFollower = go.AddComponent<BoundingBoxFollower>();
+			BoundingBoxFollower newFollower = go.AddComponent<BoundingBoxFollower>();
 
 			if (original != null) {
 				newFollower.slotName = original.slotName;
 				newFollower.isTrigger = original.isTrigger;
+				newFollower.usedByEffector = original.usedByEffector;
+				newFollower.usedByComposite = original.usedByComposite;
 				newFollower.clearStateOnDisable = original.clearStateOnDisable;
 			}
 			if (slotName != null)
@@ -236,18 +246,18 @@ namespace Spine.Unity.Editor {
 			SkeletonRenderer skeletonRenderer, BoundingBoxFollower original = null) {
 
 			List<GameObject> createdGameObjects = new List<GameObject>();
-			foreach (var skin in skeletonRenderer.Skeleton.Data.Skins) {
-				var attachments = skin.Attachments;
-				foreach (var entry in attachments) {
-					var boundingBoxAttachment = entry.Attachment as BoundingBoxAttachment;
+			foreach (Skin skin in skeletonRenderer.Skeleton.Data.Skins) {
+				ICollection<Skin.SkinEntry> attachments = skin.Attachments;
+				foreach (Skin.SkinEntry entry in attachments) {
+					BoundingBoxAttachment boundingBoxAttachment = entry.Attachment as BoundingBoxAttachment;
 					if (boundingBoxAttachment == null)
 						continue;
 					int slotIndex = entry.SlotIndex;
-					var slot = skeletonRenderer.Skeleton.Slots.Items[slotIndex];
+					Slot slot = skeletonRenderer.Skeleton.Slots.Items[slotIndex];
 					string slotName = slot.Data.Name;
 					GameObject go = AddBoundingBoxFollowerChild(skeletonRenderer,
 						original, boundingBoxAttachment.Name, slotName);
-					var boneFollower = go.AddComponent<BoneFollower>();
+					BoneFollower boneFollower = go.AddComponent<BoneFollower>();
 					boneFollower.skeletonRenderer = skeletonRenderer;
 					boneFollower.SetBone(slot.Data.BoneData.Name);
 					createdGameObjects.Add(go);

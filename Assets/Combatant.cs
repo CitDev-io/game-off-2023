@@ -6,11 +6,7 @@ using TMPro;
 public abstract class Combatant : MonoBehaviour
 {
     [SerializeField]
-    public int BaseMitigation = 0;
-    [SerializeField]
-    public PowerType powerType = PowerType.LIGHT;
-    [SerializeField]
-    public int maximumHealth = 1;
+    public CharacterConfig Config;
     [SerializeField]
     public int currentHealth = 1;
     [SerializeField]
@@ -18,11 +14,14 @@ public abstract class Combatant : MonoBehaviour
     bool IsCurrentCombatant = false;
     [SerializeField]
     public GameObject TurnIndicator;
-    [SerializeField]
-    public int MinDamage = 1;
-    public int MaxDamage = 1;
     public bool isDead = false;
 
+
+    void Start() {
+        isDead = false;
+        currentHealth = Config.BaseHP;
+        MoreStart();
+    }
     void OnMouseDown()
     {
         if (isDead) return;
@@ -33,7 +32,7 @@ public abstract class Combatant : MonoBehaviour
     void FixedUpdate()
     {
         if (HealthTicker != null) {
-            HealthTicker.GetComponent<TMP_Text>().text = currentHealth.ToString() + "/" + maximumHealth.ToString();
+            HealthTicker.GetComponent<TMP_Text>().text = currentHealth.ToString() + "/" + Config.BaseHP.ToString();
         }
         MoreFixedUpdate();
 
@@ -55,15 +54,15 @@ public abstract class Combatant : MonoBehaviour
     }
 
     public int GetRandomDamageRoll() {
-        return Random.Range(MinDamage, MaxDamage);
+        return Random.Range(Config.BaseAttackMin, Config.BaseAttackMax);
     }
 
     public int HandleIncomingAttack(PowerType sourcePowerType, Combatant source) {
         int rawDamage = source.GetRandomDamageRoll();
 
-        bool resistantToPowerType = sourcePowerType == powerType;
+        bool resistantToPowerType = sourcePowerType == Config.PowerType;
         int PowerTypeResistance = resistantToPowerType ? 10 : 0;
-        int mitigationPower = BaseMitigation + PowerTypeResistance;
+        int mitigationPower = Config.BaseMitigation + PowerTypeResistance;
         int mitigatedDamage = (int) (rawDamage * (mitigationPower / 100f));
 
         int unmitigatedDamage = Mathf.Clamp(
@@ -78,6 +77,7 @@ public abstract class Combatant : MonoBehaviour
         return FinalDamage;
     }
 
+    internal abstract void MoreStart();
     internal abstract void MoreFixedUpdate();
     internal abstract int CalculateFinalDamage(PowerType sourcePowerType, Combatant source, int rawDamage, int unmitigatedDamage);
 
