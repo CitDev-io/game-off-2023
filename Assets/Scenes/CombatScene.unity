@@ -1699,7 +1699,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 4.2269897, y: 5.729}
+  m_AnchoredPosition: {x: 4.2269287, y: 5.729004}
   m_SizeDelta: {x: 17.6765, y: 30.7419}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &579174112
@@ -3585,6 +3585,7 @@ GameObject:
   - component: {fileID: 1217756856}
   - component: {fileID: 1217756857}
   - component: {fileID: 1217756858}
+  - component: {fileID: 1217756859}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3624,11 +3625,10 @@ MonoBehaviour:
   EnemySetList: {fileID: 11400000, guid: 25f024d3ba2edf34a8416a8ca1a31c11, type: 2}
   PlayerParty: {fileID: 11400000, guid: 54065b50793c3114c8704103d8cb32c4, type: 2}
   CharacterPuckPrefab: {fileID: 6807464998052182329, guid: a8aa492c74e681a4d990e73b25720136, type: 3}
-  combatantUI: {fileID: 225769547}
   WinUI: {fileID: 1187236597}
   LoseUI: {fileID: 566426630}
   ReviveUI: {fileID: 710718743}
-  BoonUI: {fileID: 627204159}
+  CombatAwaitingUser: 0
 --- !u!114 &1217756858
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3641,6 +3641,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a74fb94fd7b8d9a4cacac6c3ca602e08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsPerforming: 0
+--- !u!114 &1217756859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217756855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81c3a19394b5dd54e9f15ef1a1957400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsPerforming: 0
+  combatantUI: {fileID: 225769547}
+  BoonUI: {fileID: 627204159}
 --- !u!1 &1251602342
 GameObject:
   m_ObjectHideFlags: 0
@@ -6331,6 +6347,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: CombatReferee, Assembly-CSharp
         m_MethodName: UserResponse_Boon
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 627204159}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

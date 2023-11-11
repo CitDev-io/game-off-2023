@@ -7,6 +7,8 @@ public class WaveProvider : IWaveProvider
     private PartyConfig _partyConfig;
     private EnemySetList _enemySetList;
 
+    public int WaveCount => _enemySetList.GameStages.Count;
+
     public WaveProvider(PartyConfig partyConfig, EnemySetList enemySetList)
     {
         _partyConfig = partyConfig;
@@ -20,7 +22,7 @@ public class WaveProvider : IWaveProvider
 
     public List<CharacterConfig> GetEnemyWave(int stageNumber, int waveNumber)
     {
-        if (_enemySetList.GameStages[stageNumber-1] == null) {
+        if (_enemySetList.GameStages.Count < stageNumber) {
             return _enemySetList.GameStages[0].Wave1;
         }
         switch (waveNumber) {

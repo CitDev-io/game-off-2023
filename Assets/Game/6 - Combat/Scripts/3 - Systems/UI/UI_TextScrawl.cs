@@ -12,7 +12,6 @@ public class UI_TextScrawl : MonoBehaviour
         _text = GetComponent<TextMeshProUGUI>();
         // TODO: Let's let the UIManager sort out getting this ref.
         _ref = GameObject.Find("GameManager").GetComponent<CombatReferee>();
-        _ref.eventProvider.OnAnnouncedEvent += HandleAnnouncedEvent;
     }
 
     void HandleAnnouncedEvent(string announcement) {
