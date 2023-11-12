@@ -7,8 +7,27 @@ public class WaveProvider : IWaveProvider
     private PartyConfig _partyConfig;
     private EnemySetList _enemySetList;
 
-    public int WaveCount => _enemySetList.GameStages.Count;
-
+    public int StageCount => _enemySetList.GameStages.Count;
+    public int WaveCountInStage(int stageNum) {
+        if (_enemySetList.GameStages.Count < stageNum) {
+            return 1;
+        } else if (_enemySetList.GameStages[stageNum-1].Wave7.Count > 0) {
+            return 7;
+        } else if (_enemySetList.GameStages[stageNum-1].Wave6.Count > 0) {
+            return 6;
+        } else if (_enemySetList.GameStages[stageNum-1].Wave5.Count > 0) {
+            return 5;
+        } else if (_enemySetList.GameStages[stageNum-1].Wave4.Count > 0) {
+            return 4;
+        } else if (_enemySetList.GameStages[stageNum-1].Wave3.Count > 0) {
+            return 3;
+        } else if (_enemySetList.GameStages[stageNum-1].Wave2.Count > 0) {
+            return 2;
+        } else if (_enemySetList.GameStages[stageNum-1].Wave1.Count > 0) {
+            return 1;
+        }
+        return 0;
+    }
     public WaveProvider(PartyConfig partyConfig, EnemySetList enemySetList)
     {
         _partyConfig = partyConfig;

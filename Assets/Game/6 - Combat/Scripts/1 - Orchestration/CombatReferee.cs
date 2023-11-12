@@ -351,8 +351,8 @@ Debug.Log("PHASE PROMPTED: " + CurrentCombatPhase.ToString());
             // CleanupOnEndTrigger();
             return;
         } else if (gameState.GetAliveCPUs().Count == 0) {
-            if (gameState.WaveNumber == 5) {
-                if (gameState.StageNumber == 4) {
+            if (gameState.WaveNumber == waveProvider.WaveCountInStage(gameState.StageNumber)) {
+                if (gameState.StageNumber == waveProvider.StageCount) {
                     Debug.Log("The PCs have won the game!");
                     WinUI.SetActive(true);
                     // CleanupOnEndTrigger();
@@ -422,4 +422,18 @@ Debug.Log("PHASE PROMPTED: " + CurrentCombatPhase.ToString());
         }
         CombatAwaitingUser = false;
     }
+    void Update(){
+        CheatCodes();
+    }
+
+    void CheatCodes() {
+        if (Input.GetKeyDown(KeyCode.W)) {
+            DefeatWave();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R)) {
+            ReviveAllPCs();
+        }
+    }
 }
+
