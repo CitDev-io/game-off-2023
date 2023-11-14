@@ -15,6 +15,8 @@ MonoBehaviour:
   _Name: Medium Enemy
   _PowerType: 1
   _TeamType: 1
+  _Portrait: {fileID: 0}
+  _Skin: {fileID: 21300000, guid: 0522b3ad444a7554eb117b44ae03f304, type: 3}
   _BaseMitigation: 0
   _BaseHP: 400
   _BaseSP: 400

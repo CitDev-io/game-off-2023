@@ -37,4 +37,12 @@ public class GameState
 
         return randomPc;
     }
+
+    public Character getRandomCPU() {
+        List<Character> playerCharacters = GetAliveCPUs();
+
+        Character randomPc = playerCharacters[Random.Range(0, playerCharacters.Count)];
+
+        return randomPc;
+    }
 }

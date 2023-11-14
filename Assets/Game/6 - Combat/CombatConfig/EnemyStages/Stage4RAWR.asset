@@ -13,33 +13,33 @@ MonoBehaviour:
   m_Name: Stage4RAWR
   m_EditorClassIdentifier: 
   Wave1:
-  - {fileID: 11400000, guid: 8c24efbdc79299a44b0495238743654d, type: 2}
-  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
-  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
-  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  - {fileID: 11400000, guid: caec8b81c4b040949825129bd2b75c91, type: 2}
+  - {fileID: 11400000, guid: 13ecd230498328c458c7cc32b2b04d67, type: 2}
+  - {fileID: 11400000, guid: 13ecd230498328c458c7cc32b2b04d67, type: 2}
+  - {fileID: 11400000, guid: e567e2fe57d62114eaf7a1149c37a50e, type: 2}
   Wave2:
-  - {fileID: 11400000, guid: 5e01b368bea675e4491894cbc06f8d0c, type: 2}
-  - {fileID: 11400000, guid: 5e01b368bea675e4491894cbc06f8d0c, type: 2}
-  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
-  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
-  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  - {fileID: 11400000, guid: 4d5cbaef11e12e44f853436a03db8f50, type: 2}
+  - {fileID: 11400000, guid: c446058bb7970e44398486f7bd5c5c15, type: 2}
+  - {fileID: 11400000, guid: e567e2fe57d62114eaf7a1149c37a50e, type: 2}
+  - {fileID: 11400000, guid: 6e6f8707d6ee5c844a6790e6a381f532, type: 2}
+  - {fileID: 11400000, guid: 2be40d85902211e4c81fd11e858d266a, type: 2}
   Wave3:
-  - {fileID: 11400000, guid: 5e01b368bea675e4491894cbc06f8d0c, type: 2}
-  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
-  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
-  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
-  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
+  - {fileID: 11400000, guid: c446058bb7970e44398486f7bd5c5c15, type: 2}
+  - {fileID: 11400000, guid: 6e6f8707d6ee5c844a6790e6a381f532, type: 2}
+  - {fileID: 11400000, guid: 2be40d85902211e4c81fd11e858d266a, type: 2}
+  - {fileID: 11400000, guid: 2be40d85902211e4c81fd11e858d266a, type: 2}
+  - {fileID: 11400000, guid: 2be40d85902211e4c81fd11e858d266a, type: 2}
   Wave4:
-  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
-  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
-  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
-  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
-  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
+  - {fileID: 11400000, guid: 6e6f8707d6ee5c844a6790e6a381f532, type: 2}
+  - {fileID: 11400000, guid: 2be40d85902211e4c81fd11e858d266a, type: 2}
+  - {fileID: 11400000, guid: 9186ce368bda05d418d67c52ea39e241, type: 2}
+  - {fileID: 11400000, guid: 2be40d85902211e4c81fd11e858d266a, type: 2}
+  - {fileID: 11400000, guid: 6e6f8707d6ee5c844a6790e6a381f532, type: 2}
   Wave5:
-  - {fileID: 11400000, guid: 8c24efbdc79299a44b0495238743654d, type: 2}
-  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
-  - {fileID: 11400000, guid: e908c384266c1f547a8c60b02c097b62, type: 2}
-  - {fileID: 11400000, guid: f446c5a18f2d27440ba1554c85f9617d, type: 2}
+  - {fileID: 11400000, guid: 4d5cbaef11e12e44f853436a03db8f50, type: 2}
+  - {fileID: 11400000, guid: e567e2fe57d62114eaf7a1149c37a50e, type: 2}
+  - {fileID: 11400000, guid: e567e2fe57d62114eaf7a1149c37a50e, type: 2}
+  - {fileID: 11400000, guid: 6e6f8707d6ee5c844a6790e6a381f532, type: 2}
   - {fileID: 11400000, guid: 14122647f411d72408e8a236eac2d907, type: 2}
   Wave6: []
   Wave7: []

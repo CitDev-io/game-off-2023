@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1f911328fe241041bd769443387dfdb, type: 3}
+  m_Name: JeremyShadow
+  m_EditorClassIdentifier: 
+  _Name: Jeremy
+  _PowerType: 1
+  _TeamType: 1
+  _Portrait: {fileID: 0}
+  _Skin: {fileID: 21300000, guid: 1c7b58028cb5d124aa95c359322fdf5b, type: 3}
+  _SpecialAttack: 0
+  _BaseMitigation: 0
+  _BaseHP: 400
+  _BaseSP: 400
+  _BaseAttackMin: 10
+  _BaseAttackMax: 80

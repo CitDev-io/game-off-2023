@@ -21,7 +21,7 @@ public class ActorCharacter : MonoBehaviour
 
     void Start()
     {
-        
+        transform.Find("Skin").GetComponent<SpriteRenderer>().sprite = _character.Config.Skin;        
     }
 
     // TODO: Point of Contact is probably UI Manager

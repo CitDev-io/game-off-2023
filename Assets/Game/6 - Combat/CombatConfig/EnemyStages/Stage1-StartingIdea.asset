@@ -13,26 +13,26 @@ MonoBehaviour:
   m_Name: Stage1-StartingIdea
   m_EditorClassIdentifier: 
   Wave1:
-  - {fileID: 11400000, guid: 1557f895d52accf43b720e06ecdb4d08, type: 2}
-  - {fileID: 11400000, guid: aed031b8c6ced674dbd6feafa5dd6d13, type: 2}
+  - {fileID: 11400000, guid: 1156211b837ee604591b7da8f6254557, type: 2}
+  - {fileID: 11400000, guid: aead86b7789f182459eb1814f8711370, type: 2}
   Wave2:
-  - {fileID: 11400000, guid: 1557f895d52accf43b720e06ecdb4d08, type: 2}
-  - {fileID: 11400000, guid: 1557f895d52accf43b720e06ecdb4d08, type: 2}
-  - {fileID: 11400000, guid: aed031b8c6ced674dbd6feafa5dd6d13, type: 2}
+  - {fileID: 11400000, guid: 28a65a51ee861024d90b28b19e17c50d, type: 2}
+  - {fileID: 11400000, guid: e7e23d69ba0321743bf2bc0737e29f5d, type: 2}
+  - {fileID: 11400000, guid: 2dcdaaa657c9923468c7912b3cfca61f, type: 2}
   Wave3:
-  - {fileID: 11400000, guid: 1557f895d52accf43b720e06ecdb4d08, type: 2}
-  - {fileID: 11400000, guid: aed031b8c6ced674dbd6feafa5dd6d13, type: 2}
-  - {fileID: 11400000, guid: 1557f895d52accf43b720e06ecdb4d08, type: 2}
-  - {fileID: 11400000, guid: aed031b8c6ced674dbd6feafa5dd6d13, type: 2}
+  - {fileID: 11400000, guid: 1156211b837ee604591b7da8f6254557, type: 2}
+  - {fileID: 11400000, guid: e7e23d69ba0321743bf2bc0737e29f5d, type: 2}
+  - {fileID: 11400000, guid: 2dcdaaa657c9923468c7912b3cfca61f, type: 2}
+  - {fileID: 11400000, guid: aead86b7789f182459eb1814f8711370, type: 2}
   Wave4:
-  - {fileID: 11400000, guid: 1557f895d52accf43b720e06ecdb4d08, type: 2}
-  - {fileID: 11400000, guid: 1557f895d52accf43b720e06ecdb4d08, type: 2}
-  - {fileID: 11400000, guid: 1557f895d52accf43b720e06ecdb4d08, type: 2}
-  - {fileID: 11400000, guid: aed031b8c6ced674dbd6feafa5dd6d13, type: 2}
-  - {fileID: 11400000, guid: aed031b8c6ced674dbd6feafa5dd6d13, type: 2}
+  - {fileID: 11400000, guid: 2dcdaaa657c9923468c7912b3cfca61f, type: 2}
+  - {fileID: 11400000, guid: 2dcdaaa657c9923468c7912b3cfca61f, type: 2}
+  - {fileID: 11400000, guid: 1156211b837ee604591b7da8f6254557, type: 2}
+  - {fileID: 11400000, guid: 28a65a51ee861024d90b28b19e17c50d, type: 2}
+  - {fileID: 11400000, guid: aead86b7789f182459eb1814f8711370, type: 2}
   Wave5:
-  - {fileID: 11400000, guid: 1557f895d52accf43b720e06ecdb4d08, type: 2}
-  - {fileID: 11400000, guid: aed031b8c6ced674dbd6feafa5dd6d13, type: 2}
+  - {fileID: 11400000, guid: 28a65a51ee861024d90b28b19e17c50d, type: 2}
+  - {fileID: 11400000, guid: 6c1c49b459765da4dbe652945258f34e, type: 2}
   - {fileID: 11400000, guid: 038ad7ebacefcd647a7462b5e4c24670, type: 2}
   Wave6: []
   Wave7: []

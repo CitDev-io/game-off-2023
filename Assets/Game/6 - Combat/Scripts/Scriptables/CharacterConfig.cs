@@ -29,7 +29,17 @@ public class CharacterConfig : ScriptableObject
     [SerializeField]
     private Sprite _Portrait;
     public Sprite Portrait => _Portrait;
+    [Tooltip("Skin Sprite")]
+    [SerializeField]
+    private Sprite _Skin;
+    public Sprite Skin => _Skin;
 
+
+    [Header("Abilities")]
+    [Tooltip("Special Attack")]
+    [SerializeField]
+    private AttackType _SpecialAttack;
+    public AttackType SpecialAttack => _SpecialAttack;
 
     [Header("Starting Stats")]
     [Tooltip("Whole number percentage of base damage reduction")]

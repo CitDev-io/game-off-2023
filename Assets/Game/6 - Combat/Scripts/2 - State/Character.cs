@@ -1,6 +1,8 @@
 
 using UnityEngine;
-using Spine.Unity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Character : MonoBehaviour
 {
@@ -15,6 +17,40 @@ public class Character : MonoBehaviour
     public int currentStagger = 0;
     public bool isDead = false;
     public bool IsCurrentCombatant = false;
+    [SerializeField]
+    List<Buff> Buffs = new List<Buff>();
+
+    public bool HasBuff<T>() where T : Buff {
+        return Buffs.Any(buff => buff is T);
+    }
+
+    public void AddBuff(Buff newBuff) {
+        // Check and remove existing buff of the same type
+        Type newBuffType = newBuff.GetType();
+        var existingBuff = Buffs.FirstOrDefault(buff => buff.GetType() == newBuffType);
+        if (existingBuff != null)
+        {
+            Buffs.Remove(existingBuff);
+        }
+
+        // Add the new buff
+        Buffs.Add(newBuff);
+    }
+
+    public void AgeBuffsForPhase(CombatPhase phase) {
+        var buffsToAge = Buffs.Where(buff => buff.AgingPhase == phase);
+        Debug.Log("Age for " + phase.ToString() + " : " + buffsToAge.Count());
+        foreach (var buff in buffsToAge)
+        {
+            buff.Tick();
+        }
+        RemoveAgedBuffs();
+    }
+
+    void RemoveAgedBuffs() {
+        if (Buffs.Count == 0) return;
+        Buffs.RemoveAll(buff => buff.TurnsRemaining < 1);
+    }
 
     public void RestoreStagger() {
         currentStagger = Config.BaseSP;
@@ -60,7 +96,7 @@ public class Character : MonoBehaviour
     }
 
     public int GetRandomDamageRoll() {
-        return Random.Range(Config.BaseAttackMin, Config.BaseAttackMax);
+        return UnityEngine.Random.Range(Config.BaseAttackMin, Config.BaseAttackMax);
     }
 
     public int HandleIncomingAttack(PowerType sourcePowerType, Character source) {
@@ -94,5 +130,19 @@ public class Character : MonoBehaviour
 
     void Die() {
         isDead = true;
+    }
+
+    // dev
+    [ContextMenu("add stun buff")]
+    void GetStunned() {
+        AddBuff(new BuffStunned(this, 1));
+    }
+    [ContextMenu("add multistrike buff")]
+    void GetMultistrike() {
+        AddBuff(new BuffMultistrike(this, 1));
+    }
+    [ContextMenu("add charmed buff")]
+    void GetCharmed() {
+        AddBuff(new BuffCharmed(this, 1));
     }
 }
