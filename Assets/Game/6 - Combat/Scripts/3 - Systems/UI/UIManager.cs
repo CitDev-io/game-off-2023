@@ -10,9 +10,14 @@ public class UIManager : MonoBehaviour
     public GameObject BoonUI;
     EventProvider _eventProvider;
     public UI_AbilitySelection AbilitySelectionUI;
+    public UI_TargetSelection TargetSelectionUI;
+    public UI_TextCrawler TextCrawlUI;
     bool IsSelectingAbility = false;
+    bool IsSelectingTarget = false;
 
-
+    public void TargetSelected(Character target) {
+        _eventProvider.OnInput_CombatantChoseTarget?.Invoke(target);
+    }
     public void AbilitySelected(bool isBasic) {
         _eventProvider.OnInput_CombatantChoseAbility?.Invoke(isBasic);
     }
@@ -38,6 +43,24 @@ public class UIManager : MonoBehaviour
         }
 
         if (
+            IsSelectingTarget && (
+                Input.GetKeyDown(KeyCode.UpArrow)
+                ||
+                Input.GetKeyDown(KeyCode.W)
+        )) {
+            TargetSelectionUI.ToggleUp();
+        }
+
+        if (
+            IsSelectingTarget && (
+                Input.GetKeyDown(KeyCode.DownArrow)
+                ||
+                Input.GetKeyDown(KeyCode.S)
+        )) {
+            TargetSelectionUI.ToggleDown();
+        }
+        
+        if (
             IsSelectingAbility && (
             Input.GetKeyDown(KeyCode.Space)
             ||
@@ -47,47 +70,119 @@ public class UIManager : MonoBehaviour
         )) {
             AbilitySelected(AbilitySelectionUI.CurrentlySelectedisBasic());
         }
+
+        if (
+            IsSelectingTarget && (
+            Input.GetKeyDown(KeyCode.Space)
+            ||
+            Input.GetKeyDown(KeyCode.KeypadEnter)
+            ||
+            Input.GetKeyDown(KeyCode.Return)
+        )) {
+            TargetSelected(TargetSelectionUI.CurrentSelection);
+        }
     }
 
     void SetupHooks() {
-        // _eventProvider.OnCharacterTurnStart += HandleCharacterTurnStart;
         _eventProvider.OnBoonOffer += HandleBoonOffer;
         _eventProvider.OnPhasePrompt += HandlePhasePrompts;
         _eventProvider.OnWaveReady += HandleWaveReady;
+        _eventProvider.OnEligibleTargetsChanged += HandleEligibleTargetsChanged;
+        _eventProvider.OnAbilityExecuted += HandleAbilityExecuted;
     }
 
     void HandleWaveReady() {
         IsPerforming = true;
         AbilitySelectionUI.gameObject.SetActive(false);
-        Debug.Log("******WAVE START");
         IsPerforming = false;
     }
 
     void HandlePhasePrompts(CombatPhase phase, Character combatant) {
+        if (phase == CombatPhase.INIT) {
+            HandleInitPhasePrompt();
+        }
+        if (phase == CombatPhase.CHARACTERTURN_PREFLIGHT) {
+            HandlePreflightPhasePromptForCharacter(combatant);
+        }
         if (phase == CombatPhase.CHARACTERTURN_CHOOSEABILITY) {
-           HandleAbilityStartForCharacter(combatant);
+           HandleAbilityPhasePromptForCharacter(combatant);
         }
         if (phase == CombatPhase.CHARACTERTURN_CHOOSETARGET) {
-            HandleAbilityEndForCharacter();
+            HandleTargetPhasePromptForCharacter(combatant);
+        }
+        if (phase == CombatPhase.CHARACTERTURN_EXECUTION) {
+            HandleExecutionPhasePromptForCharacter(combatant);
         }
     }
 
-    void HandleAbilityEndForCharacter() {
-        IsSelectingAbility = false;
-        AbilitySelectionUI.gameObject.SetActive(false);
+    void HandleInitPhasePrompt() {
+
     }
 
-    void HandleAbilityStartForCharacter(Character combatant) {
-        Debug.Log("**UI SEES " + combatant.Config.Name + " IS STARTING THEIR ABILITY CHOICE**");
+    void HandlePreflightPhasePromptForCharacter(Character combatant) {
+        TextCrawlUI.EnqueueMessage(combatant.Config.Name + "'s turn to act!");
+    }
+
+    void HandleAbilityPhasePromptForCharacter(Character combatant) {
+        TargetSelectionUI.gameObject.SetActive(false);
         if (combatant.Config.TeamType == TeamType.PLAYER) {
+            AbilitySelectionUI.SetSpecialAbilityName(combatant.Config.SpecialAttack.ToString());
             AbilitySelectionUI.ToggleAvailableAbilities(true, combatant.Config.SpecialAttack != AttackType.NONE);
             AbilitySelectionUI.ToggleSelectedAbility(true);
             AbilitySelectionUI.gameObject.SetActive(true);
             IsSelectingAbility = true;
         }
     }
+    void HandleTargetPhasePromptForCharacter(Character combatant) {
+        AbilitySelectionUI.gameObject.SetActive(false);
+        if (combatant.Config.TeamType == TeamType.PLAYER) {
+            IsSelectingAbility = false;
+            IsSelectingTarget = true;
+            TargetSelectionUI.ToggleEligibleTarget(0);
+            AbilitySelectionUI.gameObject.SetActive(false);
+            TargetSelectionUI.gameObject.SetActive(true);
+        }
+    }
+    void HandleExecutionPhasePromptForCharacter(Character combatant) {
+        TargetSelectionUI.gameObject.SetActive(false);
+        AbilitySelectionUI.gameObject.SetActive(false);
+        IsSelectingTarget = false;
+    }
+
+    void HandleAbilityExecuted(ExecutedAbility executedAbility) {
+        string abilityCast = executedAbility.Source.Config.Name + " used " + executedAbility.AttackType.ToString() + " on " + executedAbility.Target.Config.Name;
+        TextCrawlUI.EnqueueMessage(abilityCast);
+
+        foreach(CalculatedDamage dmg in executedAbility.AppliedHealthChanges) {
+            string damageDealt =  dmg.Target.Config.Name + " took " + dmg.DamageToHealth + " damage (" + dmg.DamageToStagger + " stagger)";
+            TextCrawlUI.EnqueueMessage(damageDealt);
+
+            if (dmg.Target.isDead) {
+                string targetDied = dmg.Target.Config.Name + " has been defeated!";
+                TextCrawlUI.EnqueueMessage(targetDied);
+            } else if (dmg.StaggerCrackedByThis) {
+                string staggerCracked = dmg.Target.Config.Name + "'s stagger has been cracked!";
+                TextCrawlUI.EnqueueMessage(staggerCracked);
+            }
+        }
+
+        foreach(AppliedBuff buff in executedAbility.AppliedBuffs) {
+            if (buff.AffectedCharacter.isDead) {
+                continue;
+            }
+            string buffApplied = buff.AffectedCharacter.Config.Name + " has been afflicted by " + buff.Buff.ToString() + "!";
+            TextCrawlUI.EnqueueMessage(buffApplied);
+        }
+
+    }
+
+    void HandleEligibleTargetsChanged(List<Character> targets) {
+        TargetSelectionUI.SetEligibleTargets(targets);
+    }
 
     void HandleBoonOffer() {
+        TargetSelectionUI.gameObject.SetActive(false);
+        AbilitySelectionUI.gameObject.SetActive(false);
         BoonUI.SetActive(true);
     }
 }

@@ -1,29 +1,50 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class StageChoreographer : MonoBehaviour
 {
+    EventProvider _eventProvider;
     public bool IsPerforming = false;
-    // TODO: Probably should be a helper class/factory since this won't always be one-size-fits-all
-    
-    // TODO: Ought to decouple and use events, this isn't the only interested party
-    // public void SpawnEnemyWave(List<CharacterConfig> characters) {
-        
-    // }
 
-
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    void Awake() {
+        _eventProvider = GetComponent<CombatReferee>().eventProvider;
+        SetupHooks();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    void SetupHooks() {
+        _eventProvider.OnPhasePrompt += HandlePhasePrompts;
+        _eventProvider.OnWaveReady += HandleWaveReady;
+        _eventProvider.OnAbilityExecuted += HandleAbilityExecuted;
     }
+
+    void HandleWaveReady() {
+        StartCoroutine(WaitPerformance(1.5f));
+    }
+
+    IEnumerator WaitPerformance(float duration) {
+        IsPerforming = true;
+        yield return new WaitForSeconds(duration);
+        IsPerforming = false;
+    }
+
+    void HandlePhasePrompts(CombatPhase phase, Character combatant) {
+        if (phase == CombatPhase.CHARACTERTURN_EXECUTION) {
+            HandleExecutionPhasePromptForCharacter(combatant);
+        }
+    }
+
+    void HandleExecutionPhasePromptForCharacter(Character combatant) {
+        StartCoroutine(WaitPerformance(2.5f));
+    }
+
+    void HandleAbilityExecuted(ExecutedAbility executedAbility) {
+        foreach(CalculatedDamage dmg in executedAbility.AppliedHealthChanges) {
+            if (dmg.Target.isDead) {
+                dmg.Target.GetComponent<ActorCharacter>().DoDeathPerformance();
+            } else if (dmg.StaggerCrackedByThis) {
+                dmg.Target.GetComponent<ActorCharacter>().DoCrackedPerformance();
+            }
+        }
+    }
+   
 }

@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Spine.Unity;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "CharacterConfig", menuName = "GameOff2023/New Character Configuration")]

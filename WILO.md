@@ -15,3 +15,28 @@
 
 ### Things I'm Thinking About
 - UI and Choreo need to start doing some acting. Let's not wait until the end to have acting breaks and hope UI transitions well.
+
+
+# 11-15-2023
+-------------
+- Now have acting within the phases and acting breaks
+- Text scrawl is working
+- manual selections (ability/target) is working
+- ready for abilities+buffs
+- ability resolution is ready to carve out
+- boon selection is ready to drop in
+- able to do minor performing
+- could really use elemental icons
+- buff icons would be nice
+- how will we "paladin is stunned and cannot act" on the scrawl?
+- god damn. clear path from here. truly.
+- changing ability selection to 3 is gonna be meh. use target for tips
+- if we have multiple targets beyond 6 slots, consider making the 5th one "NEXT >" and "< BACK" and toggle which we are showing
+- maybe decoration for eligible targets? choreo has a hook.
+- UI can subsystem out the text generation/translation of attacks
+- UI should onboard win/lose
+- consider for selector menu items:
+    - tooltip/select-but-dont-choose should show ability info on scrawl
+    - maybe (i) info for tappers
+- tapping a mob when not in choose-target mode should zoom in and give more information, stat sheet
+- ready for Turn Order logic/acting, easy to feed.

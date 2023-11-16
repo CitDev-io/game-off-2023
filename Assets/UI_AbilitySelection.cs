@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UI_AbilitySelection : MonoBehaviour
 {
@@ -12,7 +13,6 @@ public class UI_AbilitySelection : MonoBehaviour
 
    
    public void ToggleAvailableAbilities(bool basic, bool special) {
-    Debug.Log(basic + " " + special);
         BasicAttackBox.SetActive(basic);
         SpecialAttackBox.SetActive(special);
    }
@@ -33,6 +33,10 @@ public class UI_AbilitySelection : MonoBehaviour
             BasicAttackBox.GetComponent<Image>().enabled = false;
             SpecialAttackBox.GetComponent<Image>().enabled = true;
         }
+    }
+
+    public void SetSpecialAbilityName(string name) {
+        SpecialAttackBox.transform.Find("Nameplate").GetComponent<TextMeshProUGUI>().text = name;
     }
 
     public void ToggleAndReportAbility(bool isBasic) {

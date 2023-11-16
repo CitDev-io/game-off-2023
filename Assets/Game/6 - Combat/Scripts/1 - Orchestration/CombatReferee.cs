@@ -50,6 +50,7 @@ public class CombatReferee : MonoBehaviour
     void Start()
     {
         eventProvider.OnInput_CombatantChoseAbility += HandleIncomingCombatantAbilityChoice;
+        eventProvider.OnInput_CombatantChoseTarget += TargetSelected;
         SetupParty();
         SetupWave();
     }
@@ -63,11 +64,18 @@ public class CombatReferee : MonoBehaviour
                 break;
             case CombatPhase.WAVE_SETUP:
                 NextPhase = CombatPhase.CHARACTERTURN_PREFLIGHT;
-
                 break;
             case CombatPhase.CHARACTERTURN_PREFLIGHT:
                 NextPhase = CombatPhase.CHARACTERTURN_CHOOSEABILITY;
-
+                
+                // TODO: This necessary?
+                combatState.CurrentCombatant.TurnStart();
+                
+                if (combatState.CurrentCombatant.Config.TeamType == TeamType.CPU) {
+                    if (combatState.CurrentCombatant.currentStagger == 0) {
+                        combatState.CurrentCombatant.RestoreStagger();
+                    }
+                }
 
                 if (combatState.CurrentCombatant.HasBuff<BuffStunned>()) {
                     NextPhase = CombatPhase.CHARACTERTURN_CLEANUP;
@@ -75,32 +83,34 @@ public class CombatReferee : MonoBehaviour
                 }
                 break;
             case CombatPhase.CHARACTERTURN_CHOOSEABILITY:
-                    if (combatState.CurrentCombatant.Config.TeamType == TeamType.CPU) {
-                        Debug.Log(combatState.CurrentCombatant.gameObject.name + " is a CPU. It is now their turn.");
-                        CombatAwaitingUser = true;
-                        DoCpuTurn();
-                    } else {
-                        CombatAwaitingUser = true;
-                    }
+                CombatAwaitingUser = true;
+                if (combatState.CurrentCombatant.Config.TeamType == TeamType.CPU) {
+                    Debug.Log(combatState.CurrentCombatant.gameObject.name + " is a CPU. It is now their turn.");
+                    DoCpuAbilityChoice();
+                }
                 NextPhase = CombatPhase.CHARACTERTURN_CHOOSETARGET;
                 break;
             case CombatPhase.CHARACTERTURN_CHOOSETARGET:
-                if (combatState.CurrentCombatant.Config.TeamType == TeamType.PLAYER) {
-                    CombatAwaitingUser = true;
+                CombatAwaitingUser = true;
+                if (combatState.CurrentCombatant.Config.TeamType == TeamType.CPU) {
+                    DoCpuTargetChoice();
                 }
                 NextPhase = CombatPhase.CHARACTERTURN_EXECUTION;
                 break;
             case CombatPhase.CHARACTERTURN_EXECUTION:
+                ExecuteAttack();
                 NextPhase = CombatPhase.CHARACTERTURN_CLEANUP;
                 break;
             case CombatPhase.CHARACTERTURN_CLEANUP:
-                NextPhase = CombatPhase.CHARACTERTURN_HANDOFF;
+                // TODO: this necessary?
+                combatState.CurrentCombatant.TurnEnd();
 
                 if (combatState.CurrentCombatant.HasBuff<BuffMultistrike>()) {
                     Debug.Log(combatState.CurrentCombatant.gameObject.name + " - MULTISTRIKE TRIGGER. Adding another turn.");
                     AddCharacterTurnNext(combatState.CurrentCombatant);
                 }
 
+                NextPhase = CombatPhase.CHARACTERTURN_HANDOFF;
                 break;
             case CombatPhase.CHARACTERTURN_HANDOFF:
                 MoveToNextCombatant();
@@ -279,8 +289,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         return transform.Find("Player Field").transform.Find("SpawnPoint" + index.ToString());
     }
 
-    // TODO: Ought to decouple and have a performance here
-    public void ClearStage() {
+    void ClearStage() {
         // make sure there aren't CPUs in the field
         foreach (Transform child in transform) {
             Character checkChar = child.gameObject.GetComponent<Character>();
@@ -378,16 +387,16 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     void PROGRESSBOARD() {
         // Check Win Conditions
         if (gameState.GetAlivePCs().Count == 0) {
+            // TODO: Should trigger an event and let UI Manager handle this.
             Debug.Log("The CPUs have won!");
             LoseUI.SetActive(true);
-            // CleanupOnEndTrigger();
             return;
         } else if (gameState.GetAliveCPUs().Count == 0) {
             if (gameState.WaveNumber == waveProvider.WaveCountInStage(gameState.StageNumber)) {
                 if (gameState.StageNumber == waveProvider.StageCount) {
+                    // TODO: Should trigger an event and let UI Manager handle this.
                     Debug.Log("The PCs have won the game!");
                     WinUI.SetActive(true);
-                    // CleanupOnEndTrigger();
                     return;
                 } else {
                     StageChangeover();
@@ -397,6 +406,17 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
                 WaveChangeStep1();
                 return;
             }
+        }
+    }
+
+    List<Character> GetEligibleTargetsForSelectedAttack() {
+        Character source = combatState.CurrentCombatant;
+        // AttackType ability = combatState.AbilitySelected;
+
+        if (source.Config.TeamType == TeamType.PLAYER) {
+            return gameState.GetAliveCPUs();
+        } else {
+            return gameState.GetAlivePCs();
         }
     }
 
@@ -425,65 +445,86 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
+    void TargetSelected(Character selectedCharacter) {
+        if (CurrentCombatPhase == CombatPhase.CHARACTERTURN_CHOOSETARGET && CombatAwaitingUser) {
+            combatState.TargetSelected = selectedCharacter;
+            CombatAwaitingUser = false;
+        }
+    }
 
     void HandleIncomingCombatantAbilityChoice(bool isBasic) {
         AttackSelected(isBasic ? AttackType.BASICATTACK : combatState.CurrentCombatant.Config.SpecialAttack);
     }
-    // TODO: Probably ref job but involves SkirmishResolver
-    public void ReportCombatantClicked(Character target) {
-        if (target.Config.TeamType == TeamType.CPU && combatState.CurrentCombatant.Config.TeamType == TeamType.PLAYER && CurrentCombatPhase == CombatPhase.CHARACTERTURN_CHOOSETARGET && CombatAwaitingUser) {
-            combatState.TargetSelected = target;
-            ExecuteAttack();
-        }
-    }
 
-    public void AttackSelected(AttackType attack) {
+    void AttackSelected(AttackType attack) {
         if (CurrentCombatPhase == CombatPhase.CHARACTERTURN_CHOOSEABILITY && CombatAwaitingUser) {
             combatState.AbilitySelected = attack;
+            eventProvider.OnEligibleTargetsChanged?.Invoke(
+                GetEligibleTargetsForSelectedAttack()
+            );
             CombatAwaitingUser = false;
         }
     }
 
     // TODO: Totally a SkirmishResolver Job, ref gives more info over though
     void ExecuteAttack() {
+        // this will dry up when we do the ability system
         if (combatState.AbilitySelected == AttackType.BASICATTACK) {
             Debug.Log(combatState.CurrentCombatant.gameObject.name + " attacked " + combatState.TargetSelected.gameObject.name + "!");
-            combatState.TargetSelected.HandleIncomingAttack(combatState.CurrentCombatant.Config.PowerType, combatState.CurrentCombatant);
+            
+            ExecutedAbility executedAbility =  combatState.TargetSelected.HandleIncomingAttack(combatState.CurrentCombatant.Config.PowerType, combatState.CurrentCombatant);
+            eventProvider.OnAbilityExecuted?.Invoke(executedAbility);
         } else {
             Debug.Log(combatState.CurrentCombatant.gameObject.name + " used a special attack on " + combatState.TargetSelected.gameObject.name + "!");
-            combatState.TargetSelected.HandleIncomingAttack(combatState.CurrentCombatant.Config.PowerType, combatState.CurrentCombatant);
-            combatState.TargetSelected.AddBuff(new BuffStunned(combatState.CurrentCombatant, 1));
+            ExecutedAbility executedAbility =  combatState.TargetSelected.HandleIncomingAttack(combatState.CurrentCombatant.Config.PowerType, combatState.CurrentCombatant);
+
+            // TODO : We're assuming it's a stun for now
+            // TODO: for stun its a 75% chance
+            executedAbility.AttackType = AttackType.SHIELDBASH;
+            Buff stunIt = new BuffStunned(combatState.CurrentCombatant, 1);
+            combatState.TargetSelected.AddBuff(stunIt);
+            executedAbility.AppliedBuffs.Add(
+                new AppliedBuff(
+                    combatState.TargetSelected,
+                    stunIt
+                )
+            );
+
+            eventProvider.OnAbilityExecuted?.Invoke(executedAbility);
         }
         CombatAwaitingUser = false;
     }
 
     // TODO: Needs to be resolved by AIStrategy
-    void DoCpuTurn() {
-        StartCoroutine("CpuTurn");
+    void DoCpuAbilityChoice() {
+        StartCoroutine("IECpuChooseAbility");
+    }
+
+    void DoCpuTargetChoice() {
+        StartCoroutine("IECpuChooseTarget");
+    }
+
+
+    IEnumerator IECpuChooseTarget() {
+        yield return new WaitForSeconds(1f);
+        if (combatState.CurrentCombatant.HasBuff<BuffCharmed>()) {
+            TargetSelected(gameState.getRandomCPU());
+        } else {
+            TargetSelected(gameState.getRandomPlayerCharacter());
+        }
     }
 
     // TODO: give to AIStrategy
-    IEnumerator CpuTurn() {
-        if (combatState.CurrentCombatant.Config.TeamType == TeamType.CPU) {
-            if (combatState.CurrentCombatant.currentStagger == 0) {
-                combatState.CurrentCombatant.RestoreStagger();
-            }
-            combatState.CurrentCombatant.TurnStart();
-            yield return new WaitForSeconds(1f);
-            Character target = gameState.getRandomPlayerCharacter();
-
-            if (combatState.CurrentCombatant.HasBuff<BuffCharmed>()) {
-                target = gameState.getRandomCPU();
-            }
-
-            combatState.AbilitySelected = AttackType.BASICATTACK;
-            combatState.TargetSelected = target;
-
-            ExecuteAttack();
-            combatState.CurrentCombatant.TurnEnd();
+    IEnumerator IECpuChooseAbility() {
+        yield return new WaitForSeconds(1f);
+        if (combatState.CurrentCombatant.HasBuff<BuffCharmed>()) {
+            AttackSelected(AttackType.BASICATTACK);
+            yield break;
         }
-        CombatAwaitingUser = false;
+
+        AttackSelected(AttackType.BASICATTACK);
     }
+
     void Update(){
         CheatCodes();
     }

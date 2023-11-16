@@ -25,7 +25,6 @@ public class Character : MonoBehaviour
     }
 
     public void AddBuff(Buff newBuff) {
-        // Check and remove existing buff of the same type
         Type newBuffType = newBuff.GetType();
         var existingBuff = Buffs.FirstOrDefault(buff => buff.GetType() == newBuffType);
         if (existingBuff != null)
@@ -33,7 +32,6 @@ public class Character : MonoBehaviour
             Buffs.Remove(existingBuff);
         }
 
-        // Add the new buff
         Buffs.Add(newBuff);
     }
 
@@ -57,28 +55,35 @@ public class Character : MonoBehaviour
     }
 
     // TODO: Give to SKIRMISH Resolver
-    int CalculateFinalDamage(PowerType sourcePowerType, Character source, int rawDamage, int unmitigatedDamage) {
-        if (Config.TeamType == TeamType.PLAYER) return unmitigatedDamage;
-
-        bool CharacterIsCracked = currentStagger == 0;
-
-        if (CharacterIsCracked) {
-            return unmitigatedDamage;
+    CalculatedDamage CalculateFinalDamage(PowerType sourcePowerType, Character source, int rawDamage, int unmitigatedDamage) {
+        if (Config.BaseSP == 0) {
+            return new CalculatedDamage(
+                this,
+                unmitigatedDamage,
+                0,
+                false
+            );
         }
 
         bool SourceAffectsStagger = sourcePowerType != Config.PowerType;
 
         int DamageDealtToStagger = SourceAffectsStagger ? rawDamage : 0;
 
-        currentStagger = Mathf.Clamp(
-            currentStagger - DamageDealtToStagger,
-            0,
-            currentStagger
+        bool CharacterBeganCracked = currentStagger == 0;
+        bool CharacterIsCracked = currentStagger <= DamageDealtToStagger;
+
+        int FinalDamageToHealth = CharacterIsCracked ?
+            unmitigatedDamage :
+            (int) (unmitigatedDamage / 2f);
+        
+        CalculatedDamage result = new CalculatedDamage(
+            this,
+            FinalDamageToHealth,
+            DamageDealtToStagger,
+            !CharacterBeganCracked && CharacterIsCracked
         );
 
-        int DamageToHealth = (int) (unmitigatedDamage / 2f);
-
-        return DamageToHealth;
+        return result;
     }
 
     public void InitializeMe() {
@@ -99,7 +104,7 @@ public class Character : MonoBehaviour
         return UnityEngine.Random.Range(Config.BaseAttackMin, Config.BaseAttackMax);
     }
 
-    public int HandleIncomingAttack(PowerType sourcePowerType, Character source) {
+    public ExecutedAbility HandleIncomingAttack(PowerType sourcePowerType, Character source) {
         int rawDamage = source.GetRandomDamageRoll();
 
         bool resistantToPowerType = sourcePowerType == Config.PowerType;
@@ -113,10 +118,19 @@ public class Character : MonoBehaviour
             rawDamage
         );
 
-        int FinalDamage = CalculateFinalDamage(sourcePowerType, source, rawDamage, unmitigatedDamage);
+        CalculatedDamage FinalDamage = CalculateFinalDamage(sourcePowerType, source, rawDamage, unmitigatedDamage);
 
-        TakeDamage(FinalDamage);
-        return FinalDamage;
+        TakeDamage(FinalDamage.DamageToHealth);
+        TakeStagger(FinalDamage.DamageToStagger);
+
+        ExecutedAbility e = new ExecutedAbility(
+            source,
+            this,
+            AttackType.BASICATTACK,
+            new List<AppliedBuff>(),
+            new List<CalculatedDamage>{FinalDamage}
+        );
+        return e;
     }
 
 
@@ -125,6 +139,13 @@ public class Character : MonoBehaviour
         if (currentHealth <= 0) {
             currentHealth = 0;
             Die();
+        }
+    }
+
+    void TakeStagger(int Damage) {
+        currentStagger -= Damage;
+        if (currentStagger < 0) {
+            currentStagger = 0;
         }
     }
 
