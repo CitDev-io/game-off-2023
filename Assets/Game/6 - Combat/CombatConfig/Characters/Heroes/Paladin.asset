@@ -23,3 +23,5 @@ MonoBehaviour:
   _BaseSP: 0
   _BaseAttackMin: 20
   _BaseAttackMax: 100
+  _BaseSpecialMin: 20
+  _BaseSpecialMax: 100

@@ -35,8 +35,8 @@ public class CharacterConfig : ScriptableObject
     [Header("Abilities")]
     [Tooltip("Special Attack")]
     [SerializeField]
-    private AttackType _SpecialAttack;
-    public AttackType SpecialAttack => _SpecialAttack;
+    private UserAbilitySelection _SpecialAttack;
+    public UserAbilitySelection SpecialAttack => _SpecialAttack;
 
     [Header("Starting Stats")]
     [Tooltip("Whole number percentage of base damage reduction")]
@@ -63,4 +63,14 @@ public class CharacterConfig : ScriptableObject
     [SerializeField]
     private int _BaseAttackMax = 0;
     public int BaseAttackMax => _BaseAttackMax;
+
+    [Tooltip("Base Special Minimum Damage")]
+    [SerializeField]
+    private int _BaseSpecialMin = 0;
+    public int BaseSpecialMin => _BaseSpecialMin;
+
+    [Tooltip("Base Special Maximum Damage")]
+    [SerializeField]
+    private int _BaseSpecialMax = 0;
+    public int BaseSpecialMax => _BaseSpecialMax;
 }

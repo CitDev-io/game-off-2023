@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,12 +8,14 @@ public abstract class Buff
     public Sprite PortraitArt { get; protected set; }
     public int TurnsRemaining { get; private set; }
     public Character Source { get; protected set; }
+    public Character Target { get; protected set; }
     // i suspect this needs to be preflight or cleanup only!
     public CombatPhase AgingPhase { get; protected set; }
 
-    protected Buff(Character src, int duration)
+    protected Buff(Character src, Character tgt, int duration)
     {
         Source = src;
+        Target = tgt;
         TurnsRemaining = duration;
     }
 
@@ -25,4 +26,6 @@ public abstract class Buff
             TurnsRemaining--;
         }
     }
+
+    public virtual ExecutedAbility ResolvePreflightEffects(){ return null; }
 }

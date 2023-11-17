@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using System.Numerics;
 
 public class CombatReferee : MonoBehaviour
 {  
@@ -77,9 +76,12 @@ public class CombatReferee : MonoBehaviour
                     }
                 }
 
-                if (combatState.CurrentCombatant.HasBuff<BuffStunned>()) {
+                ResolvePreflightBuffEffectsForCombatant(combatState.CurrentCombatant);
+
+                bool IsStunned = combatState.CurrentCombatant.HasBuff<BuffStunned>();
+                bool SkipToCleanup = IsStunned || combatState.CurrentCombatant.isDead;
+                if (SkipToCleanup) {
                     NextPhase = CombatPhase.CHARACTERTURN_CLEANUP;
-                    Debug.Log(combatState.CurrentCombatant.gameObject.name + " - Stunned and cannot act.");
                 }
                 break;
             case CombatPhase.CHARACTERTURN_CHOOSEABILITY:
@@ -107,13 +109,13 @@ public class CombatReferee : MonoBehaviour
 
                 if (combatState.CurrentCombatant.HasBuff<BuffMultistrike>()) {
                     Debug.Log(combatState.CurrentCombatant.gameObject.name + " - MULTISTRIKE TRIGGER. Adding another turn.");
-                    AddCharacterTurnNext(combatState.CurrentCombatant);
+                    combatState.AddCharacterTurnNext(combatState.CurrentCombatant);
                 }
 
                 NextPhase = CombatPhase.CHARACTERTURN_HANDOFF;
                 break;
             case CombatPhase.CHARACTERTURN_HANDOFF:
-                MoveToNextCombatant();
+                combatState.MoveToNextCombatant();
                 NextPhase = CombatPhase.CHARACTERTURN_PREFLIGHT;
                 break;
             default:
@@ -184,6 +186,17 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         return CombatResult.IN_PROGRESS;
     }
 
+    void ResolvePreflightBuffEffectsForCombatant(Character combatant) {
+        List<ExecutedAbility> abilityEffects = combatant
+            .Buffs
+            .Select(buff => buff.ResolvePreflightEffects())
+            .Where(ability => ability != null)
+            .ToList();
+
+        foreach (ExecutedAbility ability in abilityEffects) {
+            eventProvider.OnAbilityExecuted?.Invoke(ability);
+        }
+    }
 
 
 
@@ -234,7 +247,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
     void SetupWave() {
         // make sure the queue is empty
-        combatState.TurnOrder.Clear();
+        combatState.ClearTurnOrder();
 
         // TODO: orchestrate through stagechoreo
         ClearStage();
@@ -250,7 +263,6 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         for (var i=0; i < enemiesToMake.Count; i++) {
             // create game object
             GameObject newEnemy = Instantiate(CharacterPuckPrefab);
-            Debug.Log(GetSpawnPointByIndex(i).position);
 
             // register in game state
             gameState.combatants.Add(newEnemy.GetComponent<Character>());
@@ -272,7 +284,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         SeedCombatQueue();
 
         // set up current combatant
-        MoveToNextCombatant();
+        combatState.MoveToNextCombatant();
 
         eventProvider.OnWaveReady?.Invoke();
         // let the phase driver run this
@@ -306,7 +318,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         List<Character> shuffledCombatants = gameState.combatants.OrderBy(combatant => Random.Range(0, 100)).ToList();
         foreach(Character combatant in shuffledCombatants)
         {
-            combatState.TurnOrder.Enqueue(combatant);
+            combatState.AddCharacterToTurnOrder(combatant);
         }
     }
 
@@ -315,7 +327,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         List<Character> PCs = gameState.GetAllPCs();
         foreach (Character pc in PCs) {
             if (pc.isDead) {
-                combatState.TurnOrder.Enqueue(pc);
+                combatState.AddCharacterToTurnOrder(pc);
             }
             pc.currentHealth = pc.Config.BaseHP;
             pc.isDead = false;
@@ -380,11 +392,6 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
-    void PurgeDeadCombatantsFromQueue() {
-        List<Character> combatantsToRemove = combatState.TurnOrder.ToList().FindAll(combatant => combatant.isDead);
-        combatState.TurnOrder = new Queue<Character>(combatState.TurnOrder.ToList().FindAll(combatant => !combatant.isDead));
-    }
-
     void PROGRESSBOARD() {
         // Check Win Conditions
         if (gameState.GetAlivePCs().Count == 0) {
@@ -412,7 +419,6 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
     List<Character> GetEligibleTargetsForSelectedAttack() {
         Character source = combatState.CurrentCombatant;
-        // AttackType ability = combatState.AbilitySelected;
 
         if (source.Config.TeamType == TeamType.PLAYER) {
             return gameState.GetAliveCPUs();
@@ -420,31 +426,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
             return gameState.GetAlivePCs();
         }
     }
-
-    void AddCharacterTurnNext(Character character) {
-        Queue<Character> newQueue = new Queue<Character>();
-        newQueue.Enqueue(character);
-        foreach (Character combatant in combatState.TurnOrder) {
-            newQueue.Enqueue(combatant);
-        }
-        combatState.TurnOrder = newQueue;
-    }
-
-    void MoveToNextCombatant() {
-        PurgeDeadCombatantsFromQueue();
-        if (combatState.CurrentCombatant != null) combatState.CurrentCombatant.TurnEnd();
-
-        // TODO: can prob just do the pop on the combat state
-        combatState.CurrentCombatant = combatState.TurnOrder.Dequeue();
-
-        // TODO: Should not use this event, right?
-        eventProvider.OnCharacterTurnStart?.Invoke(combatState.CurrentCombatant);
-
-        combatState.CurrentCombatant.TurnStart();
-        if (!combatState.TurnOrder.Contains(combatState.CurrentCombatant)){
-            combatState.TurnOrder.Enqueue(combatState.CurrentCombatant);
-        }
-    }
+    
 
     void TargetSelected(Character selectedCharacter) {
         if (CurrentCombatPhase == CombatPhase.CHARACTERTURN_CHOOSETARGET && CombatAwaitingUser) {
@@ -454,12 +436,13 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     }
 
     void HandleIncomingCombatantAbilityChoice(bool isBasic) {
-        AttackSelected(isBasic ? AttackType.BASICATTACK : combatState.CurrentCombatant.Config.SpecialAttack);
+        AttackSelected(isBasic ? UserAbilitySelection.BASICATTACK : combatState.CurrentCombatant.Config.SpecialAttack);
     }
 
-    void AttackSelected(AttackType attack) {
+    void AttackSelected(UserAbilitySelection attack) {
         if (CurrentCombatPhase == CombatPhase.CHARACTERTURN_CHOOSEABILITY && CombatAwaitingUser) {
-            combatState.AbilitySelected = attack;
+            combatState.AbilitySelected = AttackTypeToAbility
+            .Lookup(attack);
             eventProvider.OnEligibleTargetsChanged?.Invoke(
                 GetEligibleTargetsForSelectedAttack()
             );
@@ -467,32 +450,9 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
-    // TODO: Totally a SkirmishResolver Job, ref gives more info over though
     void ExecuteAttack() {
-        // this will dry up when we do the ability system
-        if (combatState.AbilitySelected == AttackType.BASICATTACK) {
-            Debug.Log(combatState.CurrentCombatant.gameObject.name + " attacked " + combatState.TargetSelected.gameObject.name + "!");
-            
-            ExecutedAbility executedAbility =  combatState.TargetSelected.HandleIncomingAttack(combatState.CurrentCombatant.Config.PowerType, combatState.CurrentCombatant);
-            eventProvider.OnAbilityExecuted?.Invoke(executedAbility);
-        } else {
-            Debug.Log(combatState.CurrentCombatant.gameObject.name + " used a special attack on " + combatState.TargetSelected.gameObject.name + "!");
-            ExecutedAbility executedAbility =  combatState.TargetSelected.HandleIncomingAttack(combatState.CurrentCombatant.Config.PowerType, combatState.CurrentCombatant);
-
-            // TODO : We're assuming it's a stun for now
-            // TODO: for stun its a 75% chance
-            executedAbility.AttackType = AttackType.SHIELDBASH;
-            Buff stunIt = new BuffStunned(combatState.CurrentCombatant, 1);
-            combatState.TargetSelected.AddBuff(stunIt);
-            executedAbility.AppliedBuffs.Add(
-                new AppliedBuff(
-                    combatState.TargetSelected,
-                    stunIt
-                )
-            );
-
-            eventProvider.OnAbilityExecuted?.Invoke(executedAbility);
-        }
+        ExecutedAbility completedAbility = combatState.ExecuteSelectedAbility();
+        eventProvider.OnAbilityExecuted?.Invoke(completedAbility);
         CombatAwaitingUser = false;
     }
 
@@ -519,11 +479,11 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     IEnumerator IECpuChooseAbility() {
         yield return new WaitForSeconds(1f);
         if (combatState.CurrentCombatant.HasBuff<BuffCharmed>()) {
-            AttackSelected(AttackType.BASICATTACK);
+            AttackSelected(UserAbilitySelection.BASICATTACK);
             yield break;
         }
 
-        AttackSelected(AttackType.BASICATTACK);
+        AttackSelected(UserAbilitySelection.BASICATTACK);
     }
 
     void Update(){

@@ -17,8 +17,11 @@ MonoBehaviour:
   _TeamType: 0
   _Portrait: {fileID: 0}
   _Skin: {fileID: 21300000, guid: 45e9f32f100d39a43b4ece54333ea101, type: 3}
+  _SpecialAttack: 0
   _BaseMitigation: 0
   _BaseHP: 120
   _BaseSP: 0
   _BaseAttackMin: 10
   _BaseAttackMax: 50
+  _BaseSpecialMin: 10
+  _BaseSpecialMax: 50

@@ -10,7 +10,6 @@ public delegate void ExecutedAbilityDelegate(ExecutedAbility executedAbility);
 
 public class EventProvider
 {
-    public CharacterDelegate OnCharacterTurnStart;
     public CombatPhaseDelegate OnPhaseAwake;
     public CombatPhaseDelegate OnPhasePrompt;
     public CombatPhaseDelegate OnPhaseExiting;

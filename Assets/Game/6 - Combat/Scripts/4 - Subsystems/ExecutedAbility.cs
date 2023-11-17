@@ -2,31 +2,41 @@ using System.Collections.Generic;
 
 public class ExecutedAbility
 {
-    public ExecutedAbility(Character source, Character target, AttackType attackType, List<AppliedBuff> appliedBuffs, List<CalculatedDamage> appliedHealthChanges)
+    public ExecutedAbility(Character source, Character target, Ability ability)
     {
         Source = source;
         Target = target;
-        AttackType = attackType;
-        AppliedBuffs = appliedBuffs;
-        AppliedHealthChanges = appliedHealthChanges;
+        Ability = ability;
     }
     
     public Character Source;
     public Character Target;
-    public AttackType AttackType = AttackType.NONE;
+    public Ability Ability;
 
     public List<CalculatedDamage> AppliedHealthChanges = new List<CalculatedDamage>();
 
-    public List<AppliedBuff> AppliedBuffs = new List<AppliedBuff>();
+    public List<Buff> AppliedBuffs = new List<Buff>();
 
-}
+    public ExecutedAbility Commit() {
+        foreach (CalculatedDamage damage in AppliedHealthChanges) {
+            Target.TakeDamage(damage.DamageToHealth);
+            Target.TakeStagger(damage.DamageToStagger);
+        }
 
-public class AppliedBuff {
-    public AppliedBuff(Character affectedCharacter, Buff buff)
-    {
-        AffectedCharacter = affectedCharacter;
-        Buff = buff;
+        foreach (Buff buff in AppliedBuffs) {
+            buff.Target.AddBuff(buff);
+        }
+
+        return this;
     }
-    public Character AffectedCharacter;
-    public Buff Buff;
+
+    public ExecutedAbility Add(Buff buff) {
+        AppliedBuffs.Add(buff);
+        return this;
+    }
+
+    public ExecutedAbility Add(CalculatedDamage dmg) {
+        AppliedHealthChanges.Add(dmg);
+        return this;
+    }
 }

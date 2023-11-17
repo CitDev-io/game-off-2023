@@ -127,7 +127,7 @@ public class UIManager : MonoBehaviour
         TargetSelectionUI.gameObject.SetActive(false);
         if (combatant.Config.TeamType == TeamType.PLAYER) {
             AbilitySelectionUI.SetSpecialAbilityName(combatant.Config.SpecialAttack.ToString());
-            AbilitySelectionUI.ToggleAvailableAbilities(true, combatant.Config.SpecialAttack != AttackType.NONE);
+            AbilitySelectionUI.ToggleAvailableAbilities(true, combatant.Config.SpecialAttack != UserAbilitySelection.NONE);
             AbilitySelectionUI.ToggleSelectedAbility(true);
             AbilitySelectionUI.gameObject.SetActive(true);
             IsSelectingAbility = true;
@@ -150,7 +150,7 @@ public class UIManager : MonoBehaviour
     }
 
     void HandleAbilityExecuted(ExecutedAbility executedAbility) {
-        string abilityCast = executedAbility.Source.Config.Name + " used " + executedAbility.AttackType.ToString() + " on " + executedAbility.Target.Config.Name;
+        string abilityCast = executedAbility.Source.Config.Name + " used " + executedAbility.Ability.Name + " on " + executedAbility.Target.Config.Name;
         TextCrawlUI.EnqueueMessage(abilityCast);
 
         foreach(CalculatedDamage dmg in executedAbility.AppliedHealthChanges) {
@@ -166,11 +166,11 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        foreach(AppliedBuff buff in executedAbility.AppliedBuffs) {
-            if (buff.AffectedCharacter.isDead) {
+        foreach(Buff buff in executedAbility.AppliedBuffs) {
+            if (buff.Target.isDead) {
                 continue;
             }
-            string buffApplied = buff.AffectedCharacter.Config.Name + " has been afflicted by " + buff.Buff.ToString() + "!";
+            string buffApplied = buff.Target.Config.Name + " has been afflicted by " + buff.Name + "!";
             TextCrawlUI.EnqueueMessage(buffApplied);
         }
 
@@ -183,6 +183,6 @@ public class UIManager : MonoBehaviour
     void HandleBoonOffer() {
         TargetSelectionUI.gameObject.SetActive(false);
         AbilitySelectionUI.gameObject.SetActive(false);
-        BoonUI.SetActive(true);
+        BoonUI.GetComponent<UI_BoonMenuManager>().DoAppearPerformance();
     }
 }
