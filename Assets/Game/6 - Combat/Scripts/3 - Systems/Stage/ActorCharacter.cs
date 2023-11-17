@@ -83,4 +83,19 @@ public class ActorCharacter : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         _skin.color = new Color(1f, 1f, 1f, 1f);
     }
+
+    public void DoRevivedPerformance() {
+        gameObject.SetActive(true);
+        StartCoroutine(RevivedPerformance());
+    }
+
+    IEnumerator RevivedPerformance() {
+        float alpha = _skin.color.a;
+        while (alpha < 0.95f) {
+            _skin.color = new Color(1f, 1f, 1f, alpha);
+            alpha += DEATH_FADE_INCREMENT;
+            yield return new WaitForSeconds(DEATH_FADE_SPEED);
+        }
+        _skin.color = Color.white;
+    }
 }

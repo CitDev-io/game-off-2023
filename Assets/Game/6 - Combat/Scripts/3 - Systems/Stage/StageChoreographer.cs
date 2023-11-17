@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class StageChoreographer : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class StageChoreographer : MonoBehaviour
         _eventProvider.OnPhasePrompt += HandlePhasePrompts;
         _eventProvider.OnWaveReady += HandleWaveReady;
         _eventProvider.OnAbilityExecuted += HandleAbilityExecuted;
+        _eventProvider.OnCharacterRevived += HandleCharacterRevived;
     }
 
     void HandleWaveReady() {
@@ -45,6 +47,10 @@ public class StageChoreographer : MonoBehaviour
                 dmg.Target.GetComponent<ActorCharacter>().DoCrackedPerformance();
             }
         }
+    }
+
+    void HandleCharacterRevived(Character combatant) {
+        combatant.GetComponent<ActorCharacter>().DoRevivedPerformance();
     }
    
 }

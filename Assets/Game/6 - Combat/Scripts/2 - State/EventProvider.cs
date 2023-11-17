@@ -21,4 +21,5 @@ public class EventProvider
     public CharacterDelegate OnInput_CombatantChoseTarget;
     public CharactersDelegate OnEligibleTargetsChanged;
     public ExecutedAbilityDelegate OnAbilityExecuted;
+    public CharacterDelegate OnCharacterRevived;
 }

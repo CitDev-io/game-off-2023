@@ -319,6 +319,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
             }
             pc.currentHealth = pc.Config.BaseHP;
             pc.isDead = false;
+            eventProvider.OnCharacterRevived?.Invoke(pc);
         }
     }
 
