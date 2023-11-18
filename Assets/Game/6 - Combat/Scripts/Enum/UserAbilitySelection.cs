@@ -4,5 +4,8 @@ public enum UserAbilitySelection {
     SHIELDBASH,
     SNEAKATTACK,
     CURSEOFSTRENGTH,
-    BLESSING
+    BLESSING,
+    DEADLYPOUNCE,
+    CELESTIALBARRAGE,
+    POLYMORPH
 }

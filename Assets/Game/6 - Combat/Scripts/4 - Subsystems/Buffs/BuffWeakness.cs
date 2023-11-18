@@ -1,4 +1,3 @@
-
 public class BuffWeakness : Buff
 {
     public BuffWeakness(Character src, Character tgt, int duration) : base(src, tgt, duration)

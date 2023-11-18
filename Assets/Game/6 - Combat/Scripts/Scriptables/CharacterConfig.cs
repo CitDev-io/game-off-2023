@@ -37,6 +37,13 @@ public class CharacterConfig : ScriptableObject
     [SerializeField]
     private UserAbilitySelection _SpecialAttack;
     public UserAbilitySelection SpecialAttack => _SpecialAttack;
+    
+    [Tooltip("Ultimate Ability")]
+    [SerializeField]
+    private UserAbilitySelection _UltimateAbility;
+    public UserAbilitySelection UltimateAbility => _UltimateAbility;
+
+    
 
     [Header("Starting Stats")]
     [Tooltip("Whole number percentage of base damage reduction")]

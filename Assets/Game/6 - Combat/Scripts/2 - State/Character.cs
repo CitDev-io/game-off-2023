@@ -69,10 +69,16 @@ public class Character : MonoBehaviour
     }
 
     public int GetBasicAttackRoll() {
+        if (HasBuff<BuffPolymorph>()) {
+            return 1;
+        }
         return UnityEngine.Random.Range(Config.BaseAttackMin, Config.BaseAttackMax);
     }
 
     public int GetSpecialAttackRoll() {
+        if (HasBuff<BuffPolymorph>()) {
+            return 1;
+        }
         return UnityEngine.Random.Range(Config.BaseSpecialMin, Config.BaseSpecialMax);
     }
 

@@ -45,7 +45,9 @@ public abstract class BaseAbilityResolver
     }
 
     protected bool IsVictimResistantToPowerType(Character victim, PowerType element) {
-        // TODO: Victim may also have buffs!
+        if (victim.HasBuff<BuffElementalWeakness>()) {
+            return false;
+        }
         bool resistantToPowerType = victim.Config.PowerType == element;
         return resistantToPowerType;
     }

@@ -19,8 +19,8 @@ public class ExecutedAbility
 
     public ExecutedAbility Commit() {
         foreach (CalculatedDamage damage in AppliedHealthChanges) {
-            Target.TakeDamage(damage.DamageToHealth);
-            Target.TakeStagger(damage.DamageToStagger);
+            damage.Target.TakeDamage(damage.DamageToHealth);
+            damage.Target.TakeStagger(damage.DamageToStagger);
         }
 
         foreach (Buff buff in AppliedBuffs) {

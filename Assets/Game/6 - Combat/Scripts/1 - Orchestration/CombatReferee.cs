@@ -437,8 +437,21 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
-    void HandleIncomingCombatantAbilityChoice(bool isBasic) {
-        AttackSelected(isBasic ? UserAbilitySelection.BASICATTACK : combatState.CurrentCombatant.Config.SpecialAttack);
+    void HandleIncomingCombatantAbilityChoice(AbilityCategory category) {
+        UserAbilitySelection abilityChosen;
+        switch(category) {
+            case AbilityCategory.SPECIALATTACK:
+                abilityChosen = combatState.CurrentCombatant.Config.SpecialAttack;
+                break;
+            case AbilityCategory.ULTIMATE:
+                abilityChosen = combatState.CurrentCombatant.Config.UltimateAbility;
+                break;
+            case AbilityCategory.BASICATTACK:
+            default:
+                abilityChosen = UserAbilitySelection.BASICATTACK;
+                break;
+        }
+        AttackSelected(abilityChosen);
     }
 
     void AttackSelected(UserAbilitySelection attack) {

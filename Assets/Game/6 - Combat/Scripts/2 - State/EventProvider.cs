@@ -6,6 +6,7 @@ public delegate void CharactersDelegate(List<Character> character);
 public delegate void CombatPhaseDelegate(CombatPhase phase, Character combatant);
 public delegate void StandardDelegate();
 public delegate void BoolDelegate(bool boolean);
+public delegate void AbilityCategoryDelegate(AbilityCategory category);
 public delegate void ExecutedAbilityDelegate(ExecutedAbility executedAbility);
 
 public class EventProvider
@@ -16,7 +17,7 @@ public class EventProvider
     public StandardDelegate OnCombatHasEnded;
     public StandardDelegate OnBoonOffer;
     public StandardDelegate OnWaveReady;
-    public BoolDelegate OnInput_CombatantChoseAbility;
+    public AbilityCategoryDelegate OnInput_CombatantChoseAbility;
     public CharacterDelegate OnInput_CombatantChoseTarget;
     public CharactersDelegate OnEligibleTargetsChanged;
     public ExecutedAbilityDelegate OnAbilityExecuted;

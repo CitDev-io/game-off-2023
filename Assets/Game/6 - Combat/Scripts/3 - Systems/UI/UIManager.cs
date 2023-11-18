@@ -18,8 +18,8 @@ public class UIManager : MonoBehaviour
     public void TargetSelected(Character target) {
         _eventProvider.OnInput_CombatantChoseTarget?.Invoke(target);
     }
-    public void AbilitySelected(bool isBasic) {
-        _eventProvider.OnInput_CombatantChoseAbility?.Invoke(isBasic);
+    public void AbilitySelected(AbilityCategory category) {
+        _eventProvider.OnInput_CombatantChoseAbility?.Invoke(category);
     }
 
     void Awake()
@@ -34,12 +34,17 @@ public class UIManager : MonoBehaviour
             Input.GetKeyDown(KeyCode.UpArrow)
             ||
             Input.GetKeyDown(KeyCode.W)
+        )) {
+            AbilitySelectionUI.ToggleUp();
+        }
+
+        if (
+            IsSelectingAbility && (
+            Input.GetKeyDown(KeyCode.DownArrow)
             ||
             Input.GetKeyDown(KeyCode.S)
-            ||
-            Input.GetKeyDown(KeyCode.DownArrow)
         )) {
-            AbilitySelectionUI.Toggle();
+            AbilitySelectionUI.ToggleDown();
         }
 
         if (
@@ -68,7 +73,7 @@ public class UIManager : MonoBehaviour
             ||
             Input.GetKeyDown(KeyCode.Return)
         )) {
-            AbilitySelected(AbilitySelectionUI.CurrentlySelectedisBasic());
+            AbilitySelected(AbilitySelectionUI.CurrentlySelected());
         }
 
         if (
@@ -126,9 +131,18 @@ public class UIManager : MonoBehaviour
     void HandleAbilityPhasePromptForCharacter(Character combatant) {
         TargetSelectionUI.gameObject.SetActive(false);
         if (combatant.Config.TeamType == TeamType.PLAYER) {
+            List<AbilityCategory> availableAbilities = new List<AbilityCategory>(){ 
+                AbilityCategory.BASICATTACK
+            };
+            if (combatant.Config.SpecialAttack != UserAbilitySelection.NONE) {
+                availableAbilities.Add(AbilityCategory.SPECIALATTACK);
+            };
+            if (combatant.Config.UltimateAbility != UserAbilitySelection.NONE) {
+                availableAbilities.Add(AbilityCategory.ULTIMATE);
+            };
             AbilitySelectionUI.SetSpecialAbilityName(combatant.Config.SpecialAttack.ToString());
-            AbilitySelectionUI.ToggleAvailableAbilities(true, combatant.Config.SpecialAttack != UserAbilitySelection.NONE);
-            AbilitySelectionUI.ToggleSelectedAbility(true);
+            AbilitySelectionUI.SetAvailableAbilities(availableAbilities);
+            AbilitySelectionUI.ToggleToSelectedAbility((int) AbilityCategory.BASICATTACK);
             AbilitySelectionUI.gameObject.SetActive(true);
             IsSelectingAbility = true;
         }
