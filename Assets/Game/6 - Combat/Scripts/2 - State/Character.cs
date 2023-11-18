@@ -77,8 +77,15 @@ public class Character : MonoBehaviour
     }
 
     public void TakeDamage(int Damage) {
-        currentHealth -= Damage;
-        if (currentHealth <= 0) {
+        bool startedDead = currentHealth == 0;
+
+        currentHealth = Math.Clamp(
+            currentHealth - Damage,
+            0,
+            Config.BaseHP
+        );
+
+        if (currentHealth == 0 && !startedDead) {
             currentHealth = 0;
             Die();
         }

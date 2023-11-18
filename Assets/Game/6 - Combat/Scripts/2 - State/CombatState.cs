@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class CombatState
 {
-    public Ability AbilitySelected;
+    public BaseAbilityResolver AbilitySelected;
     public Character TargetSelected;
     public Character CurrentCombatant;
     Queue<Character> TurnOrder = new Queue<Character>();
+    public List<Character> FullCombatantList = new List<Character>();
 
     public Queue<Character> GetTurnOrder() {
         return TurnOrder;
@@ -44,11 +46,51 @@ public class CombatState
         TurnOrder = newQueue;
     }
 
+    public void ClearSelections() {
+        AbilitySelected = null;
+        TargetSelected = null;
+    }
+
     public ExecutedAbility ExecuteSelectedAbility() {
+        List<Character> CharactersVisibleToAbilityResolver = GetEligibleTargetsForSelectedAbility();
+
+        if (AbilitySelected.TargetScope == EligibleTargetScopeType.NONE) {
+            CharactersVisibleToAbilityResolver = FullCombatantList;
+        }
+
         return AbilitySelected
             .Resolve(
                 CurrentCombatant,
-                TargetSelected
+                TargetSelected,
+                CharactersVisibleToAbilityResolver
             );
+    }
+
+    public List<Character> GetEligibleTargetsForSelectedAbility() {
+        return CombatantListFilter.ByScope(
+            FullCombatantList,
+            CurrentCombatant,
+            AbilitySelected.TargetScope
+        );
+    }
+
+    public List<Character> GetAlivePCs() {
+        return FullCombatantList.FindAll(combatant => combatant.Config.TeamType == TeamType.PLAYER && !combatant.isDead);
+    }
+
+    public List<Character> GetAliveCPUs() {
+        return FullCombatantList.FindAll(combatant => combatant.Config.TeamType == TeamType.CPU && !combatant.isDead);
+    }
+
+    public List<Character> GetDefeatedPCs() {
+        return FullCombatantList.FindAll(combatant => combatant.Config.TeamType == TeamType.PLAYER && combatant.isDead);
+    }
+
+    public List<Character> GetDefeatedCPUs() {
+        return FullCombatantList.FindAll(combatant => combatant.Config.TeamType == TeamType.CPU && combatant.isDead);
+    }
+
+    public List<Character> GetAllPCs() {
+        return FullCombatantList.FindAll(combatant => combatant.Config.TeamType == TeamType.PLAYER);
     }
 }

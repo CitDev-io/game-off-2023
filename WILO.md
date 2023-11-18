@@ -40,3 +40,10 @@
     - maybe (i) info for tappers
 - tapping a mob when not in choose-target mode should zoom in and give more information, stat sheet
 - ready for Turn Order logic/acting, easy to feed.
+
+
+
+11/17/2023
+-------------
+- buff doesn't need an agingphase, likely. keep an eye out. cut when ready
+- buff application not using pretty name!

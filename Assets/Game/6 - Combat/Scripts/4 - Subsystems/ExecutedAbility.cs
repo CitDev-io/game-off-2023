@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class ExecutedAbility
 {
-    public ExecutedAbility(Character source, Character target, Ability ability)
+    public ExecutedAbility(Character source, Character target, BaseAbilityResolver ability)
     {
         Source = source;
         Target = target;
@@ -11,7 +11,7 @@ public class ExecutedAbility
     
     public Character Source;
     public Character Target;
-    public Ability Ability;
+    public BaseAbilityResolver Ability;
 
     public List<CalculatedDamage> AppliedHealthChanges = new List<CalculatedDamage>();
 

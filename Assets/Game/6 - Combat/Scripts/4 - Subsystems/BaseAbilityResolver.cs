@@ -1,20 +1,28 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Ability
+public abstract class BaseAbilityResolver
 {
     public string Name { get; protected set; }
     public string Description { get; protected set; }
     public Sprite PortraitArt { get; protected set; }
+    public EligibleTargetScopeType TargetScope { get; protected set; }
 
-    public abstract ExecutedAbility GetUncommitted(Character source, Character target);
+    public abstract ExecutedAbility GetUncommitted(Character source, Character target, List<Character> eligibleTargets = null);
 
-    public ExecutedAbility Resolve(Character source, Character target) {
-        ExecutedAbility executedAbility = GetUncommitted(source, target);
+    // don't change this signature. would be nice to not pass null when you know it's safe, but do it anyway
+    public ExecutedAbility Resolve(Character source, Character target, List<Character> eligibleTargets) {
+        ExecutedAbility executedAbility = GetUncommitted(source, target, eligibleTargets);
         return executedAbility.Commit();
     }
 
     protected int GetUnmitigatedDamageFromRaw(int rawDamage, Character target, PowerType effectPowerType) {
+        // mitigation is zero if rawDamage is negative, this is a heal
+        if (rawDamage < 0) {
+            return rawDamage;
+        }
+
         int mitigationPower = GetFullVictimMitigationPower(target, effectPowerType);
 
         int mitigatedDamage = (int) (rawDamage * (mitigationPower / 100f));
@@ -42,39 +50,63 @@ public abstract class Ability
         return resistantToPowerType;
     }
 
+    protected PowerType GetPowerTypeOfCharacter(Character character) {
+        return character.Config.PowerType;
+    }
+
     protected CalculatedDamage CalculateFinalDamage(
+        Character source,
         Character victim,
-        PowerType effectPowerType,
         int rawDamage
     ) {
-        int unmitigatedDamage = GetUnmitigatedDamageFromRaw(rawDamage, victim, effectPowerType);
+        int sourceRawDamage = rawDamage;
+
+        if (source.HasBuff<BuffWeakness>()) {
+            sourceRawDamage = (int) (sourceRawDamage * 0.5f);
+        }
+
+        if (source.HasBuff<BuffStrengthen>()) {
+            sourceRawDamage *= 2;
+        }
+
+        int unmitigatedDamage = GetUnmitigatedDamageFromRaw(
+            sourceRawDamage,
+            victim,
+            GetPowerTypeOfCharacter(source)
+        );
         if (victim.Config.BaseSP == 0) {
             return new CalculatedDamage(
                 victim,
                 unmitigatedDamage,
                 0,
-                rawDamage,
+                sourceRawDamage,
                 false
             );
         }
 
-        bool SourceAffectsStagger = !IsVictimResistantToPowerType(victim, effectPowerType);
+        bool IsAHeal = sourceRawDamage < 0;
+        bool StaggerNotInvolved = IsAHeal || IsVictimResistantToPowerType(victim, GetPowerTypeOfCharacter(source));
 
-        int DamageDealtToStagger = SourceAffectsStagger ? rawDamage : 0;
+        int DamageDealtToStagger = StaggerNotInvolved ? 0 : sourceRawDamage;
 
         bool CharacterBeganCracked = victim.currentStagger == 0;
         bool CharacterIsCracked = victim.currentStagger <= DamageDealtToStagger;
 
-        int FinalDamageToHealth = CharacterIsCracked ?
-            unmitigatedDamage :
-            (int) (unmitigatedDamage / 2f);
-        
+
+        int FinalDamageToHealth = unmitigatedDamage;
+        bool FinalDamageShouldBeHalved = CharacterIsCracked && !IsAHeal;
+        if (FinalDamageShouldBeHalved) {
+            FinalDamageToHealth = (int) (unmitigatedDamage / 2f);
+        }
+
+        bool CharacterCrackedThisTurn = !CharacterBeganCracked && CharacterIsCracked;
+
         CalculatedDamage result = new CalculatedDamage(
             victim,
             FinalDamageToHealth,
             DamageDealtToStagger,
-            rawDamage,
-            !CharacterBeganCracked && CharacterIsCracked
+            sourceRawDamage,
+            CharacterCrackedThisTurn
         );
 
         return result;

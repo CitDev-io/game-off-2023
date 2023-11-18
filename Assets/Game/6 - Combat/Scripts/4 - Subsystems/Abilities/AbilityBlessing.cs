@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 
-public class AbilityBasicAttack : BaseAbilityResolver
+public class AbilityBlessing : BaseAbilityResolver
 {
-    public AbilityBasicAttack()
+    public AbilityBlessing()
     {
-        Name = "Basic Attack";
-        Description = "A basic attack.";
-        TargetScope = EligibleTargetScopeType.ENEMY;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/BasicAttack");
+        Name = "Blessing";
+        Description = "Heal a friendly target";
+        TargetScope = EligibleTargetScopeType.FRIENDLYORSELF;
+        // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 
     public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> eligibleTargets = null)
@@ -17,7 +17,7 @@ public class AbilityBasicAttack : BaseAbilityResolver
         CalculatedDamage DamageToTarget = CalculateFinalDamage(
             source,
             target,
-            source.GetBasicAttackRoll()
+            -source.GetSpecialAttackRoll()
         );
 
         _e.Add(DamageToTarget);

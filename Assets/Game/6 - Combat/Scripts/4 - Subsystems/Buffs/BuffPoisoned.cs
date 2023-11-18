@@ -12,6 +12,6 @@ public class BuffPoisoned : Buff
 
     public override ExecutedAbility ResolvePreflightEffects()
     {
-        return DotAbility.Resolve(Source, Target);
+        return DotAbility.Resolve(Source, Target, null);
     }
 }

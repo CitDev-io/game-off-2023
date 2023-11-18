@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class CombatReferee : MonoBehaviour
 {  
@@ -69,6 +70,8 @@ public class CombatReferee : MonoBehaviour
                 
                 // TODO: This necessary?
                 combatState.CurrentCombatant.TurnStart();
+
+                combatState.ClearSelections();
                 
                 if (combatState.CurrentCombatant.Config.TeamType == TeamType.CPU) {
                     if (combatState.CurrentCombatant.currentStagger == 0) {
@@ -85,19 +88,29 @@ public class CombatReferee : MonoBehaviour
                 }
                 break;
             case CombatPhase.CHARACTERTURN_CHOOSEABILITY:
+                NextPhase = CombatPhase.CHARACTERTURN_CHOOSETARGET;
+
+                if (combatState.CurrentCombatant.HasBuff<BuffCharmed>()) {
+                    AttackSelected(UserAbilitySelection.BASICATTACK);
+                    break;
+                }
+
                 CombatAwaitingUser = true;
                 if (combatState.CurrentCombatant.Config.TeamType == TeamType.CPU) {
-                    Debug.Log(combatState.CurrentCombatant.gameObject.name + " is a CPU. It is now their turn.");
                     DoCpuAbilityChoice();
                 }
-                NextPhase = CombatPhase.CHARACTERTURN_CHOOSETARGET;
                 break;
             case CombatPhase.CHARACTERTURN_CHOOSETARGET:
-                CombatAwaitingUser = true;
-                if (combatState.CurrentCombatant.Config.TeamType == TeamType.CPU) {
+                NextPhase = CombatPhase.CHARACTERTURN_EXECUTION;
+
+                bool ATargetNeedsToBeSelected = combatState.AbilitySelected.TargetScope != EligibleTargetScopeType.NONE;
+                bool isCpuTurn = combatState.CurrentCombatant.Config.TeamType == TeamType.CPU;
+
+                CombatAwaitingUser = ATargetNeedsToBeSelected;
+
+                if (ATargetNeedsToBeSelected && isCpuTurn) {
                     DoCpuTargetChoice();
                 }
-                NextPhase = CombatPhase.CHARACTERTURN_EXECUTION;
                 break;
             case CombatPhase.CHARACTERTURN_EXECUTION:
                 ExecuteAttack();
@@ -177,10 +190,10 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     }
 
     CombatResult CheckCombatWinConditions() {
-        if (gameState.GetAlivePCs().Count == 0) {
+        if (combatState.GetAlivePCs().Count == 0) {
             return CombatResult.DEFEAT;
         }
-        if (gameState.GetAliveCPUs().Count == 0) {
+        if (combatState.GetAliveCPUs().Count == 0) {
             return CombatResult.VICTORY;
         }
         return CombatResult.IN_PROGRESS;
@@ -228,7 +241,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
             newPc.name = pcsToMake[i].Name;
 
             // register in game state
-            gameState.combatants.Add(newPc.GetComponent<Character>());
+            combatState.FullCombatantList.Add(newPc.GetComponent<Character>());
 
             // set up config
             newPc.GetComponent<Character>().Config = pcsToMake[i];
@@ -253,7 +266,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         ClearStage();
 
         // clear out enemies from last wave
-        gameState.combatants.RemoveAll(combatant => combatant.Config.TeamType == TeamType.CPU);
+        combatState.FullCombatantList.RemoveAll(combatant => combatant.Config.TeamType == TeamType.CPU);
 
         // spawn enemies for this wave
         List<CharacterConfig> enemiesToMake = waveProvider.GetEnemyWave(gameState.StageNumber, gameState.WaveNumber);
@@ -265,7 +278,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
             GameObject newEnemy = Instantiate(CharacterPuckPrefab);
 
             // register in game state
-            gameState.combatants.Add(newEnemy.GetComponent<Character>());
+            combatState.FullCombatantList.Add(newEnemy.GetComponent<Character>());
             newEnemy.name = enemiesToMake[i].Name;
             // set up config
             newEnemy.GetComponent<Character>().Config = enemiesToMake[i];
@@ -315,7 +328,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     void SeedCombatQueue()
     {
         // add all combatants to the queue in a random order
-        List<Character> shuffledCombatants = gameState.combatants.OrderBy(combatant => Random.Range(0, 100)).ToList();
+        List<Character> shuffledCombatants = combatState.FullCombatantList.OrderBy(combatant => Random.Range(0, 100)).ToList();
         foreach(Character combatant in shuffledCombatants)
         {
             combatState.AddCharacterToTurnOrder(combatant);
@@ -324,7 +337,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
     [ContextMenu("Revive All PCs")]
     void ReviveAllPCs() {
-        List<Character> PCs = gameState.GetAllPCs();
+        List<Character> PCs = combatState.GetAllPCs();
         foreach (Character pc in PCs) {
             if (pc.isDead) {
                 combatState.AddCharacterToTurnOrder(pc);
@@ -337,7 +350,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
     [ContextMenu("Defeat Wave")]
     void DefeatWave() {
-        List<Character> chars = gameState.GetAliveCPUs();
+        List<Character> chars = combatState.GetAliveCPUs();
         foreach (Character c in chars) {
             c.currentHealth = 0;
             c.isDead = true;
@@ -359,8 +372,8 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     }
 
     void WaveChangeStep1() {
-        gameState.ScalesOwned += gameState.GetDefeatedCPUs().Count;
-        if (gameState.ScalesOwned >= 5 && gameState.GetDefeatedPCs().Count > 0) {
+        gameState.ScalesOwned += combatState.GetDefeatedCPUs().Count;
+        if (gameState.ScalesOwned >= 5 && combatState.GetDefeatedPCs().Count > 0) {
             ReviveUI.SetActive(true);
         } else {
             WaveChangeStep2();
@@ -377,7 +390,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     }
 
     void StageChangeover() {
-        gameState.ScalesOwned += gameState.GetDefeatedCPUs().Count;
+        gameState.ScalesOwned += combatState.GetDefeatedCPUs().Count;
         gameState.StageNumber++;
         gameState.WaveNumber = 1;
         StageResetPlayerCharacters();
@@ -385,7 +398,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     }
 
     void StageResetPlayerCharacters() {
-        List<Character> PCs = gameState.GetAllPCs();
+        List<Character> PCs = combatState.GetAllPCs();
         foreach (Character pc in PCs) {
             pc.currentHealth = pc.Config.BaseHP;
             pc.isDead = false;
@@ -394,12 +407,12 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
     void PROGRESSBOARD() {
         // Check Win Conditions
-        if (gameState.GetAlivePCs().Count == 0) {
+        if (combatState.GetAlivePCs().Count == 0) {
             // TODO: Should trigger an event and let UI Manager handle this.
             Debug.Log("The CPUs have won!");
             LoseUI.SetActive(true);
             return;
-        } else if (gameState.GetAliveCPUs().Count == 0) {
+        } else if (combatState.GetAliveCPUs().Count == 0) {
             if (gameState.WaveNumber == waveProvider.WaveCountInStage(gameState.StageNumber)) {
                 if (gameState.StageNumber == waveProvider.StageCount) {
                     // TODO: Should trigger an event and let UI Manager handle this.
@@ -415,18 +428,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
                 return;
             }
         }
-    }
-
-    List<Character> GetEligibleTargetsForSelectedAttack() {
-        Character source = combatState.CurrentCombatant;
-
-        if (source.Config.TeamType == TeamType.PLAYER) {
-            return gameState.GetAliveCPUs();
-        } else {
-            return gameState.GetAlivePCs();
-        }
-    }
-    
+    }    
 
     void TargetSelected(Character selectedCharacter) {
         if (CurrentCombatPhase == CombatPhase.CHARACTERTURN_CHOOSETARGET && CombatAwaitingUser) {
@@ -443,8 +445,15 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         if (CurrentCombatPhase == CombatPhase.CHARACTERTURN_CHOOSEABILITY && CombatAwaitingUser) {
             combatState.AbilitySelected = AttackTypeToAbility
             .Lookup(attack);
+
+            List<Character> EligibleTargets = CombatantListFilter.ByScope(
+                combatState.FullCombatantList,
+                combatState.CurrentCombatant,
+                combatState.AbilitySelected.TargetScope
+            );
+
             eventProvider.OnEligibleTargetsChanged?.Invoke(
-                GetEligibleTargetsForSelectedAttack()
+                EligibleTargets
             );
             CombatAwaitingUser = false;
         }
@@ -468,11 +477,12 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
     IEnumerator IECpuChooseTarget() {
         yield return new WaitForSeconds(1f);
-        if (combatState.CurrentCombatant.HasBuff<BuffCharmed>()) {
-            TargetSelected(gameState.getRandomCPU());
-        } else {
-            TargetSelected(gameState.getRandomPlayerCharacter());
-        }
+        List<Character> EligibleTargets = combatState.GetEligibleTargetsForSelectedAbility();
+
+        // get random eligibletarget
+        Character randomTarget = EligibleTargets[Random.Range(0, EligibleTargets.Count)];
+
+        TargetSelected(randomTarget);
     }
 
     // TODO: give to AIStrategy

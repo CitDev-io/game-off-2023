@@ -2,5 +2,7 @@ public enum UserAbilitySelection {
     NONE,
     BASICATTACK,
     SHIELDBASH,
-    SNEAKATTACK
+    SNEAKATTACK,
+    CURSEOFSTRENGTH,
+    BLESSING
 }

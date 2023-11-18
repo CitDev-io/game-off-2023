@@ -36,7 +36,7 @@ public class StageChoreographer : MonoBehaviour
     }
 
     void HandleExecutionPhasePromptForCharacter(Character combatant) {
-        StartCoroutine(WaitPerformance(2.5f));
+        StartCoroutine(WaitPerformance(1f));
     }
 
     void HandleAbilityExecuted(ExecutedAbility executedAbility) {

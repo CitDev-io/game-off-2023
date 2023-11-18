@@ -150,11 +150,26 @@ public class UIManager : MonoBehaviour
     }
 
     void HandleAbilityExecuted(ExecutedAbility executedAbility) {
-        string abilityCast = executedAbility.Source.Config.Name + " used " + executedAbility.Ability.Name + " on " + executedAbility.Target.Config.Name;
+        string abilityCast = executedAbility.Source.Config.Name + " used " + executedAbility.Ability.Name;
+        if (executedAbility.Target != null) {
+            abilityCast += " on " + executedAbility.Target.Config.Name;
+        }
         TextCrawlUI.EnqueueMessage(abilityCast);
 
         foreach(CalculatedDamage dmg in executedAbility.AppliedHealthChanges) {
-            string damageDealt =  dmg.Target.Config.Name + " took " + dmg.DamageToHealth + " damage (" + dmg.DamageToStagger + " stagger)";
+            string damageDealt =  dmg.Target.Config.Name;
+            if (dmg.DamageToHealth < 0) {
+                damageDealt += " was healed for ";
+            } else {
+                damageDealt += " took ";
+            }
+            damageDealt += Mathf.Abs(dmg.DamageToHealth);
+            if (dmg.DamageToHealth < 0) {
+                damageDealt += " health";
+            } else {
+                damageDealt += " damage (" + dmg.DamageToStagger + " stagger)";
+            }
+            
             TextCrawlUI.EnqueueMessage(damageDealt);
 
             if (dmg.Target.isDead) {
