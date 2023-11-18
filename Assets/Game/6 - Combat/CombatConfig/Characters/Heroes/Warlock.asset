@@ -18,6 +18,7 @@ MonoBehaviour:
   _Portrait: {fileID: 21300000, guid: 1c3f6fbdfd3302c47ad2e6d711b669b0, type: 3}
   _Skin: {fileID: 21300000, guid: 2769367fcd5a49c45adf6da94205aa82, type: 3}
   _SpecialAttack: 4
+  _UltimateAbility: 8
   _BaseMitigation: 2
   _BaseHP: 140
   _BaseSP: 0

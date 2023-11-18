@@ -1,3 +1,4 @@
+using Spine.Unity;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "CharacterConfig", menuName = "GameOff2023/New Character Configuration")]
@@ -30,6 +31,10 @@ public class CharacterConfig : ScriptableObject
     [SerializeField]
     private Sprite _Skin;
     public Sprite Skin => _Skin;
+    [Tooltip("Animated Spine Asset")]
+    [SerializeField]
+    private SkeletonDataAsset _SpineSkeleton;
+    public SkeletonDataAsset SpineSkeleton => _SpineSkeleton;
 
 
     [Header("Abilities")]

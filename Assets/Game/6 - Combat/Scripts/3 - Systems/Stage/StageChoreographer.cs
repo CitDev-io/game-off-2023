@@ -41,12 +41,24 @@ public class StageChoreographer : MonoBehaviour
 
     void HandleAbilityExecuted(ExecutedAbility executedAbility) {
         foreach(CalculatedDamage dmg in executedAbility.AppliedHealthChanges) {
+            ActorCharacter sourceMotor = executedAbility.Source.GetComponent<ActorCharacter>();
+            if (executedAbility.Ability is AbilityBasicAttack) {
+                sourceMotor.DoBasicAttackPerformance();
+            } else {
+                sourceMotor.DoSpecialAbilityPerformance();
+            }
+
+            ActorCharacter victimMotor = dmg.Target.GetComponent<ActorCharacter>();
+            victimMotor.DoDamageTakenPerformance();
             if (dmg.Target.isDead) {
-                dmg.Target.GetComponent<ActorCharacter>().DoDeathPerformance();
+                victimMotor.DoDeathPerformance();
             } else if (dmg.StaggerCrackedByThis) {
-                dmg.Target.GetComponent<ActorCharacter>().DoCrackedPerformance();
+                victimMotor.DoCrackedPerformance();
             }
         }
+        // TODO: Actors should have performances too.
+        // We'll want to wait until they're all finished.
+        WaitPerformance(1f);
     }
 
     void HandleCharacterRevived(Character combatant) {

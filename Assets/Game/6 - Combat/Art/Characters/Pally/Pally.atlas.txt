@@ -1,0 +1,103 @@
+Pally.png
+size:1060,267
+filter:Linear,Linear
+pma:true
+arm back
+bounds:501,110,117,155
+arm front
+bounds:620,113,102,152
+offsets:1,0,103,153
+belt
+bounds:501,69,133,39
+offsets:1,1,135,41
+closed
+bounds:688,4,75,65
+offsets:1,1,78,67
+crotch armor
+bounds:996,94,68,48
+offsets:1,1,70,50
+rotate:90
+foot back
+bounds:940,28,61,59
+offsets:1,1,63,62
+rotate:90
+foot right
+bounds:1001,35,57,57
+offsets:1,2,59,60
+grip
+bounds:864,3,81,74
+offsets:1,1,84,76
+rotate:90
+hair
+bounds:835,86,87,46
+offsets:1,2,90,50
+hand back bottom
+bounds:924,91,71,70
+offsets:1,1,73,72
+rotate:90
+head
+bounds:832,164,101,119
+offsets:1,1,103,122
+rotate:90
+hurt
+bounds:793,134,44,15
+offsets:1067,821,2050,1538
+leg back
+bounds:708,77,34,64
+offsets:1,0,35,65
+rotate:90
+leg right
+bounds:636,71,40,70
+offsets:3,0,43,78
+rotate:90
+mad
+bounds:774,99,59,21
+offsets:2,1,62,23
+mustache
+bounds:724,122,67,27
+offsets:1,1,69,29
+norm
+bounds:774,77,59,20
+offsets:1,1,61,22
+normal
+bounds:839,150,41,12
+offsets:1067,823,2050,1538
+nose
+bounds:882,136,26,16
+offsets:1,1,29,18
+rotate:90
+scarf
+bounds:573,4,113,63
+offsets:1,1,115,65
+scarf tassel
+bounds:168,2,51,116
+offsets:0,0,51,117
+rotate:90
+shield
+bounds:168,55,168,210
+offsets:3,2,172,228
+shoulder back
+bounds:953,164,101,100
+offsets:1,1,103,102
+rotate:90
+shoulder front
+bounds:724,151,114,106
+offsets:1,2,116,109
+rotate:90
+shoulder strap
+bounds:286,13,140,40
+offsets:1,1,142,43
+skirt
+bounds:428,3,143,56
+offsets:1,1,145,61
+sword
+bounds:2,2,263,164
+offsets:1,2,265,167
+rotate:90
+tassel
+bounds:765,2,73,97
+offsets:1,2,75,107
+rotate:90
+torso
+bounds:338,61,161,204
+offsets:1,1,164,206
