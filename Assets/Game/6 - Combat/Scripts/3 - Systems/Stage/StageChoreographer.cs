@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.XR;
 
 public class StageChoreographer : MonoBehaviour
 {
@@ -48,17 +47,17 @@ public class StageChoreographer : MonoBehaviour
                 sourceMotor.DoSpecialAbilityPerformance();
             }
 
-            ActorCharacter victimMotor = dmg.Target.GetComponent<ActorCharacter>();
-            victimMotor.DoDamageTakenPerformance();
-            if (dmg.Target.isDead) {
-                victimMotor.DoDeathPerformance();
-            } else if (dmg.StaggerCrackedByThis) {
-                victimMotor.DoCrackedPerformance();
+            if (dmg.DamageToHealth > 0) {
+                ActorCharacter victimMotor = dmg.Target.GetComponent<ActorCharacter>();
+                
+                victimMotor.DoDamageTakenPerformance();
+                if (dmg.Target.isDead) {
+                    victimMotor.DoDeathPerformance();
+                } else if (dmg.StaggerCrackedByThis) {
+                    victimMotor.DoCrackedPerformance();
+                }
             }
         }
-        // TODO: Actors should have performances too.
-        // We'll want to wait until they're all finished.
-        WaitPerformance(1f);
     }
 
     void HandleCharacterRevived(Character combatant) {

@@ -7,5 +7,6 @@ public enum UserAbilitySelection {
     BLESSING,
     DEADLYPOUNCE,
     CELESTIALBARRAGE,
-    POLYMORPH
+    POLYMORPH,
+    MASSHEAL
 }

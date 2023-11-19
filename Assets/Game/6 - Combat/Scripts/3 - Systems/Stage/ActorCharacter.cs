@@ -157,11 +157,12 @@ public class ActorCharacter : MonoBehaviour
 
             // move to forward position and back
             float moveSpeed = 20f;
-            while (transform.position != forwardPosition) {
+            float tolerance = 0.025f;
+            while (Vector3.Distance(transform.position, forwardPosition) > tolerance) {
                 transform.position = Vector3.MoveTowards(transform.position, forwardPosition, Time.deltaTime * moveSpeed);
                 yield return new WaitForSeconds(0.01f);
             }
-            while (transform.position != startingPosition) {
+            while (Vector3.Distance(transform.position, startingPosition) > tolerance) {
                 transform.position = Vector3.MoveTowards(transform.position, startingPosition, Time.deltaTime * moveSpeed);
                 yield return new WaitForSeconds(0.01f);
             }

@@ -15,6 +15,6 @@ MonoBehaviour:
   DeveloperDescription: Our Valiant Heroes
   PartyMembers:
   - {fileID: 11400000, guid: 0cb3a14e1c33f9b4d96708e9634fa3ef, type: 2}
-  - {fileID: 11400000, guid: 7663bea414663dd4aaca5d061f06978b, type: 2}
   - {fileID: 11400000, guid: db748ce4bebea664398e829ca4c1beca, type: 2}
+  - {fileID: 11400000, guid: 7663bea414663dd4aaca5d061f06978b, type: 2}
   - {fileID: 11400000, guid: 4fff1ce9e5493c548966ee08227222f4, type: 2}

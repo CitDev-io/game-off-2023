@@ -10,6 +10,7 @@ public static class AttackTypeToAbility
             UserAbilitySelection.DEADLYPOUNCE => new AbilityDeadlyPounce(),
             UserAbilitySelection.CELESTIALBARRAGE => new AbilityCelestialBarrage(),
             UserAbilitySelection.POLYMORPH => new AbilityPolymorph(),
+            UserAbilitySelection.MASSHEAL => new AbilityMassHeal(),
             UserAbilitySelection.BASICATTACK or _ => new AbilityBasicAttack(),
         };
         
