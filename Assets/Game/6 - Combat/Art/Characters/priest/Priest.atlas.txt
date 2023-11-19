@@ -1,0 +1,91 @@
+Priest.png
+size:968,173
+filter:Linear,Linear
+pma:true
+arm back
+bounds:567,6,71,94
+rotate:90
+arm front
+bounds:787,18,69,120
+offsets:0,9,70,129
+rotate:90
+bag
+bounds:663,14,73,122
+offsets:4,1,78,124
+rotate:90
+belt
+bounds:909,2,85,22
+offsets:6,1,96,24
+rotate:90
+coat
+bounds:170,51,120,191
+rotate:90
+eyebrows angry
+bounds:498,44,50,12
+offsets:1,1,53,14
+eyebrows normal
+bounds:498,30,47,12
+offsets:1,1,50,14
+eyes death
+bounds:342,2,47,16
+offsets:1,1,49,18
+rotate:90
+eyes hurt
+bounds:550,10,46,13
+offsets:1,2,48,17
+rotate:90
+eyes normal
+bounds:787,5,43,11
+offsets:1,1,45,13
+hand back closed
+bounds:934,125,46,32
+offsets:1,2,48,35
+rotate:90
+hand front closed
+bounds:933,39,28,31
+offsets:1,1,31,34
+hand front open
+bounds:454,19,42,37
+offsets:1,1,44,39
+head
+bounds:567,79,94,92
+offsets:1,1,96,94
+mouth open
+bounds:933,4,10,10
+offsets:3,2,14,14
+mouth smile
+bounds:933,16,21,7
+offsets:1,1,24,9
+rotate:90
+neck
+bounds:498,9,19,37
+offsets:2,1,22,39
+rotate:90
+robe
+bounds:363,58,113,202
+rotate:90
+scarf cowl
+bounds:363,4,89,52
+offsets:0,1,89,56
+scarf cowl back
+bounds:934,72,51,30
+offsets:1,1,53,32
+rotate:90
+scarf tassel back
+bounds:170,4,45,144
+offsets:0,0,45,145
+rotate:90
+scarf tassel front
+bounds:316,2,24,47
+offsets:0,0,25,47
+staff
+bounds:663,89,82,269
+offsets:2,1,86,271
+rotate:90
+staff floaty
+bounds:942,19,18,18
+offsets:1,1,21,21
+staff glow
+bounds:2,6,165,166
+offsets:17,14,198,194
+rotate:90
