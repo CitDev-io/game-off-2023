@@ -5,6 +5,7 @@ public class BuffStunned : Buff
         Name = "Stunned";
         Description = "Cannot take any actions on their turn";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
+        isDebuff = true;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/stunned");
     }
 }

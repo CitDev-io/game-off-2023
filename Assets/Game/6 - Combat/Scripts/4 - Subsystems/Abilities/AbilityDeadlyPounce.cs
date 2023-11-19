@@ -9,21 +9,24 @@ public class AbilityDeadlyPounce : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/DeadlyPounce");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> eligibleTargets = null)
+    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
         var _e = new ExecutedAbility(source, target, this);
-
+        int DamageRoll = 2 * source.GetSpecialAttackRoll(false);
         CalculatedDamage DamageToTarget = CalculateFinalDamage(
             source,
             target,
-            2 * source.GetSpecialAttackRoll()
+            DamageRoll
         );
 
         _e.Add(DamageToTarget);
 
+        bool HitLanded = DamageRoll != 0;
         
-        Buff stunDebuff = new BuffStunned(source, target, 1);
-        _e.Add(stunDebuff);
+        if (HitLanded) {
+            Buff stunDebuff = new BuffStunned(source, target, 1);
+            _e.Add(stunDebuff);
+        }
 
         return _e;
     }     

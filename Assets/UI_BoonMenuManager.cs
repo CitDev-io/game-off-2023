@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UI_BoonMenuManager : MonoBehaviour
 {
@@ -12,6 +13,12 @@ public class UI_BoonMenuManager : MonoBehaviour
     public Image Icon;
     public Image Spinner;
 
+    public TextMeshProUGUI Name1;
+    public TextMeshProUGUI Name2;
+    public TextMeshProUGUI Name3;
+
+    List<BaseBoonResolver> _boons;
+
     void Awake() {
         SwooshModal.SetActive(false);
         PanelUI.SetActive(false);
@@ -20,14 +27,26 @@ public class UI_BoonMenuManager : MonoBehaviour
         Icon.gameObject.SetActive(false);
     }
 
-    [ContextMenu("DoAppearPerformance")]
-    public void DoAppearPerformance() {
+    public void OfferBoons(List<BaseBoonResolver> boons) {
+        SetBoonOffers(boons);
         StartCoroutine(DoAppear(0.55f, 0f));
         StartCoroutine(IconAppear());
     }
 
-    [ContextMenu("DoDisappearPerformance")]
-    public void DoDisappearPerformance() {
+    void SetBoonOffers(List<BaseBoonResolver> boons) {
+        Name1.text = boons[0].Name;
+        Name2.text = boons[1].Name;
+        Name3.text = boons[2].Name;
+        _boons = boons;
+    }
+
+    public void UserSelectBoonByIndex(int index) {
+        BaseBoonResolver selectedBoon = _boons[index];
+        GameObject.Find("GameManager").GetComponent<UIManager>().BoonSelected(selectedBoon);
+        DoDisappearPerformance();
+    }
+
+    void DoDisappearPerformance() {
         StartCoroutine(DoAppear(0f, 179.9f));
         StartCoroutine(IconDisappear());
     }

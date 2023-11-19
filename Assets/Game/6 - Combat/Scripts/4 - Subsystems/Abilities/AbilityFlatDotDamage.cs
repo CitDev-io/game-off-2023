@@ -11,7 +11,7 @@ public class AbilityFlatDotDamage : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/DotDamage");   
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> eligibleTargets = null)
+    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
         var _e = new ExecutedAbility(source, target, this);
 

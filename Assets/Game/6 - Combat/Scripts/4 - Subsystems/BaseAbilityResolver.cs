@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public abstract class BaseAbilityResolver
 {
@@ -9,7 +10,7 @@ public abstract class BaseAbilityResolver
     public Sprite PortraitArt { get; protected set; }
     public EligibleTargetScopeType TargetScope { get; protected set; }
 
-    public abstract ExecutedAbility GetUncommitted(Character source, Character target, List<Character> eligibleTargets = null);
+    public abstract ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants);
 
     // don't change this signature. would be nice to not pass null when you know it's safe, but do it anyway
     public ExecutedAbility Resolve(Character source, Character target, List<Character> eligibleTargets) {
@@ -37,7 +38,9 @@ public abstract class BaseAbilityResolver
     }
 
     protected int GetMitigationPowerForPowerType(Character victim, PowerType element) {
-        return IsVictimResistantToPowerType(victim, element) ? 10 : 0;
+        bool IsResistant =  IsVictimResistantToPowerType(victim, element);
+        int MitigationPower = IsResistant ? 10 : 0;
+        return MitigationPower;
     }
 
     protected int GetFullVictimMitigationPower(Character victim, PowerType element) {
@@ -50,6 +53,14 @@ public abstract class BaseAbilityResolver
         }
         bool resistantToPowerType = victim.Config.PowerType == element;
         return resistantToPowerType;
+    }
+
+    protected List<Character> GetNearbyAlliesOfCharacter(Character character, List<Character> AllCombatants) {
+        return CombatantListFilter.ByScope(
+                AllCombatants,
+                character,
+                EligibleTargetScopeType.ANYOTHERALLY
+            ).Where(candidate => Mathf.Abs(candidate.BattlefieldPosition - character.BattlefieldPosition) <= 1).ToList();
     }
 
     protected PowerType GetPowerTypeOfCharacter(Character character) {
@@ -76,6 +87,15 @@ public abstract class BaseAbilityResolver
             victim,
             GetPowerTypeOfCharacter(source)
         );
+
+        bool IsAHeal = sourceRawDamage < 0;
+
+        bool IsVulnerableToAttack = victim.HasBuff<BuffElementalVulnerability>() && IsVictimResistantToPowerType(victim, GetPowerTypeOfCharacter(source));
+
+        if (!IsAHeal && IsVulnerableToAttack) {
+            unmitigatedDamage = (int) (unmitigatedDamage * 1.25f);
+        }
+
         if (victim.Config.BaseSP == 0) {
             return new CalculatedDamage(
                 victim,
@@ -86,22 +106,21 @@ public abstract class BaseAbilityResolver
             );
         }
 
-        bool IsAHeal = sourceRawDamage < 0;
         bool StaggerNotInvolved = IsAHeal || IsVictimResistantToPowerType(victim, GetPowerTypeOfCharacter(source));
 
         int DamageDealtToStagger = StaggerNotInvolved ? 0 : sourceRawDamage;
 
         bool CharacterBeganCracked = victim.currentStagger == 0;
         bool CharacterIsCracked = victim.currentStagger <= DamageDealtToStagger;
+        bool CharacterCrackedThisTurn = !CharacterBeganCracked && CharacterIsCracked;
 
 
         int FinalDamageToHealth = unmitigatedDamage;
-        bool FinalDamageShouldBeHalved = CharacterIsCracked && !IsAHeal;
+        bool FinalDamageShouldBeHalved = !CharacterIsCracked && !IsAHeal;
         if (FinalDamageShouldBeHalved) {
             FinalDamageToHealth = (int) (unmitigatedDamage / 2f);
         }
 
-        bool CharacterCrackedThisTurn = !CharacterBeganCracked && CharacterIsCracked;
 
         CalculatedDamage result = new CalculatedDamage(
             victim,

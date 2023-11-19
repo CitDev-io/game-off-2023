@@ -14,7 +14,7 @@ public static class CombatantListFilter
 
         TeamType referenceTeam = referenceCharacter.Config.TeamType;
 
-        if (referenceCharacter.HasBuff<BuffCharmed>()) {
+        if (referenceCharacter.HasBuff<BuffCharmed>() || referenceCharacter.HasBuff<BuffGreaterCharmed>()) {
             referenceTeam = referenceTeam == TeamType.PLAYER ? TeamType.CPU : TeamType.PLAYER;
         }
 

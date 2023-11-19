@@ -10,6 +10,12 @@ public class CombatState
     Queue<Character> TurnOrder = new Queue<Character>();
     public List<Character> FullCombatantList = new List<Character>();
 
+    public void ClearWaveCounters() {
+        foreach (Character combatant in FullCombatantList) {
+            combatant.GenericWaveCounter = 0;
+        }
+    }
+
     public Queue<Character> GetTurnOrder() {
         return TurnOrder;
     }
@@ -52,17 +58,11 @@ public class CombatState
     }
 
     public ExecutedAbility ExecuteSelectedAbility() {
-        List<Character> CharactersVisibleToAbilityResolver = GetEligibleTargetsForSelectedAbility();
-
-        if (AbilitySelected.TargetScope == EligibleTargetScopeType.NONE) {
-            CharactersVisibleToAbilityResolver = FullCombatantList;
-        }
-
         return AbilitySelected
             .Resolve(
                 CurrentCombatant,
                 TargetSelected,
-                CharactersVisibleToAbilityResolver
+                FullCombatantList
             );
     }
 

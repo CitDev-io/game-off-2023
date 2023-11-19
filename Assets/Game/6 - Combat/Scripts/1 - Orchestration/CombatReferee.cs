@@ -30,6 +30,7 @@ public class CombatReferee : MonoBehaviour
     public CombatState combatState;
     public EventProvider eventProvider;
     WaveProvider waveProvider;
+    BoonLibrary boonLibrary;
 
     // Coworkers
     UIManager __uiManager;
@@ -37,12 +38,12 @@ public class CombatReferee : MonoBehaviour
     CombatPhase CurrentCombatPhase = CombatPhase.INIT;
     [SerializeField] bool CombatAwaitingUser = false;
 
-
     void Awake() {
         eventProvider = new EventProvider();
         gameState = new GameState();
         combatState = new CombatState();
         waveProvider = new WaveProvider(PlayerParty, EnemySetList);
+        boonLibrary = new BoonLibrary(PlayerParty);
         __uiManager = GetComponent<UIManager>();
         __stageChoreographer = GetComponent<StageChoreographer>();
     }
@@ -51,6 +52,7 @@ public class CombatReferee : MonoBehaviour
     {
         eventProvider.OnInput_CombatantChoseAbility += HandleIncomingCombatantAbilityChoice;
         eventProvider.OnInput_CombatantChoseTarget += TargetSelected;
+        eventProvider.OnInput_BoonSelected += HandleUserChoseBoon;
         SetupParty();
         SetupWave();
     }
@@ -81,21 +83,16 @@ public class CombatReferee : MonoBehaviour
 
                 ResolvePreflightBuffEffectsForCombatant(combatState.CurrentCombatant);
 
-                bool IsStunned = combatState.CurrentCombatant.HasBuff<BuffStunned>();
-                bool SkipToCleanup = IsStunned || combatState.CurrentCombatant.isDead;
+                bool HasAbilityOptions = combatState.CurrentCombatant.GetAvailableAbilities().Count > 0;
+                bool SkipToCleanup = !HasAbilityOptions || combatState.CurrentCombatant.isDead;
                 if (SkipToCleanup) {
                     NextPhase = CombatPhase.CHARACTERTURN_CLEANUP;
                 }
                 break;
             case CombatPhase.CHARACTERTURN_CHOOSEABILITY:
                 NextPhase = CombatPhase.CHARACTERTURN_CHOOSETARGET;
-
-                if (combatState.CurrentCombatant.HasBuff<BuffCharmed>()) {
-                    AttackSelected(UserAbilitySelection.BASICATTACK);
-                    break;
-                }
-
                 CombatAwaitingUser = true;
+
                 if (combatState.CurrentCombatant.Config.TeamType == TeamType.CPU) {
                     DoCpuAbilityChoice();
                 }
@@ -107,6 +104,11 @@ public class CombatReferee : MonoBehaviour
                 bool isCpuTurn = combatState.CurrentCombatant.Config.TeamType == TeamType.CPU;
 
                 CombatAwaitingUser = ATargetNeedsToBeSelected;
+
+                if (combatState.CurrentCombatant.HasBuff<BuffTaunted>()) {
+                    TargetSelected(combatState.CurrentCombatant.Buffs.Find(buff => buff is BuffTaunted).Source);
+                    break;
+                }
 
                 if (ATargetNeedsToBeSelected && isCpuTurn) {
                     DoCpuTargetChoice();
@@ -245,9 +247,10 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
             // set up config
             newPc.GetComponent<Character>().Config = pcsToMake[i];
+            int AssignedPosition = GetFriendlySpawnPointByIndex(i).GetComponent<BattleFieldPositionInfo>().PositionId;
 
             // TODO: Instead of init, should be in the creation process somehow
-            newPc.GetComponent<Character>().InitializeMe();
+            newPc.GetComponent<Character>().InitializeMeAtPosition(AssignedPosition);
 
             // position it
             UnityEngine.Vector3 targetPos = GetFriendlySpawnPointByIndex(i).position;
@@ -283,8 +286,11 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
             // set up config
             newEnemy.GetComponent<Character>().Config = enemiesToMake[i];
 
+
+            int AssignedPosition = GetSpawnPointByIndex(i).GetComponent<BattleFieldPositionInfo>().PositionId;
+
             // init the character
-            newEnemy.GetComponent<Character>().InitializeMe();
+            newEnemy.GetComponent<Character>().InitializeMeAtPosition(AssignedPosition);
 
             // position it
             UnityEngine.Vector3 targetPos = GetSpawnPointByIndex(i).position;
@@ -292,6 +298,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
             newEnemy.transform.position = new UnityEngine.Vector3(targetPos.x, targetPos.y, targetPos.y);
         }
 
+        combatState.ClearWaveCounters();
 
         // set up combatant queue
         SeedCombatQueue();
@@ -338,14 +345,16 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     [ContextMenu("Revive All PCs")]
     void ReviveAllPCs() {
         List<Character> PCs = combatState.GetAllPCs();
-        foreach (Character pc in PCs) {
-            if (pc.isDead) {
-                combatState.AddCharacterToTurnOrder(pc);
-            }
-            pc.currentHealth = pc.Config.BaseHP;
-            pc.isDead = false;
-            eventProvider.OnCharacterRevived?.Invoke(pc);
+        PCs.ForEach(c => ReviveCharacter(c));
+    }
+
+    void ReviveCharacter(Character character) {
+        if (character.isDead) {
+            combatState.AddCharacterToTurnOrder(character);
         }
+        character.currentHealth = character.Config.BaseHP;
+        character.isDead = false;
+        eventProvider.OnCharacterRevived?.Invoke(character);
     }
 
     [ContextMenu("Defeat Wave")]
@@ -367,10 +376,6 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
-    public void UserResponse_Boon() {
-        WaveChangeover();
-    }
-
     void WaveChangeStep1() {
         gameState.ScalesOwned += combatState.GetDefeatedCPUs().Count;
         if (gameState.ScalesOwned >= 5 && combatState.GetDefeatedPCs().Count > 0) {
@@ -381,7 +386,11 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     }
 
     void WaveChangeStep2() {
-        eventProvider.OnBoonOffer?.Invoke();
+        // make up the boon offer
+        List<BaseBoonResolver> boons = boonLibrary.GetRandomBoonOptionsForParty(3);;
+
+        // event announce the offer
+        eventProvider.OnBoonOffer?.Invoke(boons);
     }
 
     void WaveChangeover() {
@@ -437,6 +446,11 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
+    void HandleUserChoseBoon(BaseBoonResolver selectedBoon) {
+        selectedBoon.ApplyToEligible(PlayerParty.PartyMembers);
+        WaveChangeover();
+    }
+
     void HandleIncomingCombatantAbilityChoice(AbilityCategory category) {
         UserAbilitySelection abilityChosen;
         switch(category) {
@@ -457,7 +471,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     void AttackSelected(UserAbilitySelection attack) {
         if (CurrentCombatPhase == CombatPhase.CHARACTERTURN_CHOOSEABILITY && CombatAwaitingUser) {
             combatState.AbilitySelected = AttackTypeToAbility
-            .Lookup(attack);
+            .Lookup(attack, combatState.CurrentCombatant.Config);
 
             List<Character> EligibleTargets = CombatantListFilter.ByScope(
                 combatState.FullCombatantList,
@@ -474,6 +488,9 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
     void ExecuteAttack() {
         ExecutedAbility completedAbility = combatState.ExecuteSelectedAbility();
+
+        completedAbility.CharactersReviving.ForEach(character => ReviveCharacter(character));
+
         eventProvider.OnAbilityExecuted?.Invoke(completedAbility);
         CombatAwaitingUser = false;
     }
@@ -491,6 +508,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     IEnumerator IECpuChooseTarget() {
         yield return new WaitForSeconds(1f);
         List<Character> EligibleTargets = combatState.GetEligibleTargetsForSelectedAbility();
+        
 
         // get random eligibletarget
         Character randomTarget = EligibleTargets[Random.Range(0, EligibleTargets.Count)];
@@ -501,10 +519,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     // TODO: give to AIStrategy
     IEnumerator IECpuChooseAbility() {
         yield return new WaitForSeconds(1f);
-        if (combatState.CurrentCombatant.HasBuff<BuffCharmed>()) {
-            AttackSelected(UserAbilitySelection.BASICATTACK);
-            yield break;
-        }
+        // List<AbilityCategory> availableAbilities = combatState.CurrentCombatant.GetAvailableAbilities();
 
         AttackSelected(UserAbilitySelection.BASICATTACK);
     }

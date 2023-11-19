@@ -19,7 +19,10 @@ public class CharacterConfig : ScriptableObject
     [SerializeField]
     private TeamType _TeamType;
     public TeamType TeamType => _TeamType;
-
+    [SerializeField]
+    [Tooltip("Select NONE for Enemies")]
+    private PCAdventureClassType _PlayerClass;
+    public PCAdventureClassType PlayerClass => _PlayerClass;
 
 
     [Header("Art")]
@@ -85,4 +88,11 @@ public class CharacterConfig : ScriptableObject
     [SerializeField]
     private int _BaseSpecialMax = 0;
     public int BaseSpecialMax => _BaseSpecialMax;
+
+
+    [Header("Starting Boon Values")]
+    [HideInInspector]
+    public int SupportTreeLevel = 0;
+    [HideInInspector]
+    public int AttackTreeLevel = 0;
 }

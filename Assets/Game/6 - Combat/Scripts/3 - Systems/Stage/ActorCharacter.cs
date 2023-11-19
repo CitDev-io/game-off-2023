@@ -14,6 +14,7 @@ public class ActorCharacter : MonoBehaviour
     public TMP_Text StaggerTicker; 
     [SerializeField]
     public GameObject TurnIndicator;
+    public UI_CharacterElementIndicator ElementIndicator;
     SpriteRenderer _skin;
     SkeletonAnimation _spineSkin;
     bool IN_SPINE_MODE = false;
@@ -28,6 +29,7 @@ public class ActorCharacter : MonoBehaviour
     void Start()
     {
         IN_SPINE_MODE = _character.Config.SpineSkeleton != null;
+        ElementIndicator.SetPowerType(_character.Config.PowerType);
         GetDressed();
         SpineEventSubscribe();
     }
@@ -63,7 +65,10 @@ public class ActorCharacter : MonoBehaviour
         if (IN_SPINE_MODE) {
             _skin.gameObject.SetActive(false);
             _spineSkin.gameObject.SetActive(true);
+            _spineSkin.initialSkinName = "default";
             _spineSkin.skeletonDataAsset = _character.Config.SpineSkeleton;
+            _spineSkin.Initialize(true);
+            _spineSkin.AnimationState.SetAnimation(0, ActorAnimations.idle.ToString(), true);
         } else {
             _skin.gameObject.SetActive(true);
             _spineSkin.gameObject.SetActive(false);
@@ -151,22 +156,8 @@ public class ActorCharacter : MonoBehaviour
             _spineSkin.AnimationState.SetAnimation(0, ActorAnimations.special.ToString(), false);
             _spineSkin.AnimationState.AddAnimation(0, ActorAnimations.idle.ToString(), true, 0.55f);
         } else {
-            Vector3 startingPosition = transform.position;
-            Vector3 forwardPosition = transform.position;
-            forwardPosition.x += 2f * (_character.Config.TeamType == TeamType.CPU ? 1 : -1);
-
-            // move to forward position and back
-            float moveSpeed = 20f;
-            float tolerance = 0.025f;
-            while (Vector3.Distance(transform.position, forwardPosition) > tolerance) {
-                transform.position = Vector3.MoveTowards(transform.position, forwardPosition, Time.deltaTime * moveSpeed);
-                yield return new WaitForSeconds(0.01f);
-            }
-            while (Vector3.Distance(transform.position, startingPosition) > tolerance) {
-                transform.position = Vector3.MoveTowards(transform.position, startingPosition, Time.deltaTime * moveSpeed);
-                yield return new WaitForSeconds(0.01f);
-            }
         }
+            yield return null;
     }
 
     public void DoDeathPerformance() {

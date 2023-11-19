@@ -17,11 +17,36 @@ public class Character : MonoBehaviour
     public int currentStagger = 0;
     public bool isDead = false;
     public bool IsCurrentCombatant = false;
+    public int BattlefieldPosition = -10;
     [SerializeField]
     public List<Buff> Buffs = new List<Buff>();
+    public int GenericWaveCounter = 0;
 
     public bool HasBuff<T>() where T : Buff {
         return Buffs.Any(buff => buff is T);
+    }
+
+    public List<AbilityCategory> GetAvailableAbilities() {
+        var availableAbilities = new List<AbilityCategory>(){ 
+            AbilityCategory.BASICATTACK,
+        };
+        if (Config.SpecialAttack != UserAbilitySelection.NONE) {
+            availableAbilities.Add(AbilityCategory.SPECIALATTACK);
+        };
+        if (Config.UltimateAbility != UserAbilitySelection.NONE) {
+            availableAbilities.Add(AbilityCategory.ULTIMATE);
+        };
+
+        if (HasBuff<BuffStunned>()) {
+            return new List<AbilityCategory>();
+        }
+
+        if (HasBuff<BuffCharmed>() || HasBuff<BuffSilenced>() || HasBuff<BuffTaunted>()) {
+            return new List<AbilityCategory>(){ 
+                AbilityCategory.BASICATTACK,
+            };
+        }
+        return availableAbilities;
     }
 
     public void AddBuff(Buff newBuff) {
@@ -45,6 +70,10 @@ public class Character : MonoBehaviour
         RemoveAgedBuffs();
     }
 
+    public void RemoveRandomDebuff() {
+
+    }
+
     void RemoveAgedBuffs() {
         if (Buffs.Count == 0) return;
         Buffs.RemoveAll(buff => buff.TurnsRemaining < 1);
@@ -54,10 +83,13 @@ public class Character : MonoBehaviour
         currentStagger = Config.BaseSP;
     }
 
-    public void InitializeMe() {
+    public void InitializeMeAtPosition(int battlePosition) {
         isDead = false;
         currentHealth = Config.BaseHP;
         currentStagger = Config.BaseSP;
+        Config.AttackTreeLevel = 0;
+        Config.SupportTreeLevel = 0;
+        BattlefieldPosition = battlePosition;
     }
 
     public void TurnStart() {
@@ -68,25 +100,91 @@ public class Character : MonoBehaviour
         IsCurrentCombatant = false;
     }
 
-    public int GetBasicAttackRoll() {
-        if (HasBuff<BuffPolymorph>()) {
-            return 1;
+    int GetCriticalRollChance() {
+        int CRIT_CHANCE = 5;
+        if (Config.SpecialAttack == UserAbilitySelection.SNEAKATTACK && Config.AttackTreeLevel >= 3) {
+            CRIT_CHANCE += 15;
         }
-        return UnityEngine.Random.Range(Config.BaseAttackMin, Config.BaseAttackMax);
+        return CRIT_CHANCE;
     }
 
-    public int GetSpecialAttackRoll() {
+    float GetCriticalHitModifier() {
+        return 1.25f;
+    }
+
+    int GetHitChance(bool isHeal) {
+        int hitChance = 80;
+        if (isHeal) {
+            hitChance = 100;
+        }
+        if (HasBuff<BuffBlinded>()) {
+            hitChance -= 30;
+        }
+
+        return hitChance;
+    }
+
+    public int GetBasicAttackRoll() {
+        bool HIT_SUCCESSFUL = TryChance(GetHitChance(false));
+
+        if (!HIT_SUCCESSFUL) {
+            return 0;
+        }
+
         if (HasBuff<BuffPolymorph>()) {
             return 1;
         }
-        return UnityEngine.Random.Range(Config.BaseSpecialMin, Config.BaseSpecialMax);
+
+        bool DidCrit = TryChance(GetCriticalRollChance());
+        int damage = UnityEngine.Random.Range(Config.BaseAttackMin, Config.BaseAttackMax);
+
+        if (DidCrit) {
+            damage = (int) (damage * GetCriticalHitModifier());
+        }
+
+        return damage;
+    }
+
+    public int GetSpecialAttackRoll(bool isAHealRoll) {
+        bool HIT_SUCCESSFUL = TryChance(GetHitChance(isAHealRoll));
+
+        if (!HIT_SUCCESSFUL) {
+            return 0;
+        }
+
+        if (HasBuff<BuffPolymorph>()) {
+            return 1;
+        }
+
+        bool DidCrit = TryChance(GetCriticalRollChance());
+        int damage = UnityEngine.Random.Range(Config.BaseSpecialMin, Config.BaseSpecialMax);
+
+        if (DidCrit) {
+            damage = (int) (damage * GetCriticalHitModifier());
+        }
+
+        return damage;
     }
 
     public void TakeDamage(int Damage) {
         bool startedDead = currentHealth == 0;
+        int DamageToHealth = Damage;
+
+        //  let shield block if there is one
+        if (HasBuff<BuffShield>()) {
+            int ShieldCharges = Buffs.First(buff => buff is BuffShield).Charges;
+
+            if (ShieldCharges > Damage) {
+                Buffs.First(buff => buff is BuffShield).Charges -= Damage;
+                DamageToHealth = 0;
+            } else {
+                DamageToHealth -= ShieldCharges;
+                Buffs.RemoveAll(buff => buff is BuffShield);
+            }
+        }
 
         currentHealth = Math.Clamp(
-            currentHealth - Damage,
+            currentHealth - DamageToHealth,
             0,
             Config.BaseHP
         );
@@ -108,7 +206,21 @@ public class Character : MonoBehaviour
         isDead = true;
     }
 
+    protected bool TryChance(int percentChance) {
+        return UnityEngine.Random.Range(0, 100) < percentChance;
+    }
+
     // dev
+    [ContextMenu("check state")]
+    void CheckState() {
+        Debug.Log(Config.AttackTreeLevel + " ATTACK");
+        Debug.Log(Config.SupportTreeLevel + " SUPPORT");
+    }
+    [ContextMenu("lvl up both")]
+    void LvlUpBoth() {
+        Config.AttackTreeLevel++;
+        Config.SupportTreeLevel++;
+    }
     [ContextMenu("add stun buff")]
     void GetStunned() {
         AddBuff(new BuffStunned(this, this, 1));
@@ -121,4 +233,5 @@ public class Character : MonoBehaviour
     void GetCharmed() {
         AddBuff(new BuffCharmed(this, this, 1));
     }
+
 }

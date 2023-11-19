@@ -2,29 +2,74 @@ using System.Collections.Generic;
 
 public class AbilitySneakAttack : BaseAbilityResolver
 {
-    public AbilitySneakAttack() {
+    int _attackLevel = 0;
+    int _supportLevel = 0;
+    public AbilitySneakAttack(int AttackLevel = 0, int SupportLevel = 0) {
+        _attackLevel = AttackLevel;
+        _supportLevel = SupportLevel;
         Name = "Poison Strike";
         Description = "Attacks an enemy and applies Poisoned";
         TargetScope = EligibleTargetScopeType.ENEMY;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/PoisonStrike");   
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> eligibleTargets = null)
+    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
         var _e = new ExecutedAbility(source, target, this);
 
+        int SneakAttackDamage = source.GetSpecialAttackRoll(false);
+        bool SneakAttackLanded = SneakAttackDamage != 0;
         CalculatedDamage DamageToTarget = CalculateFinalDamage(
             source,
             target,
-            source.GetSpecialAttackRoll()
+            SneakAttackDamage
         );
 
         _e.Add(DamageToTarget);
 
-        int PoisonDamage = DamageToTarget.RawDamage / 2;
+        if (!SneakAttackLanded) {
+            return _e;
+        }
+
+        if (_attackLevel > 0) {
+            int FollowupAttacks = 1;
+            if (_attackLevel > 1) {
+                FollowupAttacks = 2;
+            }
+            for (var i = 0; i < FollowupAttacks; i++) {
+                Character RandomEnemy = CombatantListFilter.RandomByScope(
+                    AllCombatants,
+                    source,
+                    EligibleTargetScopeType.ENEMY
+                );
+                CalculatedDamage FollowupAttack1 = CalculateFinalDamage(
+                    source,
+                    RandomEnemy,
+                    (int) (SneakAttackDamage * 0.25f)
+                );
+                _e.Add(FollowupAttack1);
+            }
+        }
+
+        int PoisonDamage = SneakAttackDamage / 2;
 
         Buff poisonDebuff = new BuffPoisoned(source, target, 1, PoisonDamage);
         _e.Add(poisonDebuff);
+
+        if (_supportLevel > 0) {
+            Buff blindBuff = new BuffBlinded(source, target, 1);
+            _e.Add(blindBuff);
+        }
+
+        if (_supportLevel > 1) {
+            Buff smokeBuff = new BuffSmokeBomb(source, target, 2);
+            _e.Add(smokeBuff);
+        }
+
+        if (_supportLevel > 2) {
+            Buff silenceBuff = new BuffSilenced(source, target, 2);
+            _e.Add(silenceBuff);
+        }
 
         return _e;
     }    

@@ -5,6 +5,7 @@ public class BuffElementalWeakness : Buff
         Name = "Elemental Weakness";
         Description = "Creature is not resistant to any elements";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
+        isDebuff = true;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/elementalweakness");
     }
 }

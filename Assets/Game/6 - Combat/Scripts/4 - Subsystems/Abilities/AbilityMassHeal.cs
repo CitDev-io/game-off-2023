@@ -10,11 +10,10 @@ public class AbilityMassHeal : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> eligibleTargets)
+    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-
         List<Character> FriendlyTargets = CombatantListFilter.ByScope(
-            eligibleTargets,
+            AllCombatants,
             source,
             EligibleTargetScopeType.FRIENDLYORSELF
         );
@@ -24,7 +23,7 @@ public class AbilityMassHeal : BaseAbilityResolver
             CalculatedDamage DamageToTarget = CalculateFinalDamage(
                 source,
                 FriendlyTarget,
-                -source.GetSpecialAttackRoll() / 2
+                -source.GetSpecialAttackRoll(true) / 2
             );
             _e.Add(DamageToTarget);
         }

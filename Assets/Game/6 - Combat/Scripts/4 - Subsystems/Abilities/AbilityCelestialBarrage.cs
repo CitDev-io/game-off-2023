@@ -10,17 +10,17 @@ public class AbilityCelestialBarrage : BaseAbilityResolver
     }
 
     int COUNT_LIGHT_STRIKES = 8;
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> eligibleTargets)
+    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
         var _e = new ExecutedAbility(source, target, this);
 
         for (var i =0; i < COUNT_LIGHT_STRIKES; i++) {
             Character RandomEnemy = CombatantListFilter.RandomByScope(
-                eligibleTargets,
+                AllCombatants,
                 source,
                 EligibleTargetScopeType.ENEMY
             );
-            int DamageRoll = source.GetSpecialAttackRoll();
+            int DamageRoll = source.GetSpecialAttackRoll(false);
             int NerfedABitDamage = (int) (DamageRoll * 0.25f);
             CalculatedDamage DamageToTarget = CalculateFinalDamage(
                 source,

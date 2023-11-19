@@ -7,6 +7,7 @@ public class BuffPoisoned : Buff
         Description = "Takes damage at the start of their turn";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         DotAbility = new AbilityFlatDotDamage(damage, "Poison Damage", "Enemy is Poisoned");
+        isDebuff = true;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/Poisoned");
     }
 
