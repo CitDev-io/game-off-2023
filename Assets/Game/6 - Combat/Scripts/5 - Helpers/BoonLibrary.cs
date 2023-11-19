@@ -18,6 +18,8 @@ public class BoonLibrary
         Boons.Add(new BoonSupportRankUp(PCAdventureClassType.ROGUE));
         Boons.Add(new BoonSupportRankUp(PCAdventureClassType.WARLOCK));
         Boons.Add(new BoonSupportRankUp(PCAdventureClassType.PRIEST));
+
+        PartyMembers = PlayerParty.PartyMembers;
     }
 
     List<BaseBoonResolver> GetBoonsForParty() {
