@@ -9,6 +9,7 @@ public abstract class BaseAbilityResolver
     public string Description { get; protected set; }
     public Sprite PortraitArt { get; protected set; }
     public EligibleTargetScopeType TargetScope { get; protected set; }
+    public bool IsUltimate = false;
 
     public abstract ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants);
 

@@ -7,6 +7,7 @@ public class AbilityMassHeal : BaseAbilityResolver
         Name = "Mass Heal";
         Description = "Heals all friendly targets";
         TargetScope = EligibleTargetScopeType.NONE;
+        IsUltimate = true;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 

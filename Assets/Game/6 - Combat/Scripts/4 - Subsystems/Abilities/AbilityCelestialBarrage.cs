@@ -5,6 +5,7 @@ public class AbilityCelestialBarrage : BaseAbilityResolver
     public AbilityCelestialBarrage() {
         Name = "Celestial Barrage";
         Description = "Beckons 8 Celestial Light Strikes to rain down on random enemies";
+        IsUltimate = true;
         TargetScope = EligibleTargetScopeType.NONE;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/ShieldBash");   
     }

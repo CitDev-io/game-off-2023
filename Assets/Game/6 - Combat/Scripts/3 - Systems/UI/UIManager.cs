@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
     public UI_AbilitySelection AbilitySelectionUI;
     public UI_TargetSelection TargetSelectionUI;
     public UI_TextCrawler TextCrawlUI;
+    public UI_ScalePanelManager ScalePanelUI;
     bool IsSelectingAbility = false;
     bool IsSelectingTarget = false;
     bool BoonTimeout = false;
@@ -109,6 +110,7 @@ public class UIManager : MonoBehaviour
         _eventProvider.OnWaveReady += HandleWaveReady;
         _eventProvider.OnEligibleTargetsChanged += HandleEligibleTargetsChanged;
         _eventProvider.OnAbilityExecuted += HandleAbilityExecuted;
+        _eventProvider.OnScaleChanged += HandleScaleChanged;
     }
 
     void HandleWaveReady() {
@@ -135,6 +137,14 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    int LightRef = 0;
+    int ShadowRef = 0;
+    void HandleScaleChanged(int Light, int Dark) {
+        LightRef = Light;
+        ShadowRef = Dark;
+        ScalePanelUI.SetScale(Light, Dark);
+    }
+
     void HandleInitPhasePrompt() {
 
     }
@@ -146,7 +156,7 @@ public class UIManager : MonoBehaviour
     void HandleAbilityPhasePromptForCharacter(Character combatant) {
         TargetSelectionUI.gameObject.SetActive(false);
         if (combatant.Config.TeamType == TeamType.PLAYER) {
-            List<AbilityCategory> availableAbilities = combatant.GetAvailableAbilities();
+            List<AbilityCategory> availableAbilities = combatant.GetAvailableAbilities(LightRef, ShadowRef);
             if (availableAbilities.Contains(AbilityCategory.SPECIALATTACK)) {
                 AbilitySelectionUI.SetSpecialAbilityName(combatant.Config.SpecialAttack.ToString());
             }

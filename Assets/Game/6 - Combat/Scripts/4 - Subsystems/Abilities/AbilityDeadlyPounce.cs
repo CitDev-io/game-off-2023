@@ -6,6 +6,7 @@ public class AbilityDeadlyPounce : BaseAbilityResolver
         Name = "Deadly Pounce";
         Description = "Deals a massive blow and stuns the enemy";
         TargetScope = EligibleTargetScopeType.ENEMY;
+        IsUltimate = true;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/DeadlyPounce");
     }
 

@@ -6,6 +6,7 @@ public class AbilityPolymorph : BaseAbilityResolver
         Name = "Polymorph";
         Description = "Transforms an enemy into a harmless sheep and negates elemental resistances for 2 turns";
         TargetScope = EligibleTargetScopeType.ENEMY;
+        IsUltimate = true;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Polymorph");");   
     }
 

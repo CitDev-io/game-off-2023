@@ -26,14 +26,22 @@ public class Character : MonoBehaviour
         return Buffs.Any(buff => buff is T);
     }
 
-    public List<AbilityCategory> GetAvailableAbilities() {
+    public List<AbilityCategory> GetAvailableAbilities(int LightPoints, int ShadowPoints) {
         var availableAbilities = new List<AbilityCategory>(){ 
             AbilityCategory.BASICATTACK,
         };
+        PowerType powerType = Config.PowerType;
+        
+        if (powerType == PowerType.LIGHT && LightPoints < 1) {
+            return availableAbilities;
+        }
+        if (powerType == PowerType.SHADOW && ShadowPoints < 1) {
+            return availableAbilities;
+        }
         if (Config.SpecialAttack != UserAbilitySelection.NONE) {
             availableAbilities.Add(AbilityCategory.SPECIALATTACK);
         };
-        if (Config.UltimateAbility != UserAbilitySelection.NONE) {
+        if (Config.UltimateAbility != UserAbilitySelection.NONE && LightPoints > 1 && ShadowPoints > 1) {
             availableAbilities.Add(AbilityCategory.ULTIMATE);
         };
 

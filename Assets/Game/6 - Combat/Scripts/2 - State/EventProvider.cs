@@ -10,6 +10,7 @@ public delegate void AbilityCategoryDelegate(AbilityCategory category);
 public delegate void ExecutedAbilityDelegate(ExecutedAbility executedAbility);
 public delegate void BoonsDelegate(List<BaseBoonResolver> boons);
 public delegate void BoonDelegate(BaseBoonResolver boon);
+public delegate void ScaleDelegate(int light, int dark);
 
 public class EventProvider
 {
@@ -25,4 +26,5 @@ public class EventProvider
     public CharactersDelegate OnEligibleTargetsChanged;
     public ExecutedAbilityDelegate OnAbilityExecuted;
     public CharacterDelegate OnCharacterRevived;
+    public ScaleDelegate OnScaleChanged;
 }

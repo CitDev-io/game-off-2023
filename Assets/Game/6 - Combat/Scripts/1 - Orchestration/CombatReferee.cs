@@ -31,6 +31,8 @@ public class CombatReferee : MonoBehaviour
     public EventProvider eventProvider;
     WaveProvider waveProvider;
     BoonLibrary boonLibrary;
+    public int LightPoints = 0;
+    public int ShadowPoints = 0;
 
     // Coworkers
     UIManager __uiManager;
@@ -83,7 +85,7 @@ public class CombatReferee : MonoBehaviour
 
                 ResolvePreflightBuffEffectsForCombatant(combatState.CurrentCombatant);
 
-                bool HasAbilityOptions = combatState.CurrentCombatant.GetAvailableAbilities().Count > 0;
+                bool HasAbilityOptions = combatState.CurrentCombatant.GetAvailableAbilities(LightPoints, ShadowPoints).Count > 0;
                 bool SkipToCleanup = !HasAbilityOptions || combatState.CurrentCombatant.isDead;
                 if (SkipToCleanup) {
                     NextPhase = CombatPhase.CHARACTERTURN_CLEANUP;
@@ -489,10 +491,48 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     void ExecuteAttack() {
         ExecutedAbility completedAbility = combatState.ExecuteSelectedAbility();
 
+        AdjustScaleByAbilityCast(completedAbility);
+        eventProvider.OnScaleChanged?.Invoke(LightPoints, ShadowPoints);
+
+        if (completedAbility.Ability is AbilityBasicAttack)
+
         completedAbility.CharactersReviving.ForEach(character => ReviveCharacter(character));
 
         eventProvider.OnAbilityExecuted?.Invoke(completedAbility);
         CombatAwaitingUser = false;
+    }
+
+    void AdjustScaleByAbilityCast(ExecutedAbility _e) {
+        if (_e.Source.Config.TeamType != TeamType.PLAYER) return;
+        if (_e.Ability is AbilityFlatDotDamage) return;
+
+        if (_e.Ability is AbilityBasicAttack) {
+            if (_e.Source.Config.PowerType == PowerType.LIGHT) {
+                if (LightPoints < 2){
+                    LightPoints += 1;
+                }
+            } else {
+                if (ShadowPoints < 2) {
+                    ShadowPoints += 1;
+                }
+            }
+            return;
+        }
+
+        
+        if (LightPoints > 1 && ShadowPoints > 1 && _e.Ability.IsUltimate) {
+            LightPoints -=2;
+            ShadowPoints -=2;
+            return;
+        } 
+
+        if (_e.Source.Config.PowerType == PowerType.LIGHT) {
+            LightPoints -= 1;
+            return;
+        } else {
+            ShadowPoints -= 1;
+            return;
+        }
     }
 
     // TODO: Needs to be resolved by AIStrategy
