@@ -1,0 +1,98 @@
+Warlock.png
+size:1085,126
+filter:Linear,Linear
+pma:true
+arm back
+bounds:934,49,75,75
+offsets:1,0,76,75
+arm front
+bounds:862,47,70,77
+eye white
+bounds:920,3,42,38
+offsets:1,1,44,40
+rotate:90
+eyeball
+bounds:138,2,65,122
+eyebrows normal
+bounds:340,4,52,13
+offsets:1,1,55,15
+eyes dead
+bounds:1028,28,49,20
+offsets:1,1,51,22
+eyes hurt
+bounds:1028,8,55,18
+offsets:1,1,57,20
+eyes mad
+bounds:538,5,55,22
+offsets:1,1,57,25
+eyes normal
+bounds:482,2,54,20
+offsets:1,1,56,24
+hair back
+bounds:2,2,122,134
+offsets:1,1,124,136
+rotate:90
+hair front
+bounds:525,29,95,62
+offsets:1,4,99,67
+rotate:90
+hand back
+bounds:595,2,47,34
+offsets:1,1,49,36
+hand front
+bounds:854,9,64,27
+offsets:1,1,66,30
+head
+bounds:325,19,105,87
+offsets:2,1,108,89
+rotate:90
+imp
+bounds:1011,50,69,74
+offsets:1,2,71,77
+imp eyes
+bounds:418,8,22,9
+offsets:2,2,26,13
+leg back
+bounds:644,7,29,76
+offsets:0,1,29,80
+rotate:90
+leg front
+bounds:776,9,27,76
+offsets:1,0,31,77
+rotate:90
+mouth mad
+bounds:442,10,20,7
+offsets:2,2,24,10
+mouth normal
+bounds:464,10,16,7
+offsets:1,1,19,9
+mouth open
+bounds:325,3,14,13
+offsets:2,1,17,15
+rotate:90
+neck
+bounds:394,4,13,22
+offsets:4,7,21,31
+rotate:90
+pupil
+bounds:722,8,28,28
+offsets:1,1,31,30
+scarf cowl
+bounds:960,12,66,35
+offsets:2,1,69,37
+scarf left
+bounds:471,24,52,100
+offsets:0,0,53,101
+scarf right
+bounds:414,19,55,105
+skull
+bounds:752,8,22,28
+offsets:6,2,29,31
+staff
+bounds:589,38,86,271
+offsets:1,2,88,274
+rotate:90
+torso
+bounds:205,5,119,118
+offsets:1,2,120,120
+rotate:90

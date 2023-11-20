@@ -121,7 +121,7 @@ public class Character : MonoBehaviour
     }
 
     int GetHitChance(bool isHeal) {
-        int hitChance = 80;
+        int hitChance = 95;
         if (isHeal) {
             hitChance = 100;
         }
