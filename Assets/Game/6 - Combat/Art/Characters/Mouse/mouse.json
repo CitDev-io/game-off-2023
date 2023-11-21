@@ -1,0 +1,94 @@
+{
+"skeleton": {
+	"hash": "Fuyp/gVFO/0",
+	"spine": "4.1.24",
+	"x": -229,
+	"y": -15,
+	"width": 421,
+	"height": 468,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/mouse"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "mouse", "parent": "root", "length": 202.36, "rotation": 89.85, "x": 19.92, "y": 180.59 },
+	{ "name": "shadow", "parent": "root", "x": 24.6, "y": -0.96 }
+],
+"slots": [
+	{ "name": "mouse shadow", "bone": "shadow", "attachment": "mouse shadow" },
+	{ "name": "mouse dragon", "bone": "mouse", "attachment": "mouse dragon" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"mouse dragon": {
+				"mouse dragon": { "x": 65.31, "y": 38.59, "rotation": -89.85, "width": 421, "height": 414 }
+			},
+			"mouse shadow": {
+				"mouse shadow": { "x": -23.6, "y": 0.96, "width": 104, "height": 30 }
+			}
+		}
+	}
+],
+"events": {
+	"attack": {}
+},
+"animations": {
+	"attack": {
+		"bones": {
+			"mouse": {
+				"translate": [
+					{
+						"curve": [ 0.034, 0, 0.035, -75.69, 0.034, 0, 0.101, 2.41 ]
+					},
+					{
+						"time": 0.2,
+						"x": -84.79,
+						"y": 38.74,
+						"curve": [ 0.246, 109.04, 0.319, 135.28, 0.281, 68.6, 0.345, 73.67 ]
+					},
+					{
+						"time": 0.4,
+						"x": 111.25,
+						"y": 67.62,
+						"curve": [ 0.489, 85.22, 0.586, 0, 0.494, 57.49, 0.567, 15.19 ]
+					},
+					{ "time": 0.6667 }
+				]
+			},
+			"shadow": {
+				"translate": [
+					{},
+					{
+						"time": 0.2,
+						"x": -90.12,
+						"curve": [ 0.249, 145.25, 0.6, 0, 0.32, 0, 0.6, 0 ]
+					},
+					{ "time": 0.8 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.4, "name": "attack" }
+		]
+	},
+	"idle": {
+		"bones": {
+			"mouse": {
+				"translate": [
+					{
+						"curve": [ 0.034, 0, 0.118, 0, 0.034, 0, 0.101, 38.74 ]
+					},
+					{
+						"time": 0.2,
+						"y": 38.74,
+						"curve": [ 0.453, 0, 0.701, 0, 0.746, 38.74, 0.701, 0 ]
+					},
+					{ "time": 0.8 }
+				]
+			}
+		}
+	}
+}
+}

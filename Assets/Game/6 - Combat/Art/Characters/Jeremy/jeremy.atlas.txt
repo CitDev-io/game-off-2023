@@ -1,0 +1,13 @@
+jeremy.png
+size:519,394
+filter:Linear,Linear
+pma:true
+scale:0.75
+Jeremy
+bounds:2,2,390,458
+offsets:1,0,392,458
+rotate:90
+jeremy shadow
+bounds:462,188,204,55
+offsets:1,1,206,57
+rotate:90

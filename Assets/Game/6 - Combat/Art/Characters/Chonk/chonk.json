@@ -1,0 +1,71 @@
+{
+"skeleton": {
+	"hash": "8wjeKT2lzdc",
+	"spine": "4.1.24",
+	"x": -344,
+	"y": -19,
+	"width": 591,
+	"height": 490,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/chonk"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "chonk dragon", "parent": "root", "length": 382.28, "rotation": 83.33, "x": -3.67, "y": 42.99 },
+	{ "name": "shadow", "parent": "root", "x": 106.54, "y": 14.76 }
+],
+"slots": [
+	{ "name": "chonk shadow", "bone": "shadow", "attachment": "chonk shadow" },
+	{ "name": "Chonk Dragon", "bone": "chonk dragon", "attachment": "Chonk Dragon" },
+	{ "name": "root", "bone": "root", "attachment": "root" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"Chonk Dragon": {
+				"Chonk Dragon": { "x": 185.5, "y": 66.82, "rotation": -83.33, "width": 591, "height": 472 }
+			},
+			"chonk shadow": {
+				"chonk shadow": { "x": -126.54, "y": 32.24, "width": 484, "height": 132 }
+			},
+			"root": {
+				"root": { "x": 0.5, "y": -0.5, "width": 5, "height": 5 }
+			}
+		}
+	}
+],
+"events": {
+	"attack": {}
+},
+"animations": {
+	"attack": {
+		"bones": {
+			"chonk dragon": {
+				"translate": [
+					{
+						"curve": [ 0.089, 0, 0.178, 0, 0.091, 130.23, 0.19, 100.92 ]
+					},
+					{
+						"time": 0.2667,
+						"y": 81.3,
+						"curve": [ 0.278, 0, 0.289, 0, 0.292, 74.84, 0.26, -27.61 ]
+					},
+					{ "time": 0.3, "y": -33.33 },
+					{ "time": 0.3667, "curve": "stepped" },
+					{ "time": 0.8 }
+				],
+				"scale": [
+					{ "time": 0.2333 },
+					{ "time": 0.3, "x": 0.802 },
+					{ "time": 0.3667 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.3, "name": "attack" }
+		]
+	},
+	"idle": {}
+}
+}

@@ -15,11 +15,18 @@ MonoBehaviour:
   _Name: Ghost Dragon
   _PowerType: 1
   _TeamType: 1
+  _PlayerClass: 0
   _Portrait: {fileID: 0}
   _Skin: {fileID: 21300000, guid: dd2414452430e1348826021768bd95fc, type: 3}
+  _SpineSkeleton: {fileID: 11400000, guid: cce327313102c2547928b46c5d978a9f, type: 2}
   _SpecialAttack: 0
+  _UltimateAbility: 0
   _BaseMitigation: 0
   _BaseHP: 400
   _BaseSP: 400
   _BaseAttackMin: 10
   _BaseAttackMax: 80
+  _BaseSpecialMin: 0
+  _BaseSpecialMax: 0
+  SupportTreeLevel: 0
+  AttackTreeLevel: 0

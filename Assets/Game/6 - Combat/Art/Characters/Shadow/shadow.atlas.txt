@@ -1,0 +1,7 @@
+shadow.png
+size:824,670
+filter:Linear,Linear
+pma:true
+shadow dragon
+bounds:2,2,820,666
+offsets:1,1,870,668

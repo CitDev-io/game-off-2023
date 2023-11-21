@@ -1,0 +1,12 @@
+worm.png
+size:293,201
+filter:Linear,Linear
+pma:true
+scale:0.5
+worm wyrm shadow
+bounds:245,28,171,46
+offsets:1,1,173,48
+rotate:90
+worm wyrn
+bounds:2,2,197,241
+rotate:90

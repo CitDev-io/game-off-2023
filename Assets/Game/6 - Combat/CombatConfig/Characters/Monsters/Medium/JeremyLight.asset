@@ -15,11 +15,18 @@ MonoBehaviour:
   _Name: Jeremy
   _PowerType: 0
   _TeamType: 1
+  _PlayerClass: 0
   _Portrait: {fileID: 0}
   _Skin: {fileID: 21300000, guid: 1c7b58028cb5d124aa95c359322fdf5b, type: 3}
+  _SpineSkeleton: {fileID: 11400000, guid: 909d70de0df1b9a40be0ffed313f30ba, type: 2}
   _SpecialAttack: 0
+  _UltimateAbility: 0
   _BaseMitigation: 0
   _BaseHP: 400
   _BaseSP: 400
   _BaseAttackMin: 10
   _BaseAttackMax: 80
+  _BaseSpecialMin: 0
+  _BaseSpecialMax: 0
+  SupportTreeLevel: 0
+  AttackTreeLevel: 0

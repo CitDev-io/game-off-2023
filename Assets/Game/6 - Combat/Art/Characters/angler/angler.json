@@ -1,0 +1,87 @@
+{
+"skeleton": {
+	"hash": "l5QE09YvkyA",
+	"spine": "4.1.24",
+	"x": -384,
+	"y": -18,
+	"width": 860,
+	"height": 636,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/angler"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "angler dragon", "parent": "root", "length": 456.36, "rotation": 39.11, "x": -70.84, "y": 51.18 },
+	{ "name": "shadow", "parent": "root", "x": 30.53, "y": 14.15 }
+],
+"slots": [
+	{ "name": "shadow", "bone": "shadow", "attachment": "shadow" },
+	{ "name": "multihead", "bone": "angler dragon", "attachment": "multihead" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"multihead": {
+				"multihead": { "x": 247.6, "y": 119.38, "rotation": -39.11, "width": 860, "height": 636 }
+			},
+			"shadow": {
+				"shadow": { "x": -19.03, "y": 24.85, "width": 421, "height": 114 }
+			}
+		}
+	}
+],
+"events": {
+	"attack": {}
+},
+"animations": {
+	"animation": {
+		"bones": {
+			"angler dragon": {
+				"rotate": [
+					{
+						"time": 0.3667,
+						"curve": [ 0.447, -15.11, 0.544, 0 ]
+					},
+					{ "time": 0.6333 }
+				],
+				"translate": [
+					{
+						"curve": [ 0.113, 130.77, 0.367, -42.52, 0.122, 0, 0.244, 0 ]
+					},
+					{
+						"time": 0.3667,
+						"x": 191.35,
+						"curve": [ 0.367, 430.48, 0.552, 365.27, 0.444, 0, 0.522, 0 ]
+					},
+					{
+						"time": 0.6,
+						"x": 371.14,
+						"curve": [ 0.628, -25.22, 0.73, -4.65, 0.644, 0, 0.778, 0 ]
+					},
+					{ "time": 0.8 }
+				]
+			},
+			"shadow": {
+				"translate": [
+					{},
+					{
+						"time": 0.2,
+						"x": 35.88,
+						"curve": [ 0.412, 38.24, 0.34, 157.54, 0.252, 0, 0.303, 0 ]
+					},
+					{
+						"time": 0.3667,
+						"x": 243.8,
+						"curve": [ 0.624, 774.19, 0.593, 4.9, 0.489, 0, 0.611, 0 ]
+					},
+					{ "time": 0.7333 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.4667, "name": "attack" }
+		]
+	}
+}
+}

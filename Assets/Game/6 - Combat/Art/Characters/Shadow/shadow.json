@@ -1,0 +1,66 @@
+{
+"skeleton": {
+	"hash": "5BiECTS0mCU",
+	"spine": "4.1.24",
+	"x": -387,
+	"y": -7,
+	"width": 870,
+	"height": 668,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/shadow"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "shadow dragon", "parent": "root", "length": 458.81, "rotation": -176.79, "x": 224.35, "y": 102.26 }
+],
+"slots": [
+	{ "name": "shadow dragon", "bone": "shadow dragon", "attachment": "shadow dragon" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"shadow dragon": {
+				"shadow dragon": { "x": 163.47, "y": -234.27, "rotation": 176.79, "width": 870, "height": 668 }
+			}
+		}
+	}
+],
+"events": {
+	"attack": {}
+},
+"animations": {
+	"attack": {
+		"slots": {
+			"shadow dragon": {
+				"rgba": [
+					{ "time": 0.1, "color": "ffffffff" },
+					{ "time": 0.2667, "color": "00000000" },
+					{ "time": 0.6, "color": "ffffffff" }
+				]
+			}
+		},
+		"bones": {
+			"shadow dragon": {
+				"translate": [
+					{},
+					{ "time": 0.1, "x": 63.9, "y": -34.67 },
+					{ "time": 0.2, "x": 144.45, "y": -37.56 },
+					{
+						"time": 0.2333,
+						"x": 222.8,
+						"y": -34.67,
+						"curve": [ 0.259, 746.84, 0.374, 300.57, 0.311, -32.42, 0.389, 0 ]
+					},
+					{ "time": 0.4667, "x": 255.6 },
+					{ "time": 0.8 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.3, "name": "attack" }
+		]
+	},
+	"idle": {}
+}
+}

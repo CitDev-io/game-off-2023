@@ -1,0 +1,12 @@
+fat.png
+size:1205,1158
+filter:Linear,Linear
+pma:true
+fat
+bounds:2,2,1154,930
+offsets:1,2,1156,933
+rotate:90
+shadow
+bounds:934,151,1005,269
+offsets:3,3,1011,276
+rotate:90

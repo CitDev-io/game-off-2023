@@ -36,8 +36,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ca8d719dded84b045b73edd6222990e2, type: 2}
   - {fileID: 11400000, guid: 6e6f8707d6ee5c844a6790e6a381f532, type: 2}
   Wave5:
+  - {fileID: 11400000, guid: 266441538e9eefa4a9c2b5bcfb98ea6c, type: 2}
+  - {fileID: 11400000, guid: 266441538e9eefa4a9c2b5bcfb98ea6c, type: 2}
   - {fileID: 11400000, guid: 14122647f411d72408e8a236eac2d907, type: 2}
-  - {fileID: 11400000, guid: 266441538e9eefa4a9c2b5bcfb98ea6c, type: 2}
-  - {fileID: 11400000, guid: 266441538e9eefa4a9c2b5bcfb98ea6c, type: 2}
   Wave6: []
   Wave7: []

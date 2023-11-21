@@ -1,0 +1,90 @@
+{
+"skeleton": {
+	"hash": "ECkotGnOvTk",
+	"spine": "4.1.24",
+	"x": -471,
+	"y": -104,
+	"width": 812,
+	"height": 817,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/undead"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "undead dragon", "parent": "root", "length": 508.65, "rotation": 78.12, "x": -79.99, "y": 42.35 },
+	{ "name": "shadow", "parent": "root", "x": 44.93, "y": 23.14 }
+],
+"slots": [
+	{ "name": "shadow", "bone": "shadow", "attachment": "shadow" },
+	{ "name": "undead", "bone": "undead dragon", "attachment": "undead" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"shadow": {
+				"shadow": { "x": -53.93, "y": -1.64, "width": 346, "height": 95 }
+			},
+			"undead": {
+				"undead": { "x": 259.61, "y": 39.31, "rotation": -78.12, "width": 812, "height": 817 }
+			}
+		}
+	}
+],
+"events": {
+	"attack": {}
+},
+"animations": {
+	"animation": {
+		"bones": {
+			"undead dragon": {
+				"rotate": [
+					{},
+					{ "time": 0.1333, "value": 17.38 },
+					{ "time": 0.4667 }
+				],
+				"translate": [
+					{
+						"curve": [ 0.031, -55.01, 0.079, -173.9, 0.033, 0, 0.067, 0 ]
+					},
+					{ "time": 0.1, "x": -46.6, "curve": "stepped" },
+					{
+						"time": 0.4333,
+						"x": -46.6,
+						"curve": [ 0.503, 370.34, 0.411, 458.97, 0.513, 0, 0.411, -74.32 ]
+					},
+					{ "time": 0.4667, "x": 363.22, "y": -38.23 },
+					{
+						"time": 0.5333,
+						"x": 363.22,
+						"y": -32.21,
+						"curve": [ 0.577, 347.6, 0.582, -13.3, 0.543, -32.21, 0.711, 0 ]
+					},
+					{ "time": 0.8 }
+				],
+				"scale": [
+					{},
+					{ "time": 0.1333, "x": 1.081 },
+					{ "time": 0.3667 },
+					{ "time": 0.4667, "x": 0.917 }
+				]
+			},
+			"shadow": {
+				"translate": [
+					{ "time": 0.4333 },
+					{ "time": 0.4667, "x": 339.75, "curve": "stepped" },
+					{
+						"time": 0.5333,
+						"x": 339.75,
+						"curve": [ 0.598, 141.51, 0.711, 0, 0.622, 0, 0.711, 0 ]
+					},
+					{ "time": 0.8 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.4667, "name": "attack" }
+		]
+	}
+}
+}

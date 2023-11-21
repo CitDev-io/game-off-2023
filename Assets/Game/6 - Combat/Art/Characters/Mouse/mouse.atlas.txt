@@ -1,0 +1,11 @@
+mouse.png
+size:231,211
+filter:Linear,Linear
+pma:true
+scale:0.5
+mouse dragon
+bounds:2,2,211,207
+mouse shadow
+bounds:215,158,51,14
+offsets:1,0,52,15
+rotate:90

@@ -1,0 +1,11 @@
+pirate.png
+size:1299,623
+filter:Linear,Linear
+pma:true
+pirate
+bounds:2,2,1217,619
+offsets:1,1,1220,622
+shadow
+bounds:1221,131,490,76
+offsets:2,3,494,81
+rotate:90

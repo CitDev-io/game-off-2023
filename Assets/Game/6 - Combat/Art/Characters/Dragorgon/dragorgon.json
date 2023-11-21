@@ -1,0 +1,84 @@
+{
+"skeleton": {
+	"hash": "D9JiBLbec40",
+	"spine": "4.1.24",
+	"x": -269,
+	"y": -21,
+	"width": 494,
+	"height": 721,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/dragorgon"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "dragorgon", "parent": "root", "length": 447.56, "rotation": 84.26, "x": -28.82, "y": 47.9 },
+	{ "name": "shadow", "parent": "root", "x": -117.97, "y": 3.1 }
+],
+"slots": [
+	{ "name": "dragorgon shadow", "bone": "shadow", "attachment": "dragorgon shadow" },
+	{ "name": "dragorgon", "bone": "dragorgon", "attachment": "dragorgon" },
+	{ "name": "root", "bone": "root", "attachment": "root" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"dragorgon": {
+				"dragorgon": { "x": 303.26, "y": 23.66, "rotation": -84.26, "width": 494, "height": 696 }
+			},
+			"dragorgon shadow": {
+				"dragorgon shadow": { "x": 52.97, "y": 32.9, "width": 346, "height": 114 }
+			},
+			"root": {
+				"root": { "x": 0.5, "y": -0.5, "width": 5, "height": 5 }
+			}
+		}
+	}
+],
+"events": {
+	"attack": {}
+},
+"animations": {
+	"animation": {},
+	"attack": {
+		"bones": {
+			"dragorgon": {
+				"rotate": [
+					{},
+					{ "time": 0.0333, "value": -19.68 },
+					{ "time": 0.2667 }
+				],
+				"translate": [
+					{
+						"curve": [ 0.011, 254.54, 0.223, 184.29, 0.133, 0, 0.267, 0 ]
+					},
+					{
+						"time": 0.4,
+						"x": 175.79,
+						"curve": [ 0.423, -76.19, 0.567, 0, 0.567, 0, 0.567, 0 ]
+					},
+					{ "time": 0.7333 }
+				]
+			},
+			"shadow": {
+				"translate": [
+					{
+						"curve": [ 0.1, -123.13, 0.053, 309.16, 0.133, 0, 0.267, 0 ]
+					},
+					{
+						"time": 0.4,
+						"x": 189.42,
+						"curve": [ 0.52, 147.99, 0.502, -22.93, 0.533, 0, 0.578, 0 ]
+					},
+					{ "time": 0.6667, "curve": "stepped" },
+					{ "time": 0.8 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.1, "name": "attack" }
+		]
+	},
+	"idle": {}
+}
+}

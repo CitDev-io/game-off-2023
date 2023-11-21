@@ -1,0 +1,81 @@
+{
+"skeleton": {
+	"hash": "TA9Me8star4",
+	"spine": "4.1.24",
+	"x": -212,
+	"y": -37,
+	"width": 360,
+	"height": 493,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/ghost"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "ghost dragon", "parent": "root", "length": 251.14, "rotation": 83.84, "x": 27.75, "y": 160.24 },
+	{ "name": "shadow", "parent": "root", "x": 39.68, "y": 0.51 }
+],
+"slots": [
+	{ "name": "ghost shadow", "bone": "shadow", "attachment": "ghost shadow" },
+	{ "name": "ghost dragon", "bone": "ghost dragon", "attachment": "ghost dragon" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"ghost dragon": {
+				"ghost dragon": { "x": 75.87, "y": 68.28, "rotation": -83.84, "width": 360, "height": 426 }
+			},
+			"ghost shadow": {
+				"ghost shadow": { "x": -40.18, "y": -1.51, "width": 239, "height": 72 }
+			}
+		}
+	}
+],
+"events": {
+	"attack": {}
+},
+"animations": {
+	"attack": {
+		"bones": {
+			"ghost dragon": {
+				"translate": [
+					{
+						"curve": [ 0.033, 0, 0.067, -77.28, 0.033, 0, 0.07, 96.27 ]
+					},
+					{
+						"time": 0.1,
+						"x": -77.28,
+						"y": 48.28,
+						"curve": [ 0.2, -77.28, 0.3, 183.09, 0.2, -113.48, 0.3, -8.97 ]
+					},
+					{ "time": 0.4, "x": 183.09, "y": -8.97 },
+					{ "time": 0.6667 }
+				]
+			},
+			"shadow": {
+				"translate": [
+					{},
+					{ "time": 0.1, "x": -79.76 },
+					{ "time": 0.4, "x": 190.11 },
+					{ "time": 0.6667, "curve": "stepped" },
+					{ "time": 0.8 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.4, "name": "attack" }
+		]
+	},
+	"idle": {
+		"bones": {
+			"ghost dragon": {
+				"translate": [
+					{},
+					{ "time": 0.4, "y": 19.54 },
+					{ "time": 0.8 }
+				]
+			}
+		}
+	}
+}
+}

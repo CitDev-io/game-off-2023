@@ -1,0 +1,13 @@
+undead.png
+size:686,612
+filter:Linear,Linear
+pma:true
+scale:0.75
+shadow
+bounds:615,352,258,69
+offsets:1,1,260,71
+rotate:90
+undead
+bounds:2,2,608,611
+offsets:0,1,609,613
+rotate:90

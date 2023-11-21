@@ -1,0 +1,101 @@
+{
+"skeleton": {
+	"hash": "rmXzhFSt8PY",
+	"spine": "4.1.24",
+	"x": -172,
+	"y": -43,
+	"width": 373,
+	"height": 408,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/fire"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "fire dragon", "parent": "root", "length": 238.92, "rotation": 59.76, "x": -45.22, "y": 20.6 },
+	{ "name": "shadow", "parent": "root", "x": 61.46, "y": 0.2 }
+],
+"slots": [
+	{ "name": "fire dragon shadow", "bone": "shadow", "attachment": "fire dragon shadow" },
+	{ "name": "fire dragon", "bone": "fire dragon", "attachment": "fire dragon" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"fire dragon": {
+				"fire dragon": { "x": 151.81, "y": 19.37, "rotation": -59.76, "width": 373, "height": 407 }
+			},
+			"fire dragon shadow": {
+				"fire dragon shadow": { "x": -66.96, "y": -1.2, "width": 255, "height": 84 }
+			}
+		}
+	}
+],
+"events": {
+	"attack": {}
+},
+"animations": {
+	"attack": {
+		"bones": {
+			"shadow": {
+				"translate": [
+					{
+						"time": 0.2,
+						"curve": [ 0.232, 245.32, 0.359, 200.71, 0.314, 0, 0.286, 0 ]
+					},
+					{
+						"time": 0.4,
+						"x": 215.9,
+						"curve": [ 0.517, -28.51, 0.667, 0, 0.533, 0, 0.667, 0 ]
+					},
+					{ "time": 0.8 }
+				]
+			},
+			"fire dragon": {
+				"rotate": [
+					{},
+					{
+						"time": 0.2,
+						"value": 13.4,
+						"curve": [ 0.265, -12.53, 0.36, -1.06 ]
+					},
+					{
+						"time": 0.4,
+						"value": -8.18,
+						"curve": [ 0.48, -5.48, 0.667, 0 ]
+					},
+					{ "time": 0.8 }
+				],
+				"translate": [
+					{},
+					{
+						"time": 0.2,
+						"x": 37.35,
+						"y": 33.62,
+						"curve": [ 0.243, 254.99, 0.333, 229.59, 0.267, 33.62, 0.333, 32.25 ]
+					},
+					{
+						"time": 0.4,
+						"x": 229.59,
+						"y": 27.64,
+						"curve": [ 0.455, -25.77, 0.667, 0, 0.533, 18.43, 0.667, 0 ]
+					},
+					{ "time": 0.8 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.4, "name": "attack" }
+		]
+	},
+	"idle": {
+		"bones": {
+			"fire dragon": {
+				"scale": [
+					{}
+				]
+			}
+		}
+	}
+}
+}

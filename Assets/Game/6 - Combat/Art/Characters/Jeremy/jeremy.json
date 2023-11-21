@@ -1,0 +1,84 @@
+{
+"skeleton": {
+	"hash": "V5kjKK2q6nQ",
+	"spine": "4.1.24",
+	"x": -232,
+	"y": -34,
+	"width": 522,
+	"height": 635,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/jeremy"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "jeremy", "parent": "root", "length": 433.48, "rotation": 78.73, "x": -63.82, "y": 18.74 },
+	{ "name": "shadow", "parent": "root", "x": 29.56, "y": -0.96 }
+],
+"slots": [
+	{ "name": "jeremy shadow", "bone": "shadow", "attachment": "jeremy shadow" },
+	{ "name": "Jeremy", "bone": "jeremy", "attachment": "Jeremy" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"Jeremy": {
+				"Jeremy": { "x": 289.57, "y": -36.95, "rotation": -78.73, "width": 522, "height": 611 }
+			},
+			"jeremy shadow": {
+				"jeremy shadow": { "x": -56.56, "y": 4.96, "width": 274, "height": 76 }
+			}
+		}
+	}
+],
+"events": {
+	"attack": {}
+},
+"animations": {
+	"animation": {
+		"bones": {
+			"jeremy": {
+				"rotate": [
+					{},
+					{ "time": 0.1, "value": 17.7 },
+					{ "time": 0.2333 }
+				],
+				"translate": [
+					{},
+					{
+						"time": 0.2333,
+						"y": 30.13,
+						"curve": [ 0.267, 165.92, 0.29, 193.74, 0.367, 30.13, 0.267, 0 ]
+					},
+					{
+						"time": 0.4,
+						"x": 129.31,
+						"curve": [ 0.443, -38.79, 0.467, -4.23, 0.533, 0, 0.533, 0 ]
+					},
+					{ "time": 0.6667 }
+				]
+			},
+			"shadow": {
+				"translate": [
+					{ "time": 0.2333 },
+					{
+						"time": 0.3333,
+						"x": 176.09,
+						"curve": [ 0.349, 123.6, 0.391, 212.91, 0.356, 0, 0.378, 0 ]
+					},
+					{
+						"time": 0.4,
+						"x": 128.44,
+						"curve": [ 0.415, -17.47, 0.586, 0, 0.489, 0, 0.578, 0 ]
+					},
+					{ "time": 0.6667, "curve": "stepped" },
+					{ "time": 0.8 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.3333, "name": "attack" }
+		]
+	}
+}
+}

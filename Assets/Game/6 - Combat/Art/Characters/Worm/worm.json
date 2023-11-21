@@ -1,0 +1,76 @@
+{
+"skeleton": {
+	"hash": "1CG+NQfjp74",
+	"spine": "4.1.24",
+	"x": -186,
+	"y": -16,
+	"width": 394,
+	"height": 495,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/worm"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "worm", "parent": "root", "length": 375.84, "rotation": 55.88, "x": -92.3, "y": 53.16 },
+	{ "name": "shadow", "parent": "root", "x": 69.86, "y": 6.53 }
+],
+"slots": [
+	{ "name": "worm wyrm shadow", "bone": "shadow", "attachment": "worm wyrm shadow" },
+	{ "name": "worm wyrn", "bone": "worm", "attachment": "worm wyrn" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"worm wyrm shadow": {
+				"worm wyrm shadow": { "x": -81.86, "y": 24.97, "width": 346, "height": 95 }
+			},
+			"worm wyrn": {
+				"worm wyrn": { "x": 210.97, "y": 18.16, "rotation": -55.88, "width": 394, "height": 482 }
+			}
+		}
+	}
+],
+"events": {
+	"attack": {}
+},
+"animations": {
+	"attack": {
+		"bones": {
+			"worm": {
+				"rotate": [
+					{},
+					{ "time": 0.0667, "value": 24.37 },
+					{ "time": 0.1 }
+				],
+				"translate": [
+					{},
+					{
+						"time": 0.1,
+						"x": 202.7,
+						"y": 2.14,
+						"curve": [ 0.333, 202.7, 0.433, 0, 0.333, 2.14, 0.433, 0 ]
+					},
+					{ "time": 0.6667 }
+				]
+			},
+			"shadow": {
+				"translate": [
+					{},
+					{
+						"time": 0.1,
+						"x": 179.39,
+						"curve": [ 0.333, 181.27, 0.433, 4.87, 0.333, 0, 0.478, 0 ]
+					},
+					{ "time": 0.6667, "curve": "stepped" },
+					{ "time": 0.8 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.1333, "name": "attack" }
+		]
+	},
+	"idle": {}
+}
+}

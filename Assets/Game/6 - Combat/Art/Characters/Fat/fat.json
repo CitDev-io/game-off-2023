@@ -1,0 +1,82 @@
+{
+"skeleton": {
+	"hash": "RzgZJ2KiybI",
+	"spine": "4.1.24",
+	"x": -722,
+	"y": -60,
+	"width": 1156,
+	"height": 933,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/fat"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "fat dragon", "parent": "root", "length": 728.56, "rotation": 83.35, "x": -108.11, "y": 49.25 },
+	{ "name": "shadow", "parent": "root", "x": 243.89, "y": 61.96 }
+],
+"slots": [
+	{ "name": "shadow", "bone": "shadow", "attachment": "shadow" },
+	{ "name": "fat", "bone": "fat dragon", "attachment": "fat" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"fat": {
+				"fat": { "x": 350.69, "y": 77.03, "rotation": -83.35, "width": 1156, "height": 933 }
+			},
+			"shadow": {
+				"shadow": { "x": -370.39, "y": 45.04, "width": 1011, "height": 276 }
+			}
+		}
+	}
+],
+"events": {
+	"attack": {}
+},
+"animations": {
+	"animation": {
+		"bones": {
+			"fat dragon": {
+				"translate": [
+					{
+						"curve": [ 0.067, 0, 0.133, 50.86, 0.063, 35.7, 0.136, 140.35 ]
+					},
+					{
+						"time": 0.2,
+						"x": 76.29,
+						"y": 98.33,
+						"curve": [ 0.267, 101.72, 0.301, 131.2, 0.262, 57.49, 0.348, -170.56 ]
+					},
+					{ "time": 0.3667, "x": 152.58, "curve": "stepped" },
+					{
+						"time": 0.5333,
+						"x": 152.58,
+						"curve": [ 0.646, 148.28, 0.573, 80.39, 0.628, -33.55, 0.578, 0 ]
+					},
+					{ "time": 0.6667 }
+				],
+				"scale": [
+					{ "time": 0.1 },
+					{ "time": 0.1667, "x": 1.113, "y": 0.925 },
+					{ "time": 0.2333, "curve": "stepped" },
+					{ "time": 0.3333 },
+					{ "time": 0.3667, "x": 0.755, "y": 1.105 },
+					{ "time": 0.4667 }
+				]
+			},
+			"shadow": {
+				"translate": [
+					{},
+					{ "time": 0.3, "x": 173.82, "curve": "stepped" },
+					{ "time": 0.5667, "x": 173.82 },
+					{ "time": 0.8 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.3667, "name": "attack" }
+		]
+	}
+}
+}

@@ -1,0 +1,11 @@
+angler.png
+size:964,637
+filter:Linear,Linear
+pma:true
+multihead
+bounds:2,2,848,633
+offsets:1,1,860,636
+shadow
+bounds:852,217,418,110
+offsets:1,2,421,114
+rotate:90

@@ -1,0 +1,14 @@
+chonk.png
+size:722,483
+filter:Linear,Linear
+pma:true
+Chonk Dragon
+bounds:2,11,588,470
+offsets:1,1,591,472
+chonk shadow
+bounds:592,2,479,128
+offsets:2,2,484,132
+rotate:90
+root
+bounds:2,6,3,3
+offsets:1,1,5,5
