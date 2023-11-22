@@ -50,6 +50,11 @@ public class CharacterConfig : ScriptableObject
     [SerializeField]
     private UserAbilitySelection _UltimateAbility;
     public UserAbilitySelection UltimateAbility => _UltimateAbility;
+    [Tooltip("Native Buff")]
+    [SerializeField]
+    private NativeBuffOption _NativeBuff;
+    public NativeBuffOption NativeBuff => _NativeBuff;
+    
 
     
 

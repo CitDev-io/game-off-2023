@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using Spine.Unity;
+using System.Collections.Generic;
 
 public class ActorCharacter : MonoBehaviour
 {
@@ -15,15 +16,19 @@ public class ActorCharacter : MonoBehaviour
     [SerializeField]
     public GameObject TurnIndicator;
     public UI_CharacterElementIndicator ElementIndicator;
+    GameObject _displayLayer;
     SpriteRenderer _skin;
     SkeletonAnimation _spineSkin;
     bool IN_SPINE_MODE = false;
+    public bool IsActing = false;
+    Queue<CharacterActorPerformance> _performanceQueue = new Queue<CharacterActorPerformance>();
 
     Character _character;
     void Awake() {
         _character = GetComponent<Character>();
-        _skin = transform.Find("Skin").GetComponent<SpriteRenderer>();
-        _spineSkin = transform.Find("SpineSkin").GetComponent<SkeletonAnimation>();
+        _displayLayer = transform.Find("DisplayLayer").gameObject;
+        _skin = _displayLayer.transform.Find("Skin").GetComponent<SpriteRenderer>();
+        _spineSkin = _displayLayer.transform.Find("SpineSkin").GetComponent<SkeletonAnimation>();
     }
 
     void Start()
@@ -32,6 +37,45 @@ public class ActorCharacter : MonoBehaviour
         ElementIndicator.SetPowerType(_character.Config.PowerType);
         GetDressed();
         SpineEventSubscribe();
+        StartCoroutine(BrilliantActing());
+    }
+
+    IEnumerator BrilliantActing() {
+        while (true) {
+            yield return new WaitForSeconds(0.05f);
+
+            if (!IsActing && _performanceQueue.Count > 0) {
+                CharacterActorPerformance performance = _performanceQueue.Dequeue();
+                Debug.Log("DEQUEUE " + performance.ToString() + " for " + gameObject.name);
+                switch(performance) {
+                    case CharacterActorPerformance.BASICATTACK:
+                        StartCoroutine(BasicAttackPerformance());
+                        break;
+                    case CharacterActorPerformance.SPECIALATTACK:
+                        StartCoroutine(SpecialAbilityPerformance());
+                        break;
+                    case CharacterActorPerformance.TAKEDAMAGE:
+                        StartCoroutine(TakeDamagePerformance());
+                        break;
+                    case CharacterActorPerformance.DIE:
+                        StartCoroutine(DeathPerformance());
+                        break;
+                    case CharacterActorPerformance.CRACKED:
+                        StartCoroutine(CrackedPerformance());
+                        break;
+                    case CharacterActorPerformance.REVIVE:
+                        StartCoroutine(RevivedPerformance());
+                        break;
+                }
+            }
+        }
+    }
+
+
+
+    public void EnqueuePerformance(CharacterActorPerformance performance) {
+        Debug.Log("ENQUEUE " + performance.ToString() + " for " + gameObject.name);
+        _performanceQueue.Enqueue(performance);
     }
 
     void SpineEventSubscribe() {
@@ -42,22 +86,30 @@ public class ActorCharacter : MonoBehaviour
 
     void HandleSpineEvent(Spine.TrackEntry trackEntry, Spine.Event e) {
         if (e.Data.Name == "damage") {
-            StartCoroutine(SpineRedFlash());
+            StartCoroutine(SpineFlashRedPerformance());
         }
     }
 
-    IEnumerator SpineRedFlash() {
+    void ChangeSpineSkinRed() {
         Color flashColor = Color.red;
         _spineSkin.skeleton.R = flashColor.r;
         _spineSkin.skeleton.G = flashColor.g;
         _spineSkin.skeleton.B = flashColor.b;
         _spineSkin.skeleton.A = flashColor.a;
-        yield return new WaitForSeconds(0.1f);
-        flashColor = Color.white;
+    }
+
+    void ChangeSpineSkinWhite() {
+        Color flashColor = Color.white;
         _spineSkin.skeleton.R = flashColor.r;
         _spineSkin.skeleton.G = flashColor.g;
         _spineSkin.skeleton.B = flashColor.b;
         _spineSkin.skeleton.A = flashColor.a;
+    }
+
+    IEnumerator SpineFlashRedPerformance() {
+        ChangeSpineSkinRed();
+        yield return new WaitForSeconds(0.1f);
+        ChangeSpineSkinWhite();
     }
 
     void GetDressed() {
@@ -103,10 +155,6 @@ public class ActorCharacter : MonoBehaviour
         }
     }
 
-    public void DoDamageTakenPerformance() {
-        StartCoroutine(TakeDamagePerformance());
-    }
-
     IEnumerator TakeDamagePerformance() {
         if (IN_SPINE_MODE) {
             bool hasPerformance = false;
@@ -114,10 +162,17 @@ public class ActorCharacter : MonoBehaviour
                 hasPerformance = true;
             }
             if (hasPerformance) {
+                IsActing = true;
                 _spineSkin.AnimationState.AddAnimation(0, ActorAnimations.damage.ToString(), false, 0f);
                 _spineSkin.AnimationState.AddAnimation(0, ActorAnimations.idle.ToString(), true, 0f);
+                yield return new WaitForSeconds(0.7f);
+                IsActing = false;
             } else {
-                StartCoroutine(SpineRedFlash());
+                IsActing = true;
+                ChangeSpineSkinRed();
+                yield return new WaitForSeconds(0.1f);
+                ChangeSpineSkinWhite();
+                IsActing = false;
             }
             yield return null;
         } else {
@@ -128,18 +183,13 @@ public class ActorCharacter : MonoBehaviour
         }
     }
 
-    public void DoBasicAttackPerformance() {
-        StartCoroutine(BasicAttackPerformance());
-    }
-
-    public void DoSpecialAbilityPerformance() {
-        StartCoroutine(SpecialAbilityPerformance());
-    }
-
     IEnumerator BasicAttackPerformance() {
         if (IN_SPINE_MODE) {
+            IsActing = true;
             _spineSkin.AnimationState.SetAnimation(0, ActorAnimations.attack.ToString(), false);
             _spineSkin.AnimationState.AddAnimation(0, ActorAnimations.idle.ToString(), true, 0.55f);
+            yield return new WaitForSeconds(0.75f);
+            IsActing = false;
         } else {
             Vector3 startingPosition = transform.position;
             Vector3 forwardPosition = transform.position;
@@ -147,6 +197,7 @@ public class ActorCharacter : MonoBehaviour
 
             // move to forward position and back
             float moveSpeed = 20f;
+            IsActing = true;
             while (transform.position != forwardPosition) {
                 transform.position = Vector3.MoveTowards(transform.position, forwardPosition, Time.deltaTime * moveSpeed);
                 yield return new WaitForSeconds(0.01f);
@@ -155,6 +206,7 @@ public class ActorCharacter : MonoBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, startingPosition, Time.deltaTime * moveSpeed);
                 yield return new WaitForSeconds(0.01f);
             }
+            IsActing = false;
         }
     }
 
@@ -165,16 +217,15 @@ public class ActorCharacter : MonoBehaviour
                 hasPerformance = true;
             }
             if (hasPerformance) {
+                IsActing = true;
                 _spineSkin.AnimationState.SetAnimation(0, ActorAnimations.special.ToString(), false);
                 _spineSkin.AnimationState.AddAnimation(0, ActorAnimations.idle.ToString(), true, 0.55f);
+                yield return new WaitForSeconds(0.75f);
+                IsActing = false;
             }
         } else {
         }
             yield return null;
-    }
-
-    public void DoDeathPerformance() {
-        StartCoroutine(DeathPerformance());
     }
 
     float DEATH_FADE_SPEED = 0.08f;
@@ -185,6 +236,7 @@ public class ActorCharacter : MonoBehaviour
             if (_spineSkin.skeletonDataAsset.GetSkeletonData(true).FindAnimation("death") != null) {
                 hasDeathPerformance = true;
             }
+            IsActing = true;
             if (hasDeathPerformance) {
                 _spineSkin.AnimationState.AddAnimation(0, 
                 ActorAnimations.death.ToString(), false, 0.35f);
@@ -198,22 +250,22 @@ public class ActorCharacter : MonoBehaviour
                 alpha -= DEATH_FADE_INCREMENT;
                 yield return new WaitForSeconds(DEATH_FADE_SPEED);
             }
-            gameObject.SetActive(false);
+            _displayLayer.SetActive(false);
+            yield return new WaitForSeconds(1.0f);
+            IsActing = false;
         } else {
             yield return new WaitForSeconds(0.75f);
+            IsActing = true;
             float alpha = 1f;
             while (alpha > 0f) {
                 _skin.color = new Color(1f, 1f, 1f, alpha);
                 alpha -= DEATH_FADE_INCREMENT;
                 yield return new WaitForSeconds(DEATH_FADE_SPEED);
             }
-            gameObject.SetActive(false);
+            _displayLayer.SetActive(false);
             _skin.color = Color.white;
+            IsActing = false;
         }
-    }
-
-    public void DoCrackedPerformance() {
-        StartCoroutine(CrackedPerformance());
     }
 
     IEnumerator CrackedPerformance() {
@@ -226,13 +278,10 @@ public class ActorCharacter : MonoBehaviour
         _skin.color = new Color(1f, 1f, 1f, 1f);
     }
 
-    public void DoRevivedPerformance() {
-        gameObject.SetActive(true);
-        StartCoroutine(RevivedPerformance());
-    }
-
     IEnumerator RevivedPerformance() {
+        _displayLayer.SetActive(true);
         if (IN_SPINE_MODE) {
+            IsActing = true;
             float alpha = 0f;
             while (alpha < 0.95f) {
                 _spineSkin.skeleton.A = alpha;
@@ -242,7 +291,9 @@ public class ActorCharacter : MonoBehaviour
             _spineSkin.skeleton.A = 1f;
             yield return new WaitForSeconds(0.75f);
             _spineSkin.AnimationState.SetAnimation(0, ActorAnimations.idle.ToString(), true);
+            IsActing = false;
         } else {
+            IsActing = true;
             float alpha = _skin.color.a;
             while (alpha < 0.95f) {
                 _skin.color = new Color(1f, 1f, 1f, alpha);
@@ -250,6 +301,7 @@ public class ActorCharacter : MonoBehaviour
                 yield return new WaitForSeconds(DEATH_FADE_SPEED);
             }
             _skin.color = Color.white;
+            IsActing = false;
         }
     }
 }

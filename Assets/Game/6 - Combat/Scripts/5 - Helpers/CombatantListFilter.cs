@@ -99,6 +99,8 @@ public static class CombatantListFilter
             && (candidate.Config.TeamType != referenceTeam || AllowFriendly)
         ).ToList();
 
+        if (matches.Count == 0) return new List<Character>(){ referenceCharacter };
+
         return matches;
     }
 }

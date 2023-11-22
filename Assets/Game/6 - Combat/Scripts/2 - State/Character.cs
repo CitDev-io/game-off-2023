@@ -26,6 +26,10 @@ public class Character : MonoBehaviour
         return Buffs.Any(buff => buff is T);
     }
 
+    public void RemoveBuff<T>() where T : Buff {
+        Buffs.RemoveAll(buff => buff is T);
+    }
+
     public List<AbilityCategory> GetAvailableAbilities(int LightPoints, int ShadowPoints) {
         var availableAbilities = new List<AbilityCategory>(){ 
             AbilityCategory.BASICATTACK,
@@ -70,7 +74,6 @@ public class Character : MonoBehaviour
 
     public void AgeBuffsForPhase(CombatPhase phase) {
         var buffsToAge = Buffs.Where(buff => buff.AgingPhase == phase);
-        Debug.Log("Age for " + phase.ToString() + " : " + buffsToAge.Count());
         foreach (var buff in buffsToAge)
         {
             buff.Tick();
@@ -79,7 +82,17 @@ public class Character : MonoBehaviour
     }
 
     public void RemoveRandomDebuff() {
+        if (Buffs.Count == 0) return;
 
+        Buff randomDebuff = Buffs.Where(buff => buff.isDebuff).FirstOrDefault();
+
+        if (randomDebuff != null) {
+            Buffs.Remove(randomDebuff);
+        }
+    }
+
+    public void RemoveAllBuffs() {
+        Buffs.Clear();
     }
 
     void RemoveAgedBuffs() {
@@ -98,6 +111,12 @@ public class Character : MonoBehaviour
         Config.AttackTreeLevel = 0;
         Config.SupportTreeLevel = 0;
         BattlefieldPosition = battlePosition;
+        if (Config.NativeBuff == NativeBuffOption.VOLCANICBOWEL) {
+            AddBuff(new BuffVolcanicBowelSyndrome(this, this, 999));
+        }
+        if (Config.NativeBuff == NativeBuffOption.PYROPEAKABOO) {
+            AddBuff(new BuffPyroPeakboo(this, this, 999));
+        }
     }
 
     public void TurnStart() {

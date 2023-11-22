@@ -15,10 +15,19 @@ MonoBehaviour:
   _Name: Boss 2
   _PowerType: 0
   _TeamType: 1
+  _PlayerClass: 0
   _Portrait: {fileID: 0}
   _Skin: {fileID: 21300000, guid: a22feb7f427495349b91a6f1ea1ea970, type: 3}
+  _SpineSkeleton: {fileID: 0}
+  _SpecialAttack: 0
+  _UltimateAbility: 0
+  _NativeBuff: 0
   _BaseMitigation: 0
   _BaseHP: 1200
   _BaseSP: 650
   _BaseAttackMin: 20
   _BaseAttackMax: 120
+  _BaseSpecialMin: 20
+  _BaseSpecialMax: 120
+  SupportTreeLevel: 0
+  AttackTreeLevel: 0

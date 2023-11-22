@@ -6,6 +6,21 @@ public class StageChoreographer : MonoBehaviour
     EventProvider _eventProvider;
     public bool IsPerforming = false;
 
+    /*
+        WILO
+
+        Would love to keep a running tally of all of my
+        actors.
+
+        when we receive a waveclear signal, we should wait
+        for all of the actors to complete their performances
+        then we send an ALL CLEAR to the event provider
+
+        
+        referee should wait for ALL CLEAR before proceeding
+
+    */
+
     void Awake() {
         _eventProvider = GetComponent<CombatReferee>().eventProvider;
         SetupHooks();
@@ -42,26 +57,25 @@ public class StageChoreographer : MonoBehaviour
         foreach(CalculatedDamage dmg in executedAbility.AppliedHealthChanges) {
             ActorCharacter sourceMotor = executedAbility.Source.GetComponent<ActorCharacter>();
             if (executedAbility.Ability is AbilityBasicAttack) {
-                sourceMotor.DoBasicAttackPerformance();
+                sourceMotor.EnqueuePerformance(CharacterActorPerformance.BASICATTACK);
             } else {
-                sourceMotor.DoSpecialAbilityPerformance();
+                sourceMotor.EnqueuePerformance(CharacterActorPerformance.SPECIALATTACK);
             }
 
             if (dmg.DamageToHealth > 0) {
                 ActorCharacter victimMotor = dmg.Target.GetComponent<ActorCharacter>();
                 
-                victimMotor.DoDamageTakenPerformance();
+                victimMotor.EnqueuePerformance(CharacterActorPerformance.TAKEDAMAGE);
                 if (dmg.Target.isDead) {
-                    victimMotor.DoDeathPerformance();
+                    victimMotor.EnqueuePerformance(CharacterActorPerformance.DIE);
                 } else if (dmg.StaggerCrackedByThis) {
-                    victimMotor.DoCrackedPerformance();
+                    victimMotor.EnqueuePerformance(CharacterActorPerformance.CRACKED);
                 }
             }
         }
     }
 
-    void HandleCharacterRevived(Character combatant) {
-        combatant.GetComponent<ActorCharacter>().DoRevivedPerformance();
+    void HandleCharacterRevived(Character character) {
+        character.GetComponent<ActorCharacter>().EnqueuePerformance(CharacterActorPerformance.REVIVE);
     }
-   
 }

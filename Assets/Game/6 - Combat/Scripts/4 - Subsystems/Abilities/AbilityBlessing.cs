@@ -39,7 +39,15 @@ public class AbilityBlessing : BaseAbilityResolver
 
                 if (randomDeadAlly != null) {
                     source.GenericWaveCounter++;
-                    _e.AddToRevivalList(randomDeadAlly);
+
+                    int tenthOfPriestHp = (int) (source.currentHealth / 10f);
+
+                    _e.AddToRevivalList(
+                        new ReviveOrder(
+                            randomDeadAlly,
+                            tenthOfPriestHp
+                        )
+                    );
                 }
             }
         } else {

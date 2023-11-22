@@ -16,7 +16,8 @@ public class ExecutedAbility
     public List<CalculatedDamage> AppliedHealthChanges = new List<CalculatedDamage>();
 
     public List<Buff> AppliedBuffs = new List<Buff>();
-    public List<Character> CharactersReviving = new List<Character>();
+    public List<ReviveOrder> CharactersReviving = new List<ReviveOrder>();
+
 
     public ExecutedAbility Commit() {
         foreach (CalculatedDamage damage in AppliedHealthChanges) {
@@ -31,8 +32,8 @@ public class ExecutedAbility
         return this;
     }
 
-    public ExecutedAbility AddToRevivalList(Character character) {
-        CharactersReviving.Add(character);
+    public ExecutedAbility AddToRevivalList(ReviveOrder ro) {
+        CharactersReviving.Add(ro);
         return this;
     }
 

@@ -21,12 +21,13 @@ MonoBehaviour:
   _SpineSkeleton: {fileID: 11400000, guid: 98ecf850dc1349941a19c268c28fe74d, type: 2}
   _SpecialAttack: 0
   _UltimateAbility: 0
+  _NativeBuff: 0
   _BaseMitigation: 0
   _BaseHP: 550
   _BaseSP: 550
   _BaseAttackMin: 10
   _BaseAttackMax: 100
-  _BaseSpecialMin: 0
-  _BaseSpecialMax: 0
+  _BaseSpecialMin: 10
+  _BaseSpecialMax: 100
   SupportTreeLevel: 0
   AttackTreeLevel: 0

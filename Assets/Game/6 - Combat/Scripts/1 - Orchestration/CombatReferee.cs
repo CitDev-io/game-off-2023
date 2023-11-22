@@ -211,7 +211,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
             .ToList();
 
         foreach (ExecutedAbility ability in abilityEffects) {
-            eventProvider.OnAbilityExecuted?.Invoke(ability);
+            RefereeResolvedAbility(ability);
         }
     }
 
@@ -347,16 +347,21 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     [ContextMenu("Revive All PCs")]
     void ReviveAllPCs() {
         List<Character> PCs = combatState.GetAllPCs();
-        PCs.ForEach(c => ReviveCharacter(c));
+        PCs.ForEach(c => ReviveCharacter(
+            new ReviveOrder(c, 100)
+        ));
     }
 
-    void ReviveCharacter(Character character) {
-        if (character.isDead) {
-            combatState.AddCharacterToTurnOrder(character);
+    void ReviveCharacter(ReviveOrder ro) {
+        if (ro.character.isDead && !combatState.GetTurnOrder().Contains(ro.character)) {
+            combatState.AddCharacterToTurnOrder(ro.character);
         }
-        character.currentHealth = character.Config.BaseHP;
-        character.isDead = false;
-        eventProvider.OnCharacterRevived?.Invoke(character);
+        ro.character.currentHealth = (int)(ro.character.Config.BaseHP * (ro.percentHealth / 100f));
+        
+        ro.character.RemoveAllBuffs();
+        ro.character.currentStagger = ro.character.Config.BaseSP;
+        ro.character.isDead = false;
+        eventProvider.OnCharacterRevived?.Invoke(ro.character);
     }
 
     [ContextMenu("Defeat Wave")]
@@ -488,17 +493,55 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
+    void RefereeResolvedAbility(ExecutedAbility executedAbility) {
+        eventProvider.OnAbilityExecuted?.Invoke(executedAbility);
+
+        executedAbility.CharactersReviving.ForEach(ro => ReviveCharacter(ro));
+
+        ResolveDeathTriggers(executedAbility);
+    }
+
+    void ResolveDeathTriggers(ExecutedAbility _e) {
+        Debug.Log("A");
+        foreach(CalculatedDamage dmg in _e.AppliedHealthChanges) {
+            Debug.Log("B");
+            if (!dmg.Target.isDead) continue;
+            Debug.Log("C");
+            if (dmg.Target.HasBuff<BuffVolcanicBowelSyndrome>()) {
+                Debug.Log("HERE");
+                dmg.Target.RemoveBuff<BuffVolcanicBowelSyndrome>();
+                AbilityVolcanicBowelBlast bb = new AbilityVolcanicBowelBlast();
+                ExecutedAbility bbExec = bb.Resolve(
+                    dmg.Target,
+                    dmg.Target,
+                    combatState.FullCombatantList
+                );
+                RefereeResolvedAbility(bbExec);
+            }
+
+            // rez effects should go last since it clears buffs
+            if (dmg.Target.HasBuff<BuffPyroPeakboo>()) {
+                dmg.Target.RemoveBuff<BuffPyroPeakboo>();
+                AbilityPyroPeakaboo pp = new AbilityPyroPeakaboo();
+                ExecutedAbility ppExec = pp.Resolve(
+                    dmg.Target,
+                    dmg.Target,
+                    combatState.FullCombatantList
+                );
+                RefereeResolvedAbility(ppExec);
+            }
+            
+        }
+    }
+
     void ExecuteAttack() {
         ExecutedAbility completedAbility = combatState.ExecuteSelectedAbility();
 
         AdjustScaleByAbilityCast(completedAbility);
         eventProvider.OnScaleChanged?.Invoke(LightPoints, ShadowPoints);
 
-        if (completedAbility.Ability is AbilityBasicAttack)
+        RefereeResolvedAbility(completedAbility);
 
-        completedAbility.CharactersReviving.ForEach(character => ReviveCharacter(character));
-
-        eventProvider.OnAbilityExecuted?.Invoke(completedAbility);
         CombatAwaitingUser = false;
     }
 
