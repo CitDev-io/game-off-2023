@@ -49,7 +49,7 @@ public class Character : MonoBehaviour
             availableAbilities.Add(AbilityCategory.ULTIMATE);
         };
 
-        if (HasBuff<BuffStunned>()) {
+        if (HasBuff<BuffStunned>() || HasBuff<BuffSearingStun>()) {
             return new List<AbilityCategory>();
         }
 

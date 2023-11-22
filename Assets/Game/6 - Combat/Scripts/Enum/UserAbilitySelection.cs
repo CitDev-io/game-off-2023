@@ -8,5 +8,11 @@ public enum UserAbilitySelection {
     DEADLYPOUNCE,
     CELESTIALBARRAGE,
     POLYMORPH,
-    MASSHEAL
+    MASSHEAL,
+    NIBBLE,
+    CINDERSLAP,
+    FLAREBLITZ,
+    SEARINGSTUN,
+    BLAZEBARRAGE,
+    CAUTERIZE
 }

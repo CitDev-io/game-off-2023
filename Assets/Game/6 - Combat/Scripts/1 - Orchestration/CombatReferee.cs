@@ -502,13 +502,9 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     }
 
     void ResolveDeathTriggers(ExecutedAbility _e) {
-        Debug.Log("A");
         foreach(CalculatedDamage dmg in _e.AppliedHealthChanges) {
-            Debug.Log("B");
             if (!dmg.Target.isDead) continue;
-            Debug.Log("C");
             if (dmg.Target.HasBuff<BuffVolcanicBowelSyndrome>()) {
-                Debug.Log("HERE");
                 dmg.Target.RemoveBuff<BuffVolcanicBowelSyndrome>();
                 AbilityVolcanicBowelBlast bb = new AbilityVolcanicBowelBlast();
                 ExecutedAbility bbExec = bb.Resolve(
@@ -602,9 +598,32 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     // TODO: give to AIStrategy
     IEnumerator IECpuChooseAbility() {
         yield return new WaitForSeconds(1f);
-        // List<AbilityCategory> availableAbilities = combatState.CurrentCombatant.GetAvailableAbilities();
 
-        AttackSelected(UserAbilitySelection.BASICATTACK);
+        bool successfulRollToSpecialAttack = false;
+        switch(gameState.StageNumber) {
+            case 1:
+                successfulRollToSpecialAttack = TryChance(25);
+                break;
+            case 2:
+                successfulRollToSpecialAttack = TryChance(35);
+                break;
+            case 3:
+                successfulRollToSpecialAttack = TryChance(45);
+                break;
+            default:
+                successfulRollToSpecialAttack = TryChance(55);
+                break;
+        }
+
+        List<AbilityCategory> availableAbilities = combatState.CurrentCombatant.GetAvailableAbilities(LightPoints, ShadowPoints);
+
+        bool canSpecialAttack = combatState.CurrentCombatant.Config.SpecialAttack != UserAbilitySelection.NONE && availableAbilities.Contains(AbilityCategory.SPECIALATTACK);
+
+        if (successfulRollToSpecialAttack && canSpecialAttack) {
+            AttackSelected(combatState.CurrentCombatant.Config.SpecialAttack);
+        } else {
+            AttackSelected(UserAbilitySelection.BASICATTACK);
+        }
     }
 
     void Update(){
@@ -619,6 +638,10 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         if (Input.GetKeyDown(KeyCode.R)) {
             ReviveAllPCs();
         }
+    }
+
+    protected bool TryChance(int percentChance) {
+        return Random.Range(0, 100) < percentChance;
     }
 }
 

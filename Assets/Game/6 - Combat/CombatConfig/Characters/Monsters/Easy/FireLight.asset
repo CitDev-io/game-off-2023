@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1f911328fe241041bd769443387dfdb, type: 3}
   m_Name: FireLight
   m_EditorClassIdentifier: 
-  _Name: Fire Dragon
+  _Name: Pyrotyke
   _PowerType: 0
   _TeamType: 1
   _PlayerClass: 0
