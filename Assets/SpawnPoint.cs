@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
 {
-    void Start() {
+    void Awake() {
         Position = transform.position;
     }
     public Vector3 Position;
