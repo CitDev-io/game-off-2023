@@ -47,3 +47,9 @@
 -------------
 - buff doesn't need an agingphase, likely. keep an eye out. cut when ready
 - buff application not using pretty name!
+
+
+
+11-21-2023
+------------
+ExecutedAbility should just be the order sheet. "ExecutableAbility" and resolve stack style. BaseAbilityResolver is just an "Effect". Put IBUFF on one and now it doesn't need the passthrough like for DOT.

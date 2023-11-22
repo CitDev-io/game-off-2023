@@ -17,6 +17,7 @@ public class ExecutedAbility
 
     public List<Buff> AppliedBuffs = new List<Buff>();
     public List<ReviveOrder> CharactersReviving = new List<ReviveOrder>();
+    public List<SummonOrder> SummonedUnits = new List<SummonOrder>();
 
 
     public ExecutedAbility Commit() {
@@ -44,6 +45,11 @@ public class ExecutedAbility
 
     public ExecutedAbility Add(CalculatedDamage dmg) {
         AppliedHealthChanges.Add(dmg);
+        return this;
+    }
+
+    public ExecutedAbility Add(SummonOrder su) {
+        SummonedUnits.Add(su);
         return this;
     }
 }

@@ -119,7 +119,7 @@ public class ActorCharacter : MonoBehaviour
             _spineSkin.initialSkinName = "default";
             _spineSkin.skeletonDataAsset = _character.Config.SpineSkeleton;
             _spineSkin.Initialize(true);
-            _spineSkin.AnimationState.SetAnimation(0, ActorAnimations.idle.ToString(), true);
+            SetAnimation(0, ActorAnimations.idle, true);
         } else {
             _skin.gameObject.SetActive(true);
             _spineSkin.gameObject.SetActive(false);
@@ -155,16 +155,35 @@ public class ActorCharacter : MonoBehaviour
         }
     }
 
+    bool HasAnimation(ActorAnimations animation) {
+        if (_spineSkin.skeletonDataAsset.GetSkeletonData(true).FindAnimation(animation.ToString()) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    void SetAnimation(int trackIndex, ActorAnimations animation, bool loop) {
+        if (IN_SPINE_MODE && HasAnimation(animation)) {
+            _spineSkin.AnimationState.SetAnimation(trackIndex, animation.ToString(), loop);
+        }
+    }
+
+    void AddAnimation(int trackIndex, ActorAnimations animation, bool loop, float delay) {
+        if (IN_SPINE_MODE && HasAnimation(animation)) {
+            _spineSkin.AnimationState.AddAnimation(trackIndex, animation.ToString(), loop, delay);
+        }
+    }
+
     IEnumerator TakeDamagePerformance() {
         if (IN_SPINE_MODE) {
             bool hasPerformance = false;
-            if (_spineSkin.skeletonDataAsset.GetSkeletonData(true).FindAnimation("damage") != null) {
+            if (HasAnimation(ActorAnimations.damage)) {
                 hasPerformance = true;
             }
             if (hasPerformance) {
                 IsActing = true;
-                _spineSkin.AnimationState.AddAnimation(0, ActorAnimations.damage.ToString(), false, 0f);
-                _spineSkin.AnimationState.AddAnimation(0, ActorAnimations.idle.ToString(), true, 0f);
+                AddAnimation(0, ActorAnimations.damage, false, 0f);
+                AddAnimation(0, ActorAnimations.idle, true, 0f);
                 yield return new WaitForSeconds(0.7f);
                 IsActing = false;
             } else {
@@ -186,8 +205,8 @@ public class ActorCharacter : MonoBehaviour
     IEnumerator BasicAttackPerformance() {
         if (IN_SPINE_MODE) {
             IsActing = true;
-            _spineSkin.AnimationState.SetAnimation(0, ActorAnimations.attack.ToString(), false);
-            _spineSkin.AnimationState.AddAnimation(0, ActorAnimations.idle.ToString(), true, 0.55f);
+            SetAnimation(0, ActorAnimations.attack, false);
+            AddAnimation(0, ActorAnimations.idle, true, 0.55f);
             yield return new WaitForSeconds(0.75f);
             IsActing = false;
         } else {
@@ -212,18 +231,11 @@ public class ActorCharacter : MonoBehaviour
 
     IEnumerator SpecialAbilityPerformance() {
         if (IN_SPINE_MODE) {
-            bool hasPerformance = false;
-            if (_spineSkin.skeletonDataAsset.GetSkeletonData(true).FindAnimation("special") != null) {
-                hasPerformance = true;
-            }
-            if (hasPerformance) {
-                IsActing = true;
-                _spineSkin.AnimationState.SetAnimation(0, ActorAnimations.special.ToString(), false);
-                _spineSkin.AnimationState.AddAnimation(0, ActorAnimations.idle.ToString(), true, 0.55f);
-                yield return new WaitForSeconds(0.75f);
-                IsActing = false;
-            }
-        } else {
+            IsActing = true;
+            SetAnimation(0, ActorAnimations.special, false);
+            AddAnimation(0, ActorAnimations.idle, true, 0.55f);
+            yield return new WaitForSeconds(0.75f);
+            IsActing = false;
         }
             yield return null;
     }
@@ -233,13 +245,13 @@ public class ActorCharacter : MonoBehaviour
     IEnumerator DeathPerformance() {
         if (IN_SPINE_MODE) {
             bool hasDeathPerformance = false;
-            if (_spineSkin.skeletonDataAsset.GetSkeletonData(true).FindAnimation("death") != null) {
+            if (HasAnimation(ActorAnimations.death)) {
                 hasDeathPerformance = true;
             }
             IsActing = true;
             if (hasDeathPerformance) {
-                _spineSkin.AnimationState.AddAnimation(0, 
-                ActorAnimations.death.ToString(), false, 0.35f);
+                AddAnimation(0, 
+                ActorAnimations.death, false, 0.35f);
                 yield return new WaitForSeconds(2f);
             } else {
                 yield return new WaitForSeconds(0.75f);
@@ -290,7 +302,7 @@ public class ActorCharacter : MonoBehaviour
             }
             _spineSkin.skeleton.A = 1f;
             yield return new WaitForSeconds(0.75f);
-            _spineSkin.AnimationState.SetAnimation(0, ActorAnimations.idle.ToString(), true);
+            SetAnimation(0, ActorAnimations.idle, true);
             IsActing = false;
         } else {
             IsActing = true;

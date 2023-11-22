@@ -14,5 +14,9 @@ public enum UserAbilitySelection {
     FLAREBLITZ,
     SEARINGSTUN,
     BLAZEBARRAGE,
-    CAUTERIZE
+    CAUTERIZE,
+    YOHOINFERNO,
+    PEGLEGPLAGUE,
+    SKELETALSHIELD,
+    HOLLOWHOWL
 }

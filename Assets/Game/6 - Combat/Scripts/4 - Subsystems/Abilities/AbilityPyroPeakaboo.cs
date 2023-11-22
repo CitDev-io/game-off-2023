@@ -15,7 +15,7 @@ public class AbilityPyroPeakaboo : BaseAbilityResolver
     {
         var _e = new ExecutedAbility(source, source, this);
 
-        _e.AddToRevivalList(new ReviveOrder(source, 50));
+        _e.AddToRevivalList(new ReviveOrder(source, 50, this));
 
         return _e;
     }

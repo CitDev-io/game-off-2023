@@ -49,6 +49,10 @@ public abstract class BaseAbilityResolver
     }
 
     protected bool IsVictimResistantToPowerType(Character victim, PowerType element) {
+        if (victim.HasBuff<BuffSkeletalShield>()) {
+            return true;
+        }
+
         if (victim.HasBuff<BuffElementalWeakness>()) {
             return false;
         }
@@ -92,7 +96,7 @@ public abstract class BaseAbilityResolver
                 AllCombatants,
                 character,
                 EligibleTargetScopeType.ANYOTHERALLY
-            ).Where(candidate => Mathf.Abs(candidate.BattlefieldPosition - character.BattlefieldPosition) <= 1).ToList();
+            ).Where(candidate => Mathf.Abs(candidate.PositionInfo.SpotId - character.PositionInfo.SpotId) <= 1).ToList();
     }
 
     protected PowerType GetPowerTypeOfCharacter(Character character) {
@@ -122,7 +126,7 @@ public abstract class BaseAbilityResolver
 
         bool IsAHeal = sourceRawDamage < 0;
 
-        bool IsVulnerableToAttack = victim.HasBuff<BuffElementalVulnerability>() && IsVictimResistantToPowerType(victim, GetPowerTypeOfCharacter(source));
+        bool IsVulnerableToAttack = victim.HasBuff<BuffElementalVulnerability>() && !IsVictimResistantToPowerType(victim, GetPowerTypeOfCharacter(source));
 
         if (!IsAHeal && IsVulnerableToAttack) {
             unmitigatedDamage = (int) (unmitigatedDamage * 1.25f);

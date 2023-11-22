@@ -33,6 +33,7 @@ public class CombatReferee : MonoBehaviour
     BoonLibrary boonLibrary;
     public int LightPoints = 0;
     public int ShadowPoints = 0;
+    public CharacterConfig Summon_GHOST;
 
     // Coworkers
     UIManager __uiManager;
@@ -231,34 +232,11 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
 
 
-    // TODO: SOOOOO not DRY. fix this!!
+
     void SetupParty() {
-        // spawn enemies for this wave
         List<CharacterConfig> pcsToMake = waveProvider.GetPCParty();
 
-        // TODO: Send to SC via events
-        // GetComponent<StageChoreographer>().SpawnEnemyWave(enemiesToMake);
-        for (var i=0; i < pcsToMake.Count; i++) {
-            // create game object
-            GameObject newPc = Instantiate(CharacterPuckPrefab);
-            Debug.Log(GetFriendlySpawnPointByIndex(i).position);
-            newPc.name = pcsToMake[i].Name;
-
-            // register in game state
-            combatState.FullCombatantList.Add(newPc.GetComponent<Character>());
-
-            // set up config
-            newPc.GetComponent<Character>().Config = pcsToMake[i];
-            int AssignedPosition = GetFriendlySpawnPointByIndex(i).GetComponent<BattleFieldPositionInfo>().PositionId;
-
-            // TODO: Instead of init, should be in the creation process somehow
-            newPc.GetComponent<Character>().InitializeMeAtPosition(AssignedPosition);
-
-            // position it
-            UnityEngine.Vector3 targetPos = GetFriendlySpawnPointByIndex(i).position;
-            newPc.transform.parent = GameObject.Find("GameManager").transform;
-            newPc.transform.position = new UnityEngine.Vector3(targetPos.x, targetPos.y, targetPos.y);
-        }
+        pcsToMake.ForEach(pc => SummonUnitForTeam(pc, TeamType.PLAYER));
     }
 
    
@@ -276,29 +254,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         // spawn enemies for this wave
         List<CharacterConfig> enemiesToMake = waveProvider.GetEnemyWave(gameState.StageNumber, gameState.WaveNumber);
 
-        // TODO: Send to SC via events
-        // GetComponent<StageChoreographer>().SpawnEnemyWave(enemiesToMake);
-        for (var i=0; i < enemiesToMake.Count; i++) {
-            // create game object
-            GameObject newEnemy = Instantiate(CharacterPuckPrefab);
-
-            // register in game state
-            combatState.FullCombatantList.Add(newEnemy.GetComponent<Character>());
-            newEnemy.name = enemiesToMake[i].Name;
-            // set up config
-            newEnemy.GetComponent<Character>().Config = enemiesToMake[i];
-
-
-            int AssignedPosition = GetSpawnPointByIndex(i).GetComponent<BattleFieldPositionInfo>().PositionId;
-
-            // init the character
-            newEnemy.GetComponent<Character>().InitializeMeAtPosition(AssignedPosition);
-
-            // position it
-            UnityEngine.Vector3 targetPos = GetSpawnPointByIndex(i).position;
-            newEnemy.transform.parent = GameObject.Find("GameManager").transform;
-            newEnemy.transform.position = new UnityEngine.Vector3(targetPos.x, targetPos.y, targetPos.y);
-        }
+        enemiesToMake.ForEach(enemy => SummonUnitForTeam(enemy, TeamType.CPU));
 
         combatState.ClearWaveCounters();
 
@@ -311,16 +267,6 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         eventProvider.OnWaveReady?.Invoke();
         // let the phase driver run this
         StartCoroutine(CombatPhaseDriver());
-    }
-
-    // TODO: Decouple this, its depending on children
-    Transform GetSpawnPointByIndex(int index) {
-        return transform.Find("Enemy Field").transform.Find("SpawnPoint" + index.ToString());
-    }
-
-    // TODO: Decouple this, its depending on children
-    Transform GetFriendlySpawnPointByIndex(int index) {
-        return transform.Find("Player Field").transform.Find("SpawnPoint" + index.ToString());
     }
 
     void ClearStage() {
@@ -348,11 +294,76 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     void ReviveAllPCs() {
         List<Character> PCs = combatState.GetAllPCs();
         PCs.ForEach(c => ReviveCharacter(
-            new ReviveOrder(c, 100)
+            new ReviveOrder(c, 100, null)
         ));
     }
 
+    BattlefieldPosition GetNextOpenSpawnPointForTeam(TeamType team) {
+        List<int> TakenSpotIds = combatState.FullCombatantList
+            .Where(combatant => combatant.Config.TeamType == team && !combatant.isDead && combatant.PositionInfo != null)
+            .Select(combatant => combatant.PositionInfo.SpotId)
+            .ToList();
+
+        for (var i=0; i<5; i++) {
+            string childName = team == TeamType.PLAYER ? "Player Field" : "Enemy Field";
+            SpawnPoint spawn = transform.Find(childName).transform.Find("SpawnPoint" + i.ToString()).GetComponent<SpawnPoint>();
+            
+            if (spawn == null) {
+                return null;
+            }
+
+            if (!TakenSpotIds.Contains(spawn.SpotId)) {
+                return spawn.GetComponent<SpawnPoint>().GetInfo();
+            }
+        }
+        return null;
+    }
+
+    void SummonUnitForTeam(CharacterConfig config, TeamType team) {
+        GameObject newPc = Instantiate(CharacterPuckPrefab);
+        newPc.transform.parent = transform;
+        newPc.name = config.Name;
+
+        BattlefieldPosition bfInfo = GetNextOpenSpawnPointForTeam(team);
+        if (bfInfo == null) {
+            Debug.Log("NO SPACE!!!");
+            Destroy(newPc);
+            return;
+        }
+
+        Character character = newPc.GetComponent<Character>();
+
+        combatState.FullCombatantList.Add(character);
+
+        character.Config = config;
+        character.SetPositionInfo(bfInfo);
+        character.FirstTimeInitialization();
+    }
+
+    void SummonUnitForTeam(SummonOrder order) {
+        CharacterConfig summonedConfig = null;
+        switch(order.Unit) {
+            case SummonableUnit.GHOST:
+            summonedConfig = Summon_GHOST;
+            break;
+        }
+        if (summonedConfig != null) {
+            SummonUnitForTeam(
+                summonedConfig,
+                order.Team
+            );
+        }
+    }
+
     void ReviveCharacter(ReviveOrder ro) {
+        if (ro.character.isDead) {
+            BattlefieldPosition bp = GetNextOpenSpawnPointForTeam(ro.character.Config.TeamType);
+            if (bp == null) {
+                Debug.Log("NO SPACE!!!");
+                return;
+            }
+            ro.character.SetPositionInfo(bp);
+        }
         if (ro.character.isDead && !combatState.GetTurnOrder().Contains(ro.character)) {
             combatState.AddCharacterToTurnOrder(ro.character);
         }
@@ -394,7 +405,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
     void WaveChangeStep2() {
         // make up the boon offer
-        List<BaseBoonResolver> boons = boonLibrary.GetRandomBoonOptionsForParty(3);;
+        List<BaseBoonResolver> boons = boonLibrary.GetRandomBoonOptionsForParty(3);
 
         // event announce the offer
         eventProvider.OnBoonOffer?.Invoke(boons);
@@ -498,6 +509,8 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
         executedAbility.CharactersReviving.ForEach(ro => ReviveCharacter(ro));
 
+        executedAbility.SummonedUnits.ForEach(su => SummonUnitForTeam(su));
+
         ResolveDeathTriggers(executedAbility);
     }
 
@@ -590,7 +603,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         
 
         // get random eligibletarget
-        Character randomTarget = EligibleTargets[Random.Range(0, EligibleTargets.Count)];
+        Character randomTarget = EligibleTargets[UnityEngine.Random.Range(0, EligibleTargets.Count)];
 
         TargetSelected(randomTarget);
     }
@@ -599,8 +612,8 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     IEnumerator IECpuChooseAbility() {
         yield return new WaitForSeconds(1f);
 
-        bool successfulRollToSpecialAttack = false;
-        switch(gameState.StageNumber) {
+        bool successfulRollToSpecialAttack;
+        switch (gameState.StageNumber) {
             case 1:
                 successfulRollToSpecialAttack = TryChance(25);
                 break;
@@ -615,14 +628,37 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
                 break;
         }
 
-        List<AbilityCategory> availableAbilities = combatState.CurrentCombatant.GetAvailableAbilities(LightPoints, ShadowPoints);
+        List<AbilityCategory> availableAbilities = combatState.CurrentCombatant.GetAvailableAbilities(2, 2);
 
         bool canSpecialAttack = combatState.CurrentCombatant.Config.SpecialAttack != UserAbilitySelection.NONE && availableAbilities.Contains(AbilityCategory.SPECIALATTACK);
 
-        if (successfulRollToSpecialAttack && canSpecialAttack) {
-            AttackSelected(combatState.CurrentCombatant.Config.SpecialAttack);
-        } else {
+        bool canUltimate = combatState.CurrentCombatant.Config.SpecialAttack != UserAbilitySelection.NONE && availableAbilities.Contains(AbilityCategory.ULTIMATE);
+
+        if (!canSpecialAttack && !canUltimate) {
             AttackSelected(UserAbilitySelection.BASICATTACK);
+            yield break;
+        }
+
+        if (!successfulRollToSpecialAttack) {
+            AttackSelected(UserAbilitySelection.BASICATTACK);
+            yield break;
+        }
+
+        if (!canUltimate) {
+            AttackSelected(combatState.CurrentCombatant.Config.SpecialAttack);
+            yield break;
+        }
+
+        if (!canSpecialAttack) {
+            AttackSelected(combatState.CurrentCombatant.Config.UltimateAbility);
+            yield break;
+        }
+        
+        bool rollToUltimate = TryChance(50);
+        if (rollToUltimate) {
+            AttackSelected(combatState.CurrentCombatant.Config.UltimateAbility);
+        } else {
+            AttackSelected(combatState.CurrentCombatant.Config.SpecialAttack);
         }
     }
 
@@ -641,7 +677,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     }
 
     protected bool TryChance(int percentChance) {
-        return Random.Range(0, 100) < percentChance;
+        return UnityEngine.Random.Range(0, 100) < percentChance;
     }
 }
 

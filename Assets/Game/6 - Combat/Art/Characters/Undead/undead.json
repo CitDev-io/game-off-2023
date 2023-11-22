@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "ECkotGnOvTk",
+	"hash": "kJyqlfolVK0",
 	"spine": "4.1.24",
 	"x": -471,
 	"y": -104,
@@ -35,7 +35,7 @@
 	"attack": {}
 },
 "animations": {
-	"animation": {
+	"attack": {
 		"bones": {
 			"undead dragon": {
 				"rotate": [
@@ -85,6 +85,15 @@
 		"events": [
 			{ "time": 0.4667, "name": "attack" }
 		]
+	},
+	"idle": {
+		"bones": {
+			"shadow": {
+				"translate": [
+					{}
+				]
+			}
+		}
 	}
 }
 }

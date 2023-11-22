@@ -45,7 +45,8 @@ public class AbilityBlessing : BaseAbilityResolver
                     _e.AddToRevivalList(
                         new ReviveOrder(
                             randomDeadAlly,
-                            tenthOfPriestHp
+                            tenthOfPriestHp,
+                            this
                         )
                     );
                 }

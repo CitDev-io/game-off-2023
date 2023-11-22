@@ -17,10 +17,22 @@ public class Character : MonoBehaviour
     public int currentStagger = 0;
     public bool isDead = false;
     public bool IsCurrentCombatant = false;
-    public int BattlefieldPosition = -10;
+    public BattlefieldPosition PositionInfo { get; internal set; }
     [SerializeField]
     public List<Buff> Buffs = new List<Buff>();
     public int GenericWaveCounter = 0;
+
+    public void SetPositionInfo(BattlefieldPosition pos) {
+        PositionInfo = pos;
+        transform.position = new Vector3(PositionInfo.Position.x, PositionInfo.Position.y, PositionInfo.Position.y);
+    }
+
+    [ContextMenu("tell me your position")]
+    void tellmeyourposition() {
+        Debug.Log(PositionInfo.Position);
+        Debug.Log(PositionInfo.RelationalReferenceId);
+        Debug.Log(PositionInfo.SpotId);
+    }
 
     public bool HasBuff<T>() where T : Buff {
         return Buffs.Any(buff => buff is T);
@@ -104,13 +116,15 @@ public class Character : MonoBehaviour
         currentStagger = Config.BaseSP;
     }
 
-    public void InitializeMeAtPosition(int battlePosition) {
+
+
+    public void FirstTimeInitialization() {
         isDead = false;
         currentHealth = Config.BaseHP;
         currentStagger = Config.BaseSP;
         Config.AttackTreeLevel = 0;
         Config.SupportTreeLevel = 0;
-        BattlefieldPosition = battlePosition;
+
         if (Config.NativeBuff == NativeBuffOption.VOLCANICBOWEL) {
             AddBuff(new BuffVolcanicBowelSyndrome(this, this, 999));
         }
