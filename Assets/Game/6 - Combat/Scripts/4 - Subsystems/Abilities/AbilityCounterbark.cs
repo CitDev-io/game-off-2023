@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-public class AbilitySkeletalShield : BaseAbilityResolver
+public class AbilityCounterbark : BaseAbilityResolver
 {
-    public AbilitySkeletalShield() {
-        Name = "Skeletal Shield";
-        Description = "Casts a shield that grants elemental resistance to Light and Shadow";
+    public AbilityCounterbark() {
+        Name = "Counterbark";
+        Description = "Casts a Counterattack on self";
         TargetScope = EligibleTargetScopeType.ENEMY;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/ShieldBash");   
     }
@@ -19,8 +18,8 @@ public class AbilitySkeletalShield : BaseAbilityResolver
         bool AbilityLanded = AbilityRoll != 0;
         
         if (AbilityLanded) {
-            Buff ssBuff = new BuffSkeletalShield(source, source, 3);
-            _e.Add(ssBuff);
+            Buff cbBuff = new BuffCounterattack(source, source, 1);
+            _e.Add(cbBuff);
         }
 
         return _e;

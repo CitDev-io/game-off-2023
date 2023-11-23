@@ -12,6 +12,7 @@ public static class AttackTypeToAbility
             UserAbilitySelection.NIBBLE => new AbilityNibble(),
             UserAbilitySelection.CINDERSLAP => new AbilityCinderSlap(),
             UserAbilitySelection.FLAREBLITZ => new AbilityFlareBlitz(),
+            UserAbilitySelection.COUNTERBARK => new AbilityCounterbark(),
             UserAbilitySelection.PEGLEGPLAGUE => new AbilityPegLegPlague(),
             UserAbilitySelection.SKELETALSHIELD => new AbilitySkeletalShield(),
             UserAbilitySelection.SEARINGSTUN => new AbilitySearingStun(),

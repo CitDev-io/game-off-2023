@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-public class AbilitySkeletalShield : BaseAbilityResolver
+public class AbilityTimberTip : BaseAbilityResolver
 {
-    public AbilitySkeletalShield() {
-        Name = "Skeletal Shield";
-        Description = "Casts a shield that grants elemental resistance to Light and Shadow";
+    public AbilityTimberTip() {
+        Name = "Timber Tip";
+        Description = "Tips the balance of Light and Shadow and attacks an enemy";
         TargetScope = EligibleTargetScopeType.ENEMY;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/ShieldBash");   
     }
@@ -17,10 +16,19 @@ public class AbilitySkeletalShield : BaseAbilityResolver
 
         int AbilityRoll = source.GetSpecialAttackRoll(false);
         bool AbilityLanded = AbilityRoll != 0;
-        
+
         if (AbilityLanded) {
-            Buff ssBuff = new BuffSkeletalShield(source, source, 3);
-            _e.Add(ssBuff);
+            int LightPtAdjustment = -2;
+            int ShadowPtAdjustment = 2;
+
+            if (source.Config.PowerType == PowerType.LIGHT) {
+                LightPtAdjustment = 2;
+                ShadowPtAdjustment = -2;
+            }
+            _e.Add(new ScaleOrder(
+                LightPtAdjustment,
+                ShadowPtAdjustment
+            ));
         }
 
         return _e;

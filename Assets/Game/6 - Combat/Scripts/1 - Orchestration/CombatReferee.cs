@@ -507,11 +507,18 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     void RefereeResolvedAbility(ExecutedAbility executedAbility) {
         eventProvider.OnAbilityExecuted?.Invoke(executedAbility);
 
+        executedAbility.UncommittedResponses.ForEach(response => ResolveAbilityResponse(response));
+
         executedAbility.CharactersReviving.ForEach(ro => ReviveCharacter(ro));
 
         executedAbility.SummonedUnits.ForEach(su => SummonUnitForTeam(su));
 
         ResolveDeathTriggers(executedAbility);
+    }
+
+    void ResolveAbilityResponse(ExecutedAbility eaResponse) {
+        eaResponse.Commit();
+        RefereeResolvedAbility(eaResponse);
     }
 
     void ResolveDeathTriggers(ExecutedAbility _e) {

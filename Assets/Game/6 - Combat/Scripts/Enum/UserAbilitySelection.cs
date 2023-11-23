@@ -18,5 +18,6 @@ public enum UserAbilitySelection {
     YOHOINFERNO,
     PEGLEGPLAGUE,
     SKELETALSHIELD,
-    HOLLOWHOWL
+    HOLLOWHOWL,
+    COUNTERBARK
 }
