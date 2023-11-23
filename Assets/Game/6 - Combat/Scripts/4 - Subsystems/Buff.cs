@@ -30,5 +30,5 @@ public abstract class Buff
         }
     }
 
-    public virtual ExecutedAbility ResolvePreflightEffects(){ return null; }
+    public virtual EffectPlan ResolvePreflightEffects(){ return null; }
 }

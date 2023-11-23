@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class AbilityCelestialBarrage : BaseAbilityResolver
+public class AbilityCelestialBarrage : Effect
 {
     public AbilityCelestialBarrage() {
         Name = "Celestial Barrage";
@@ -11,9 +11,9 @@ public class AbilityCelestialBarrage : BaseAbilityResolver
     }
 
     int COUNT_LIGHT_STRIKES = 8;
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         for (var i =0; i < COUNT_LIGHT_STRIKES; i++) {
             Character RandomEnemy = CombatantListFilter.RandomByScope(
@@ -23,10 +23,11 @@ public class AbilityCelestialBarrage : BaseAbilityResolver
             );
             int DamageRoll = source.GetSpecialAttackRoll(false);
             int NerfedABitDamage = (int) (DamageRoll * 0.25f);
-            CalculatedDamage DamageToTarget = CalculateFinalDamage(
+            DamageOrder DamageToTarget = new DamageOrder(
                 source,
                 RandomEnemy,
-                NerfedABitDamage
+                NerfedABitDamage,
+                this
             );
             
             _e.Add(DamageToTarget);

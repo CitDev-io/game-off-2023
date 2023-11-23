@@ -1,23 +1,25 @@
 using System.Collections.Generic;
 
-public class AbilityCounterattack : BaseAbilityResolver
+public class AbilityCounterattack : Effect
 {
     public AbilityCounterattack()
     {
-        Name = "Count Attack";
+        Name = "Counter Attack";
         Description = "Attacks an enemy back when attacked";
         TargetScope = EligibleTargetScopeType.ENEMY;
+        IsAbility = false;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/BasicAttack");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
-        CalculatedDamage DamageToTarget = CalculateFinalDamage(
+        DamageOrder DamageToTarget = new DamageOrder(
             source,
             target,
-            source.GetBasicAttackRoll()
+            source.GetBasicAttackRoll(),
+            this
         );
 
         _e.Add(DamageToTarget);

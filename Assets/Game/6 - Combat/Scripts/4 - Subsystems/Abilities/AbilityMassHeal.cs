@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class AbilityMassHeal : BaseAbilityResolver
+public class AbilityMassHeal : Effect
 {
     public AbilityMassHeal()
     {
@@ -11,7 +11,7 @@ public class AbilityMassHeal : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
         List<Character> FriendlyTargets = CombatantListFilter.ByScope(
             AllCombatants,
@@ -19,12 +19,13 @@ public class AbilityMassHeal : BaseAbilityResolver
             EligibleTargetScopeType.FRIENDLYORSELF
         );
 
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
         foreach(Character FriendlyTarget in FriendlyTargets) {
-            CalculatedDamage DamageToTarget = CalculateFinalDamage(
+            DamageOrder DamageToTarget = new DamageOrder(
                 source,
                 FriendlyTarget,
-                -source.GetSpecialAttackRoll(true) / 2
+                -source.GetSpecialAttackRoll(true) / 2,
+                this
             );
             _e.Add(DamageToTarget);
         }

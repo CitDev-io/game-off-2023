@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class AbilitySneakAttack : BaseAbilityResolver
+public class AbilitySneakAttack : Effect
 {
     int _attackLevel = 0;
     int _supportLevel = 0;
@@ -13,16 +13,17 @@ public class AbilitySneakAttack : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/PoisonStrike");   
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         int SneakAttackDamage = source.GetSpecialAttackRoll(false);
         bool SneakAttackLanded = SneakAttackDamage != 0;
-        CalculatedDamage DamageToTarget = CalculateFinalDamage(
+        DamageOrder DamageToTarget = new DamageOrder(
             source,
             target,
-            SneakAttackDamage
+            SneakAttackDamage,
+            this
         );
 
         _e.Add(DamageToTarget);
@@ -42,10 +43,11 @@ public class AbilitySneakAttack : BaseAbilityResolver
                     source,
                     EligibleTargetScopeType.ENEMY
                 );
-                CalculatedDamage FollowupAttack1 = CalculateFinalDamage(
+                DamageOrder FollowupAttack1 = new DamageOrder(
                     source,
                     RandomEnemy,
-                    (int) (SneakAttackDamage * 0.25f)
+                    (int) (SneakAttackDamage * 0.25f),
+                    this
                 );
                 _e.Add(FollowupAttack1);
             }

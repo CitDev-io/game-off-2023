@@ -29,8 +29,9 @@ public class StageChoreographer : MonoBehaviour
     void SetupHooks() {
         _eventProvider.OnPhasePrompt += HandlePhasePrompts;
         _eventProvider.OnWaveReady += HandleWaveReady;
-        _eventProvider.OnAbilityExecuted += HandleAbilityExecuted;
+        _eventProvider.OnEffectPlanExecutionComplete += HandleAbilityExecuted;
         _eventProvider.OnCharacterRevived += HandleCharacterRevived;
+        _eventProvider.OnDamageResolved += HandleDamageResolved;
     }
 
     void HandleWaveReady() {
@@ -53,26 +54,28 @@ public class StageChoreographer : MonoBehaviour
         StartCoroutine(WaitPerformance(1f));
     }
 
-    void HandleAbilityExecuted(ExecutedAbility executedAbility) {
-        foreach(CalculatedDamage dmg in executedAbility.AppliedHealthChanges) {
-            ActorCharacter sourceMotor = executedAbility.Source.GetComponent<ActorCharacter>();
-            if (executedAbility.Ability is AbilityBasicAttack) {
-                sourceMotor.EnqueuePerformance(CharacterActorPerformance.BASICATTACK);
-            } else {
-                sourceMotor.EnqueuePerformance(CharacterActorPerformance.SPECIALATTACK);
-            }
+    void HandleDamageResolved(CalculatedDamage cd) {
+        ActorCharacter sourceMotor = cd.Attacker.GetComponent<ActorCharacter>();
+        if (cd.Source is AbilityBasicAttack) {
+            sourceMotor.EnqueuePerformance(CharacterActorPerformance.BASICATTACK);
+        } else {
+            sourceMotor.EnqueuePerformance(CharacterActorPerformance.SPECIALATTACK);
+        }
 
-            if (dmg.DamageToHealth > 0) {
-                ActorCharacter victimMotor = dmg.Target.GetComponent<ActorCharacter>();
-                
-                victimMotor.EnqueuePerformance(CharacterActorPerformance.TAKEDAMAGE);
-                if (dmg.Target.isDead) {
-                    victimMotor.EnqueuePerformance(CharacterActorPerformance.DIE);
-                } else if (dmg.StaggerCrackedByThis) {
-                    victimMotor.EnqueuePerformance(CharacterActorPerformance.CRACKED);
-                }
+        if (cd.DamageToHealth > 0) {
+            ActorCharacter victimMotor = cd.Target.GetComponent<ActorCharacter>();
+            
+            victimMotor.EnqueuePerformance(CharacterActorPerformance.TAKEDAMAGE);
+            if (cd.Target.isDead) {
+                victimMotor.EnqueuePerformance(CharacterActorPerformance.DIE);
+            } else if (cd.StaggerCrackedByThis) {
+                victimMotor.EnqueuePerformance(CharacterActorPerformance.CRACKED);
             }
         }
+    }
+
+    void HandleAbilityExecuted(EffectPlan executedAbility) {
+        // after all things have resolved
     }
 
     void HandleCharacterRevived(Character character) {

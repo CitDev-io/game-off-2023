@@ -19,8 +19,8 @@ MonoBehaviour:
   _Portrait: {fileID: 0}
   _Skin: {fileID: 21300000, guid: 8d57aeb40e2762c4185be4d141a119e4, type: 3}
   _SpineSkeleton: {fileID: 11400000, guid: 5ca9d2148250d154f9241d9caca88335, type: 2}
-  _SpecialAttack: 0
-  _UltimateAbility: 0
+  _SpecialAttack: 21
+  _UltimateAbility: 20
   _NativeBuff: 0
   _BaseMitigation: 0
   _BaseHP: 1500

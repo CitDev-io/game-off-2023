@@ -134,6 +134,12 @@ public class ActorCharacter : MonoBehaviour
         GameObject.Find("GameManager").GetComponent<UIManager>().TargetSelected(_character);
     }
 
+    void Update() {
+        if (gameObject.name == "Boss 3") {
+            Debug.Log("BOSS 3 IS " + _character.Buffs.Count + " BUFFS");
+        }
+    }
+
     void FixedUpdate()
     {
         if (HealthTicker != null) {

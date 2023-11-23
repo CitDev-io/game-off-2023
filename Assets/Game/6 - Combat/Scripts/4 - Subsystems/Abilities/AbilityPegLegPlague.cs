@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class AbilityPegLegPlague : BaseAbilityResolver
+public class AbilityPegLegPlague : Effect
 {
     public AbilityPegLegPlague() {
         Name = "Pegleg Plague";
@@ -10,9 +10,9 @@ public class AbilityPegLegPlague : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Polymorph");");   
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         bool CastLanded = source.GetSpecialAttackRoll(false) != 0;
 

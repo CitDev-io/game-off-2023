@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class AbilityBlessing : BaseAbilityResolver
+public class AbilityBlessing : Effect
 {
     int _attackLevel = 0;
     int _supportLevel = 0;
@@ -14,9 +14,9 @@ public class AbilityBlessing : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         bool IsAHeal = source.Config.TeamType == target.Config.TeamType;
         int DamageMod = IsAHeal ? -1 : 1;
@@ -60,10 +60,11 @@ public class AbilityBlessing : BaseAbilityResolver
                         source,
                         EligibleTargetScopeType.FRIENDLYORSELF
                     );
-                    CalculatedDamage HealingToRandomAlly = CalculateFinalDamage(
+                    DamageOrder HealingToRandomAlly = new DamageOrder(
                         source,
                         RandomAlly,
-                        -BlessingEffectiveness / 2
+                        -BlessingEffectiveness / 2,
+                        this
                     );
                     _e.Add(HealingToRandomAlly);
                 }
@@ -79,10 +80,11 @@ public class AbilityBlessing : BaseAbilityResolver
             }
         }
 
-        CalculatedDamage DamageOrHealingToTarget = CalculateFinalDamage(
+        DamageOrder DamageOrHealingToTarget = new DamageOrder(
             source,
             target,
-            BlessingEffectiveness
+            BlessingEffectiveness,
+            this
         );
         _e.Add(DamageOrHealingToTarget);
 

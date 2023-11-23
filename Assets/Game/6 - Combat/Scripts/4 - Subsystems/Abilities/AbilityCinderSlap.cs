@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbilityCinderSlap : BaseAbilityResolver
+public class AbilityCinderSlap : Effect
 {
     public AbilityCinderSlap()
     {
@@ -13,9 +13,9 @@ public class AbilityCinderSlap : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         Character RandomEnemy = CombatantListFilter.RandomByScope(
             AllCombatants,
@@ -26,10 +26,11 @@ public class AbilityCinderSlap : BaseAbilityResolver
         bool AttackLanded = AttackDamage != 0;
         
         if (AttackLanded) {
-            CalculatedDamage calcDmg = CalculateFinalDamage(
+            DamageOrder calcDmg = new DamageOrder(
                 source,
                 RandomEnemy,
-                AttackDamage
+                AttackDamage,
+                this
             );
             _e.Add(calcDmg);
 

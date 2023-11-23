@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbilityCauterize : BaseAbilityResolver
+public class AbilityCauterize : Effect
 {
     public AbilityCauterize()
     {
@@ -13,9 +13,9 @@ public class AbilityCauterize : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         Character RandomAlly = GetRandomFriendlyDamaged(source, AllCombatants);
 
@@ -24,10 +24,11 @@ public class AbilityCauterize : BaseAbilityResolver
 
         Character healTarget = RandomAlly ?? source;
 
-        CalculatedDamage calcDmg = CalculateFinalDamage(
+        DamageOrder calcDmg = new DamageOrder(
             source,
             healTarget,
-            AdjustedHeal
+            AdjustedHeal,
+            this
         );
         _e.Add(calcDmg);
 

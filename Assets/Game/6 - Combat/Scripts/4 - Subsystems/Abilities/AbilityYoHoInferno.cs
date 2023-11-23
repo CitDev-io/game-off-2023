@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbilityYoHoInferno : BaseAbilityResolver
+public class AbilityYoHoInferno : Effect
 {
     public AbilityYoHoInferno()
     {
@@ -13,9 +13,9 @@ public class AbilityYoHoInferno : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         Character RandomEnemy = CombatantListFilter.RandomByScope(
             AllCombatants,
@@ -25,19 +25,21 @@ public class AbilityYoHoInferno : BaseAbilityResolver
 
         int AttackDamage1 = source.GetSpecialAttackRoll(false);
 
-        CalculatedDamage cd1 = CalculateFinalDamage(
+        DamageOrder cd1 = new DamageOrder(
             source,
             RandomEnemy,
-            AttackDamage1
+            AttackDamage1,
+            this
         );
         _e.Add(cd1);
 
         int AttackDamage2 = source.GetSpecialAttackRoll(false);
 
-        CalculatedDamage cd2 = CalculateFinalDamage(
+        DamageOrder cd2 = new DamageOrder(
             source,
             RandomEnemy,
-            AttackDamage2
+            AttackDamage2,
+            this
         );
         _e.Add(cd2);
 

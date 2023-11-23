@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class AbilityCurseOfStrength : BaseAbilityResolver
+public class AbilityCurseOfStrength : Effect
 {
     int _attackLevel = 0;
     int _supportLevel = 0;
@@ -15,9 +15,9 @@ public class AbilityCurseOfStrength : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/ShieldBash");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
         bool CurseLanded = source.GetSpecialAttackRoll(false) != 0;
 
         if (_attackLevel == 0) {
@@ -27,10 +27,11 @@ public class AbilityCurseOfStrength : BaseAbilityResolver
         }
         if (_attackLevel > 0) {
             int AttackDamage = source.GetSpecialAttackRoll(false);
-            CalculatedDamage DamageToTarget = CalculateFinalDamage(
+            DamageOrder DamageToTarget = new DamageOrder(
                 source,
                 target,
-                AttackDamage
+                AttackDamage,
+                this
             );
             CurseLanded = AttackDamage != 0;
 
@@ -78,16 +79,18 @@ public class AbilityCurseOfStrength : BaseAbilityResolver
         }
 
         if (_supportLevel > 1) {
-            CalculatedDamage HealToRandomAlly = CalculateFinalDamage(
+            DamageOrder HealToRandomAlly = new DamageOrder(
                 source,
                 RandomAlly,
-                -30
+                -30,
+                null
             );
 
-            CalculatedDamage DamageToRandomEnemy = CalculateFinalDamage(
+            DamageOrder DamageToRandomEnemy = new DamageOrder(
                 source,
                 target,
-                10
+                10,
+                this
             );
 
             _e.Add(HealToRandomAlly);

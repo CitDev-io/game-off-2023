@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-public class AbilityVolcanicBowelBlast : BaseAbilityResolver
+public class AbilityVolcanicBowelBlast : Effect
 {
     public AbilityVolcanicBowelBlast()
     {
@@ -12,9 +12,9 @@ public class AbilityVolcanicBowelBlast : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, source, this);
+        var _e = new EffectPlan(source, source, this);
 
         List<Character> NearbyAllies = GetNearbyAlliesOfCharacter(source, AllCombatants);
 
@@ -23,10 +23,11 @@ public class AbilityVolcanicBowelBlast : BaseAbilityResolver
         }
 
         foreach(Character Ally in NearbyAllies) {
-            CalculatedDamage DamageToTarget = CalculateFinalDamage(
+            DamageOrder DamageToTarget = new DamageOrder(
                 source,
                 Ally,
-                source.GetSpecialAttackRoll(false) / 4 
+                source.GetSpecialAttackRoll(false) / 4,
+                this
             );
             _e.Add(DamageToTarget);
         }

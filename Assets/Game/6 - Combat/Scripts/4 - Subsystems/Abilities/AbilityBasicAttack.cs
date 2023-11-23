@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class AbilityBasicAttack : BaseAbilityResolver
+public class AbilityBasicAttack : Effect
 {
     public AbilityBasicAttack()
     {
@@ -10,15 +10,17 @@ public class AbilityBasicAttack : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/BasicAttack");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
-        CalculatedDamage DamageToTarget = CalculateFinalDamage(
+        DamageOrder DamageToTarget = new DamageOrder(
             source,
             target,
-            source.GetBasicAttackRoll()
+            source.GetBasicAttackRoll(),
+            this
         );
+
 
         _e.Add(DamageToTarget);
 

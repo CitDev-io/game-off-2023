@@ -53,3 +53,19 @@
 11-21-2023
 ------------
 ExecutedAbility should just be the order sheet. "ExecutableAbility" and resolve stack style. BaseAbilityResolver is just an "Effect". Put IBUFF on one and now it doesn't need the passthrough like for DOT.
+
+
+11-22-2023
+--------------
+ExecutedAbility is now "EffectPlan"
+BaseAbilityRsolver is now "Effect"
+
+Buffs might be able to be Effects, but more likely a polymorphic class "BuffEffect"
+
+...then we can have "AbilityEffect" and be able to sniff out on the resolver if we're treating this like an ability cast or not (and for performance's sake)
+
+I created the Counterattack buff but can't see it triggering. Revisit this logic.
+
+If all types of Orders used the same interface, they could be placed on a stack and resolved within the Combat State resolver.
+
+DMG, BUFF need to be resolved all in one go from an effect plan so this might turn order stacks into something that needs more planning.

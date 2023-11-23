@@ -6405,6 +6405,7 @@ GameObject:
   - component: {fileID: 1217756857}
   - component: {fileID: 1217756858}
   - component: {fileID: 1217756859}
+  - component: {fileID: 1217756860}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -6443,13 +6444,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EnemySetList: {fileID: 11400000, guid: 25f024d3ba2edf34a8416a8ca1a31c11, type: 2}
   PlayerParty: {fileID: 11400000, guid: 54065b50793c3114c8704103d8cb32c4, type: 2}
-  CharacterPuckPrefab: {fileID: 6807464998052182329, guid: a8aa492c74e681a4d990e73b25720136, type: 3}
   WinUI: {fileID: 1187236597}
   LoseUI: {fileID: 566426630}
   ReviveUI: {fileID: 710718743}
-  LightPoints: 0
-  ShadowPoints: 0
-  Summon_GHOST: {fileID: 11400000, guid: c446058bb7970e44398486f7bd5c5c15, type: 2}
   CombatAwaitingUser: 0
 --- !u!114 &1217756858
 MonoBehaviour:
@@ -6482,6 +6479,20 @@ MonoBehaviour:
   TargetSelectionUI: {fileID: 530623326}
   TextCrawlUI: {fileID: 946636784}
   ScalePanelUI: {fileID: 1421235733}
+--- !u!114 &1217756860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217756855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a48db354051ca0f41bc6ef52cb7c4b68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Summon_GHOST: {fileID: 11400000, guid: c446058bb7970e44398486f7bd5c5c15, type: 2}
+  CharacterPuckPrefab: {fileID: 6807464998052182329, guid: a8aa492c74e681a4d990e73b25720136, type: 3}
 --- !u!1 &1251602342
 GameObject:
   m_ObjectHideFlags: 0

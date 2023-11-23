@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbilityTimberTip : BaseAbilityResolver
+public class AbilityTimberTip : Effect
 {
     public AbilityTimberTip() {
         Name = "Timber Tip";
@@ -10,9 +10,9 @@ public class AbilityTimberTip : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/ShieldBash");   
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         int AbilityRoll = source.GetSpecialAttackRoll(false);
         bool AbilityLanded = AbilityRoll != 0;
@@ -29,6 +29,14 @@ public class AbilityTimberTip : BaseAbilityResolver
                 LightPtAdjustment,
                 ShadowPtAdjustment
             ));
+
+            DamageOrder DamageToTarget = new DamageOrder(
+                source,
+                target,
+                AbilityRoll,
+                this
+            );
+            _e.Add(DamageToTarget);
         }
 
         return _e;

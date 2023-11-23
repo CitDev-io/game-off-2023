@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbilityBlazeBarrage : BaseAbilityResolver
+public class AbilityBlazeBarrage : Effect
 {
     public AbilityBlazeBarrage()
     {
@@ -13,9 +13,9 @@ public class AbilityBlazeBarrage : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         List<Character> AllEnemies = CombatantListFilter.ByScope(
             AllCombatants,
@@ -42,10 +42,11 @@ public class AbilityBlazeBarrage : BaseAbilityResolver
         }
 
         foreach(var Target in Targets) {
-            CalculatedDamage calcDmg = CalculateFinalDamage(
+            DamageOrder calcDmg = new DamageOrder(
                 source,
                 Target,
-                AdjustedDamage
+                AdjustedDamage,
+                this
             );
             _e.Add(calcDmg);
         }

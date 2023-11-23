@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbilityFlareBlitz : BaseAbilityResolver
+public class AbilityFlareBlitz : Effect
 {
     public AbilityFlareBlitz()
     {
@@ -13,9 +13,9 @@ public class AbilityFlareBlitz : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         Character RandomEnemy = CombatantListFilter.RandomByScope(
             AllCombatants,
@@ -31,18 +31,20 @@ public class AbilityFlareBlitz : BaseAbilityResolver
             int AdjustedDamage = (int) (AttackDamage * 0.75f);
             Character catchingAStray = GetRandomNearbyAllyOfCharacter(RandomEnemy, AllCombatants);
             
-            CalculatedDamage calcDmg = CalculateFinalDamage(
+            DamageOrder calcDmg = new DamageOrder(
                 source,
                 RandomEnemy,
-                AdjustedDamage
+                AdjustedDamage,
+                this
             );
             _e.Add(calcDmg);
 
             if (catchingAStray != null) {
-                CalculatedDamage dmg2 = CalculateFinalDamage(
+                DamageOrder dmg2 = new DamageOrder(
                     source,
                     catchingAStray,
-                    AdjustedDamage
+                    AdjustedDamage,
+                    this
                 );
                 _e.Add(dmg2);
             }

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Unity.VisualScripting;
 
 public class CombatReferee : MonoBehaviour
 {  
@@ -15,8 +14,6 @@ public class CombatReferee : MonoBehaviour
     [Space(height: 20)]
 
     [Header("Temporary Exposed Plumbing")]
-    // TODO: need a helper
-    public GameObject CharacterPuckPrefab;
     
     // TODO: Give to UIManager
     public GameObject WinUI;
@@ -31,24 +28,26 @@ public class CombatReferee : MonoBehaviour
     public EventProvider eventProvider;
     WaveProvider waveProvider;
     BoonLibrary boonLibrary;
-    public int LightPoints = 0;
-    public int ShadowPoints = 0;
-    public CharacterConfig Summon_GHOST;
 
     // Coworkers
     UIManager __uiManager;
     StageChoreographer __stageChoreographer;
+    SpawnPointProvider __spawnPointProvider;
+
+    // Phase State
     CombatPhase CurrentCombatPhase = CombatPhase.INIT;
     [SerializeField] bool CombatAwaitingUser = false;
 
     void Awake() {
         eventProvider = new EventProvider();
         gameState = new GameState();
-        combatState = new CombatState();
         waveProvider = new WaveProvider(PlayerParty, EnemySetList);
         boonLibrary = new BoonLibrary(PlayerParty);
         __uiManager = GetComponent<UIManager>();
         __stageChoreographer = GetComponent<StageChoreographer>();
+        __spawnPointProvider = GetComponent<SpawnPointProvider>();
+        
+        combatState = new CombatState(eventProvider, __spawnPointProvider);
     }
 
     void Start()
@@ -84,9 +83,9 @@ public class CombatReferee : MonoBehaviour
                     }
                 }
 
-                ResolvePreflightBuffEffectsForCombatant(combatState.CurrentCombatant);
+                combatState.ResolvePreflightBuffsForCurrentCombatant();
 
-                bool HasAbilityOptions = combatState.CurrentCombatant.GetAvailableAbilities(LightPoints, ShadowPoints).Count > 0;
+                bool HasAbilityOptions = combatState.GetAvailableAbilitiesForCurrentCombatant().Count > 0;
                 bool SkipToCleanup = !HasAbilityOptions || combatState.CurrentCombatant.isDead;
                 if (SkipToCleanup) {
                     NextPhase = CombatPhase.CHARACTERTURN_CLEANUP;
@@ -204,18 +203,10 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         return CombatResult.IN_PROGRESS;
     }
 
-    void ResolvePreflightBuffEffectsForCombatant(Character combatant) {
-        List<ExecutedAbility> abilityEffects = combatant
-            .Buffs
-            .Select(buff => buff.ResolvePreflightEffects())
-            .Where(ability => ability != null)
-            .ToList();
-
-        foreach (ExecutedAbility ability in abilityEffects) {
-            RefereeResolvedAbility(ability);
-        }
+    void ExecuteAttack() {
+        combatState.ExecuteSelectedAbility();
+        CombatAwaitingUser = false;
     }
-
 
 
 
@@ -236,11 +227,11 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     void SetupParty() {
         List<CharacterConfig> pcsToMake = waveProvider.GetPCParty();
 
-        pcsToMake.ForEach(pc => SummonUnitForTeam(pc, TeamType.PLAYER));
+        pcsToMake.ForEach(pc => combatState.SummonUnitForTeam(pc, TeamType.PLAYER));
     }
 
    
-
+    // TODO: Simplify into less calls to combatState
     void SetupWave() {
         // make sure the queue is empty
         combatState.ClearTurnOrder();
@@ -254,7 +245,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         // spawn enemies for this wave
         List<CharacterConfig> enemiesToMake = waveProvider.GetEnemyWave(gameState.StageNumber, gameState.WaveNumber);
 
-        enemiesToMake.ForEach(enemy => SummonUnitForTeam(enemy, TeamType.CPU));
+        enemiesToMake.ForEach(enemy => combatState.SummonUnitForTeam(enemy, TeamType.CPU));
 
         combatState.ClearWaveCounters();
 
@@ -269,6 +260,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         StartCoroutine(CombatPhaseDriver());
     }
 
+    // TODO: probably a BFP job
     void ClearStage() {
         // make sure there aren't CPUs in the field
         foreach (Transform child in transform) {
@@ -279,7 +271,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
-    // REFEREE JOB, maybe a shuffle resolver?
+    // TODO: combat state job
     void SeedCombatQueue()
     {
         // add all combatants to the queue in a random order
@@ -287,101 +279,6 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         foreach(Character combatant in shuffledCombatants)
         {
             combatState.AddCharacterToTurnOrder(combatant);
-        }
-    }
-
-    [ContextMenu("Revive All PCs")]
-    void ReviveAllPCs() {
-        List<Character> PCs = combatState.GetAllPCs();
-        PCs.ForEach(c => ReviveCharacter(
-            new ReviveOrder(c, 100, null)
-        ));
-    }
-
-    BattlefieldPosition GetNextOpenSpawnPointForTeam(TeamType team) {
-        List<int> TakenSpotIds = combatState.FullCombatantList
-            .Where(combatant => combatant.Config.TeamType == team && !combatant.isDead && combatant.PositionInfo != null)
-            .Select(combatant => combatant.PositionInfo.SpotId)
-            .ToList();
-
-        for (var i=0; i<5; i++) {
-            string childName = team == TeamType.PLAYER ? "Player Field" : "Enemy Field";
-            SpawnPoint spawn = transform.Find(childName).transform.Find("SpawnPoint" + i.ToString()).GetComponent<SpawnPoint>();
-            
-            if (spawn == null) {
-                return null;
-            }
-
-            if (!TakenSpotIds.Contains(spawn.SpotId)) {
-                return spawn.GetComponent<SpawnPoint>().GetInfo();
-            }
-        }
-        return null;
-    }
-
-    void SummonUnitForTeam(CharacterConfig config, TeamType team) {
-        GameObject newPc = Instantiate(CharacterPuckPrefab);
-        newPc.transform.parent = transform;
-        newPc.name = config.Name;
-
-        BattlefieldPosition bfInfo = GetNextOpenSpawnPointForTeam(team);
-        if (bfInfo == null) {
-            Debug.Log("NO SPACE!!!");
-            Destroy(newPc);
-            return;
-        }
-
-        Character character = newPc.GetComponent<Character>();
-
-        combatState.FullCombatantList.Add(character);
-
-        character.Config = config;
-        character.SetPositionInfo(bfInfo);
-        character.FirstTimeInitialization();
-    }
-
-    void SummonUnitForTeam(SummonOrder order) {
-        CharacterConfig summonedConfig = null;
-        switch(order.Unit) {
-            case SummonableUnit.GHOST:
-            summonedConfig = Summon_GHOST;
-            break;
-        }
-        if (summonedConfig != null) {
-            SummonUnitForTeam(
-                summonedConfig,
-                order.Team
-            );
-        }
-    }
-
-    void ReviveCharacter(ReviveOrder ro) {
-        if (ro.character.isDead) {
-            BattlefieldPosition bp = GetNextOpenSpawnPointForTeam(ro.character.Config.TeamType);
-            if (bp == null) {
-                Debug.Log("NO SPACE!!!");
-                return;
-            }
-            ro.character.SetPositionInfo(bp);
-        }
-        if (ro.character.isDead && !combatState.GetTurnOrder().Contains(ro.character)) {
-            combatState.AddCharacterToTurnOrder(ro.character);
-        }
-        ro.character.currentHealth = (int)(ro.character.Config.BaseHP * (ro.percentHealth / 100f));
-        
-        ro.character.RemoveAllBuffs();
-        ro.character.currentStagger = ro.character.Config.BaseSP;
-        ro.character.isDead = false;
-        eventProvider.OnCharacterRevived?.Invoke(ro.character);
-    }
-
-    [ContextMenu("Defeat Wave")]
-    void DefeatWave() {
-        List<Character> chars = combatState.GetAliveCPUs();
-        foreach (Character c in chars) {
-            c.currentHealth = 0;
-            c.isDead = true;
-            CombatAwaitingUser = false;
         }
     }
 
@@ -394,7 +291,9 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
+    // fine here
     void WaveChangeStep1() {
+        combatState.MoveToNextCombatant(); // lets us make sure we cleaned up after last turn
         gameState.ScalesOwned += combatState.GetDefeatedCPUs().Count;
         if (gameState.ScalesOwned >= 5 && combatState.GetDefeatedPCs().Count > 0) {
             ReviveUI.SetActive(true);
@@ -403,6 +302,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
+    // fine here
     void WaveChangeStep2() {
         // make up the boon offer
         List<BaseBoonResolver> boons = boonLibrary.GetRandomBoonOptionsForParty(3);
@@ -411,12 +311,15 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         eventProvider.OnBoonOffer?.Invoke(boons);
     }
 
+    // fine here
     void WaveChangeover() {
         gameState.WaveNumber++;
         SetupWave();
     }
 
+    // fine here
     void StageChangeover() {
+        combatState.MoveToNextCombatant(); // lets us make sure we cleaned up after last turn
         gameState.ScalesOwned += combatState.GetDefeatedCPUs().Count;
         gameState.StageNumber++;
         gameState.WaveNumber = 1;
@@ -424,6 +327,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         SetupWave();
     }
 
+    // fine here
     void StageResetPlayerCharacters() {
         List<Character> PCs = combatState.GetAllPCs();
         foreach (Character pc in PCs) {
@@ -432,6 +336,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
+    // TODO: needs love, but is close
     void PROGRESSBOARD() {
         // Check Win Conditions
         if (combatState.GetAlivePCs().Count == 0) {
@@ -457,6 +362,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }    
 
+    // good for ref
     void TargetSelected(Character selectedCharacter) {
         if (CurrentCombatPhase == CombatPhase.CHARACTERTURN_CHOOSETARGET && CombatAwaitingUser) {
             combatState.TargetSelected = selectedCharacter;
@@ -464,11 +370,14 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
+    // good for ref
     void HandleUserChoseBoon(BaseBoonResolver selectedBoon) {
         selectedBoon.ApplyToEligible(PlayerParty.PartyMembers);
         WaveChangeover();
     }
 
+
+    // TODO: Give most of this to combatState. too much info for CombatRef
     void HandleIncomingCombatantAbilityChoice(AbilityCategory category) {
         UserAbilitySelection abilityChosen;
         switch(category) {
@@ -486,6 +395,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         AttackSelected(abilityChosen);
     }
 
+    // TODO: Give most of this to combatState. too much info for CombatRef
     void AttackSelected(UserAbilitySelection attack) {
         if (CurrentCombatPhase == CombatPhase.CHARACTERTURN_CHOOSEABILITY && CombatAwaitingUser) {
             combatState.AbilitySelected = AttackTypeToAbility
@@ -504,95 +414,22 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
-    void RefereeResolvedAbility(ExecutedAbility executedAbility) {
-        eventProvider.OnAbilityExecuted?.Invoke(executedAbility);
 
-        executedAbility.UncommittedResponses.ForEach(response => ResolveAbilityResponse(response));
 
-        executedAbility.CharactersReviving.ForEach(ro => ReviveCharacter(ro));
 
-        executedAbility.SummonedUnits.ForEach(su => SummonUnitForTeam(su));
 
-        ResolveDeathTriggers(executedAbility);
-    }
 
-    void ResolveAbilityResponse(ExecutedAbility eaResponse) {
-        eaResponse.Commit();
-        RefereeResolvedAbility(eaResponse);
-    }
 
-    void ResolveDeathTriggers(ExecutedAbility _e) {
-        foreach(CalculatedDamage dmg in _e.AppliedHealthChanges) {
-            if (!dmg.Target.isDead) continue;
-            if (dmg.Target.HasBuff<BuffVolcanicBowelSyndrome>()) {
-                dmg.Target.RemoveBuff<BuffVolcanicBowelSyndrome>();
-                AbilityVolcanicBowelBlast bb = new AbilityVolcanicBowelBlast();
-                ExecutedAbility bbExec = bb.Resolve(
-                    dmg.Target,
-                    dmg.Target,
-                    combatState.FullCombatantList
-                );
-                RefereeResolvedAbility(bbExec);
-            }
 
-            // rez effects should go last since it clears buffs
-            if (dmg.Target.HasBuff<BuffPyroPeakboo>()) {
-                dmg.Target.RemoveBuff<BuffPyroPeakboo>();
-                AbilityPyroPeakaboo pp = new AbilityPyroPeakaboo();
-                ExecutedAbility ppExec = pp.Resolve(
-                    dmg.Target,
-                    dmg.Target,
-                    combatState.FullCombatantList
-                );
-                RefereeResolvedAbility(ppExec);
-            }
-            
-        }
-    }
 
-    void ExecuteAttack() {
-        ExecutedAbility completedAbility = combatState.ExecuteSelectedAbility();
 
-        AdjustScaleByAbilityCast(completedAbility);
-        eventProvider.OnScaleChanged?.Invoke(LightPoints, ShadowPoints);
 
-        RefereeResolvedAbility(completedAbility);
 
-        CombatAwaitingUser = false;
-    }
 
-    void AdjustScaleByAbilityCast(ExecutedAbility _e) {
-        if (_e.Source.Config.TeamType != TeamType.PLAYER) return;
-        if (_e.Ability is AbilityFlatDotDamage) return;
 
-        if (_e.Ability is AbilityBasicAttack) {
-            if (_e.Source.Config.PowerType == PowerType.LIGHT) {
-                if (LightPoints < 2){
-                    LightPoints += 1;
-                }
-            } else {
-                if (ShadowPoints < 2) {
-                    ShadowPoints += 1;
-                }
-            }
-            return;
-        }
 
-        
-        if (LightPoints > 1 && ShadowPoints > 1 && _e.Ability.IsUltimate) {
-            LightPoints -=2;
-            ShadowPoints -=2;
-            return;
-        } 
 
-        if (_e.Source.Config.PowerType == PowerType.LIGHT) {
-            LightPoints -= 1;
-            return;
-        } else {
-            ShadowPoints -= 1;
-            return;
-        }
-    }
+
 
     // TODO: Needs to be resolved by AIStrategy
     void DoCpuAbilityChoice() {
@@ -683,6 +520,23 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
     }
 
+    [ContextMenu("Revive All PCs")]
+    void ReviveAllPCs() {
+        List<Character> PCs = combatState.GetAllPCs();
+        PCs.ForEach(c => combatState.ReviveCharacter(
+            new ReviveOrder(c, 100, null)
+        ));
+    }
+
+    [ContextMenu("Defeat Wave")]
+    void DefeatWave() {
+        List<Character> chars = combatState.GetAliveCPUs();
+        foreach (Character c in chars) {
+            c.currentHealth = 0;
+            c.isDead = true;
+            CombatAwaitingUser = false;
+        }
+    }
     protected bool TryChance(int percentChance) {
         return UnityEngine.Random.Range(0, 100) < percentChance;
     }

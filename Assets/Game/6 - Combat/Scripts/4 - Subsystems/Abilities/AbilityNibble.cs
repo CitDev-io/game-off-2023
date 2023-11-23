@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbilityNibble : BaseAbilityResolver
+public class AbilityNibble : Effect
 {
     public AbilityNibble()
     {
@@ -13,9 +13,9 @@ public class AbilityNibble : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         Character RandomEnemy = CombatantListFilter.RandomByScope(
             AllCombatants,
@@ -24,10 +24,11 @@ public class AbilityNibble : BaseAbilityResolver
         );
         int AttackDamage = source.GetSpecialAttackRoll(false);
 
-        CalculatedDamage calcDmg = CalculateFinalDamage(
+        DamageOrder calcDmg = new DamageOrder(
             source,
             RandomEnemy,
-            (int) (AttackDamage * 1.5f)
+            (int) (AttackDamage * 1.5f),
+            this
         );
         _e.Add(calcDmg);
 

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class AbilityPolymorph : BaseAbilityResolver
+public class AbilityPolymorph : Effect
 {
     public AbilityPolymorph() {
         Name = "Polymorph";
@@ -10,9 +10,9 @@ public class AbilityPolymorph : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Polymorph");");   
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         bool PolymorphLanded = source.GetSpecialAttackRoll(false) != 0;
 

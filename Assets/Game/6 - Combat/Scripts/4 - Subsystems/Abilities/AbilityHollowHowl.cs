@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class AbilityHollowHowl : BaseAbilityResolver
+public class AbilityHollowHowl : Effect
 {
     public AbilityHollowHowl()
     {
@@ -11,7 +11,7 @@ public class AbilityHollowHowl : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
         int FriendlyUnitCount = CombatantListFilter.ByScope(
             AllCombatants,
@@ -19,7 +19,7 @@ public class AbilityHollowHowl : BaseAbilityResolver
             EligibleTargetScopeType.FRIENDLYORSELF
         ).Count;
 
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         if (FriendlyUnitCount > 4) {
             UnityEngine.Debug.Log("TOO MANY");

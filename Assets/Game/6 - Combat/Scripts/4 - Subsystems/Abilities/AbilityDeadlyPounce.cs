@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class AbilityDeadlyPounce : BaseAbilityResolver
+public class AbilityDeadlyPounce : Effect
 {
     public AbilityDeadlyPounce() {
         Name = "Deadly Pounce";
@@ -10,14 +10,15 @@ public class AbilityDeadlyPounce : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/DeadlyPounce");
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
         int DamageRoll = 2 * source.GetSpecialAttackRoll(false);
-        CalculatedDamage DamageToTarget = CalculateFinalDamage(
+        DamageOrder DamageToTarget = new DamageOrder(
             source,
             target,
-            DamageRoll
+            DamageRoll,
+            this
         );
 
         _e.Add(DamageToTarget);

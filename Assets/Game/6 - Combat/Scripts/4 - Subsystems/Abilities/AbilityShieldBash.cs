@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class AbilityShieldBash : BaseAbilityResolver
+public class AbilityShieldBash : Effect
 {
     int _attackLevel = 0;
     int _supportLevel = 0;
@@ -15,19 +15,20 @@ public class AbilityShieldBash : BaseAbilityResolver
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/ShieldBash");   
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         int BashDamage = source.GetSpecialAttackRoll(false);
         bool BashLanded = BashDamage != 0;
         if (_attackLevel > 1) {
             BashDamage = (int) (BashDamage * 1.25f);
         }
-        CalculatedDamage DamageToTarget = CalculateFinalDamage(
+        DamageOrder DamageToTarget = new DamageOrder(
             source,
             target,
-            BashDamage
+            BashDamage,
+            this
         );
 
         _e.Add(DamageToTarget);
@@ -42,10 +43,11 @@ public class AbilityShieldBash : BaseAbilityResolver
             float AdjacentDamageMultiplier = 0.25f;
 
             foreach (Character Adjacent in NearbyAlliesOfVictim) {
-                CalculatedDamage DamageToAdjacentAlly = CalculateFinalDamage(
+                DamageOrder DamageToAdjacentAlly = new DamageOrder(
                     source,
                     Adjacent,
-                    (int) (AdjacentDamageMultiplier * BashDamage)
+                    (int) (AdjacentDamageMultiplier * BashDamage),
+                    this
                 );
                 _e.Add(DamageToAdjacentAlly);
             }

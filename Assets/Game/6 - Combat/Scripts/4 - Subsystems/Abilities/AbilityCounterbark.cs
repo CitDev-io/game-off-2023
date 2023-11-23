@@ -1,26 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbilityCounterbark : BaseAbilityResolver
+public class AbilityCounterbark : Effect
 {
     public AbilityCounterbark() {
         Name = "Counterbark";
         Description = "Casts a Counterattack on self";
-        TargetScope = EligibleTargetScopeType.ENEMY;
+        TargetScope = EligibleTargetScopeType.NONE;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/ShieldBash");   
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, source, this);
 
-        int AbilityRoll = source.GetSpecialAttackRoll(false);
-        bool AbilityLanded = AbilityRoll != 0;
-        
-        if (AbilityLanded) {
-            Buff cbBuff = new BuffCounterattack(source, source, 1);
-            _e.Add(cbBuff);
-        }
+        Buff cbBuff = new BuffCounterattack(source, source, 2);
+        _e.Add(cbBuff);
 
         return _e;
     }     

@@ -109,8 +109,10 @@ public class UIManager : MonoBehaviour
         _eventProvider.OnPhasePrompt += HandlePhasePrompts;
         _eventProvider.OnWaveReady += HandleWaveReady;
         _eventProvider.OnEligibleTargetsChanged += HandleEligibleTargetsChanged;
-        _eventProvider.OnAbilityExecuted += HandleAbilityExecuted;
         _eventProvider.OnScaleChanged += HandleScaleChanged;
+        _eventProvider.OnDamageResolved += HandleDamageResolved;
+        _eventProvider.OnBuffAdded += HandleBuffAdded;
+        _eventProvider.OnEffectPlanExecutionStart += HandleEffectPlanExecutionStart;
     }
 
     void HandleWaveReady() {
@@ -185,15 +187,8 @@ public class UIManager : MonoBehaviour
         IsSelectingTarget = false;
     }
 
-    void HandleAbilityExecuted(ExecutedAbility executedAbility) {
-        string abilityCast = executedAbility.Source.Config.Name + " used " + executedAbility.Ability.Name;
-        if (executedAbility.Target != null) {
-            abilityCast += " on " + executedAbility.Target.Config.Name;
-        }
-        TextCrawlUI.EnqueueMessage(abilityCast);
-
-        foreach(CalculatedDamage dmg in executedAbility.AppliedHealthChanges) {
-            string damageDealt =  dmg.Target.Config.Name;
+    void HandleDamageResolved(CalculatedDamage dmg) {
+        string damageDealt =  dmg.Target.Config.Name;
             if (dmg.DamageToHealth < 0) {
                 damageDealt += " was healed for ";
             } else {
@@ -215,16 +210,22 @@ public class UIManager : MonoBehaviour
                 string staggerCracked = dmg.Target.Config.Name + "'s stagger has been cracked!";
                 TextCrawlUI.EnqueueMessage(staggerCracked);
             }
-        }
+    }
 
-        foreach(Buff buff in executedAbility.AppliedBuffs) {
-            if (buff.Target.isDead) {
-                continue;
-            }
-            string buffApplied = buff.Target.Config.Name + " has been afflicted by " + buff.Name + "!";
-            TextCrawlUI.EnqueueMessage(buffApplied);
+    void HandleBuffAdded(Buff buff) {
+        if (buff.Target.isDead) {
+            return;
         }
+        string buffApplied = buff.Target.Config.Name + " has been afflicted by " + buff.Name + "!";
+        TextCrawlUI.EnqueueMessage(buffApplied);
+    }
 
+    void HandleEffectPlanExecutionStart(EffectPlan executedAbility) {
+        string abilityCast = executedAbility.Caster.Config.Name + " used " + executedAbility.Source.Name;
+        if (executedAbility.Target != null) {
+            abilityCast += " on " + executedAbility.Target.Config.Name;
+        }
+        TextCrawlUI.EnqueueMessage(abilityCast);
     }
 
     void HandleEligibleTargetsChanged(List<Character> targets) {

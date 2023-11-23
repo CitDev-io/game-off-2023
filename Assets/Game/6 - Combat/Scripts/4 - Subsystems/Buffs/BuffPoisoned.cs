@@ -1,18 +1,18 @@
 public class BuffPoisoned : Buff
 {
-    public AbilityFlatDotDamage DotAbility;
+    public EffectFlatDotDamage DotAbility;
     public BuffPoisoned(Character src, Character tgt, int duration, int damage) : base(src, tgt, duration)
     {
         Name = "Poisoned";
         Description = "Takes damage at the start of their turn";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
-        DotAbility = new AbilityFlatDotDamage(damage, "Poison Damage", "Enemy is Poisoned");
+        DotAbility = new EffectFlatDotDamage(damage, "Poison Damage", "Enemy is Poisoned");
         isDebuff = true;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/Poisoned");
     }
 
-    public override ExecutedAbility ResolvePreflightEffects()
+    public override EffectPlan ResolvePreflightEffects()
     {
-        return DotAbility.Resolve(Source, Target, null);
+        return DotAbility.GetUncommitted(Source, Target, null);
     }
 }

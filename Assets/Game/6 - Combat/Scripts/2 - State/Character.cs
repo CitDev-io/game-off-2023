@@ -34,6 +34,17 @@ public class Character : MonoBehaviour
         Debug.Log(PositionInfo.SpotId);
     }
 
+    [ContextMenu("tell me your buffs")]
+    void tellmeyourbuffs() {
+        foreach(var buff in Buffs) {
+            Debug.Log(buff.Name + " " + buff.Charges);
+        }
+    }
+
+    public Buff GetBuff<T>() where T : Buff {
+        return Buffs.FirstOrDefault(buff => buff is T);
+    }
+
     public bool HasBuff<T>() where T : Buff {
         return Buffs.Any(buff => buff is T);
     }
@@ -48,6 +59,16 @@ public class Character : MonoBehaviour
         };
         PowerType powerType = Config.PowerType;
         
+        if (HasBuff<BuffStunned>() || HasBuff<BuffSearingStun>()) {
+            return new List<AbilityCategory>();
+        }
+
+        if (HasBuff<BuffCharmed>() || HasBuff<BuffSilenced>() || HasBuff<BuffTaunted>()) {
+            return new List<AbilityCategory>(){ 
+                AbilityCategory.BASICATTACK,
+            };
+        }
+
         if (powerType == PowerType.LIGHT && LightPoints < 1) {
             return availableAbilities;
         }
@@ -61,15 +82,6 @@ public class Character : MonoBehaviour
             availableAbilities.Add(AbilityCategory.ULTIMATE);
         };
 
-        if (HasBuff<BuffStunned>() || HasBuff<BuffSearingStun>()) {
-            return new List<AbilityCategory>();
-        }
-
-        if (HasBuff<BuffCharmed>() || HasBuff<BuffSilenced>() || HasBuff<BuffTaunted>()) {
-            return new List<AbilityCategory>(){ 
-                AbilityCategory.BASICATTACK,
-            };
-        }
         return availableAbilities;
     }
 
@@ -80,8 +92,9 @@ public class Character : MonoBehaviour
         {
             Buffs.Remove(existingBuff);
         }
-
+        UnityEngine.Debug.Log("DOING IT FOR " + Config.Name + " " + Buffs.Count());
         Buffs.Add(newBuff);
+        UnityEngine.Debug.Log("DID IT " + Buffs.Count());
     }
 
     public void AgeBuffsForPhase(CombatPhase phase) {

@@ -2,26 +2,27 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class AbilitySearingStun : BaseAbilityResolver
+public class AbilitySearingStun : Effect
 {
-    public AbilitySearingStun(int AttackLevel = 0, int SupportLevel = 0) {
+    public AbilitySearingStun() {
         Name = "Searing Stun";
         Description = "Turns enemy to stone, stunning them";
         TargetScope = EligibleTargetScopeType.ENEMY;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/ShieldBash");   
     }
 
-    public override ExecutedAbility GetUncommitted(Character source, Character target, List<Character> AllCombatants)
+    public override EffectPlan GetUncommitted(Character source, Character target, List<Character> AllCombatants)
     {
-        var _e = new ExecutedAbility(source, target, this);
+        var _e = new EffectPlan(source, target, this);
 
         int BashDamage = source.GetSpecialAttackRoll(false);
         bool BashLanded = BashDamage != 0;
         
-        CalculatedDamage DamageToTarget = CalculateFinalDamage(
+        DamageOrder DamageToTarget = new DamageOrder(
             source,
             target,
-            BashDamage
+            BashDamage,
+            this
         );
 
         _e.Add(DamageToTarget);
