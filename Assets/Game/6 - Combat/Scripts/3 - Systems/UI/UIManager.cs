@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     public UI_TargetSelection TargetSelectionUI;
     public UI_TextCrawler TextCrawlUI;
     public UI_ScalePanelManager ScalePanelUI;
+    public UI_TurnOrderManager TurnOrderUI;
     bool IsSelectingAbility = false;
     bool IsSelectingTarget = false;
     bool BoonTimeout = false;
@@ -113,6 +114,11 @@ public class UIManager : MonoBehaviour
         _eventProvider.OnDamageResolved += HandleDamageResolved;
         _eventProvider.OnBuffAdded += HandleBuffAdded;
         _eventProvider.OnEffectPlanExecutionStart += HandleEffectPlanExecutionStart;
+        _eventProvider.OnTurnOrderChanged += HandleTurnOrderChanged;
+    }
+
+    void HandleTurnOrderChanged(Character character, List<Character> InQueue) {
+        TurnOrderUI.UpdateTurnOrder(character, InQueue);
     }
 
     void HandleWaveReady() {

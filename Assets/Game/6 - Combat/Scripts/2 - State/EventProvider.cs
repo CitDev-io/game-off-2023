@@ -13,6 +13,7 @@ public delegate void BoonDelegate(BaseBoonResolver boon);
 public delegate void ScaleDelegate(int light, int dark);
 public delegate void CalculatedDamageDelegate(CalculatedDamage cd);
 public delegate void BuffDelegate(Buff buff);
+public delegate void TurnOrderDelegate(Character character, List<Character> InQueue);
 
 public class EventProvider
 {
@@ -22,6 +23,7 @@ public class EventProvider
     public ScaleDelegate OnScaleChanged;
     public EffectPlanDelegate OnEffectPlanExecutionStart;
     public EffectPlanDelegate OnEffectPlanExecutionComplete;
+    public TurnOrderDelegate OnTurnOrderChanged;
 
 
     public CombatPhaseDelegate OnPhaseAwake;

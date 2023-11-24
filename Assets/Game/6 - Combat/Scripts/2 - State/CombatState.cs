@@ -35,10 +35,12 @@ public class CombatState
 
     public void AddCharacterToTurnOrder(Character character) {
         TurnOrder.Enqueue(character);
+        _eventProvider.OnTurnOrderChanged?.Invoke(CurrentCombatant, TurnOrder.ToList());
     }
 
     void PurgeDeadCombatantsFromQueue() {
         TurnOrder = new Queue<Character>(TurnOrder.ToList().FindAll(combatant => !combatant.isDead));
+        _eventProvider.OnTurnOrderChanged?.Invoke(CurrentCombatant, TurnOrder.ToList());
     }
 
     public void MoveToNextCombatant() {
@@ -50,6 +52,7 @@ public class CombatState
         if (!TurnOrder.Contains(CurrentCombatant)){
             TurnOrder.Enqueue(CurrentCombatant);
         }
+        _eventProvider.OnTurnOrderChanged?.Invoke(CurrentCombatant, TurnOrder.ToList());
     }
 
     public void AddCharacterTurnNext(Character character) {
@@ -59,6 +62,7 @@ public class CombatState
             newQueue.Enqueue(combatant);
         }
         TurnOrder = newQueue;
+        _eventProvider.OnTurnOrderChanged?.Invoke(CurrentCombatant, TurnOrder.ToList());
     }
 
     public void ClearSelections() {
