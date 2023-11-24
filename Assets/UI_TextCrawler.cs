@@ -12,11 +12,6 @@ public class UI_TextCrawler : MonoBehaviour
     public float CHECK_QUEUE_TIMEOUT = 0.25f;
     string SpellItOut = "";
 
-    void Awake()
-    {
-        _CrawlText = transform.Find("TextScrawlText").GetComponent<TextMeshProUGUI>();
-    }
-
     void Start() {
         StartCoroutine(Crawl());
     }

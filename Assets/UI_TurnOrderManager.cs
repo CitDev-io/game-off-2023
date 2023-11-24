@@ -5,8 +5,8 @@ using TMPro;
 
 public class UI_TurnOrderManager : MonoBehaviour
 {
-    public TextMeshProUGUI Flavor1;
-    public TextMeshProUGUI Flavor2;
+    // public TextMeshProUGUI Flavor1;
+    // public TextMeshProUGUI Flavor2;
     public TextMeshProUGUI Flavor3;
 
     public List<UI_PortraitController> Portraits;
@@ -17,8 +17,8 @@ public class UI_TurnOrderManager : MonoBehaviour
         }
 
         Portraits[0].SetCharacter(CurrentCharacter);
-        Flavor1.text = CurrentCharacter.Config.Name + "'s Turn";
-        Flavor2.text = CurrentCharacter.Config.Name + "'s Battlecry goes here";
+        // Flavor1.text = CurrentCharacter.Config.Name + "'s Turn";
+        // Flavor2.text = CurrentCharacter.Config.Name + "'s Battlecry goes here";
         Flavor3.text = CurrentCharacter.currentHealth + "/" + CurrentCharacter.Config.BaseHP + " HP";
 
 
