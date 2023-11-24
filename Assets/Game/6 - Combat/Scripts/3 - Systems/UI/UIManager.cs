@@ -33,6 +33,10 @@ public class UIManager : MonoBehaviour
         _eventProvider.OnInput_BoonSelected?.Invoke(boon);
     }
 
+    public void RequestBackupToAbilitySelection() {
+        _eventProvider.OnInput_BackOutOfTargetSelection?.Invoke();
+    }
+
     IEnumerator BoonTimeoutRoutine() {
         BoonTimeout = true;
         yield return new WaitForSeconds(5f);
@@ -80,6 +84,18 @@ public class UIManager : MonoBehaviour
                 Input.GetKeyDown(KeyCode.S)
         )) {
             TargetSelectionUI.ToggleDown();
+        }
+
+        if (IsSelectingTarget && (
+            Input.GetMouseButtonDown(1)
+            ||
+            Input.GetKeyDown(KeyCode.Escape)
+            ||
+            Input.GetKeyDown(KeyCode.Backspace)
+            ||
+            Input.GetKeyDown(KeyCode.X)
+        )) {
+            RequestBackupToAbilitySelection();
         }
         
         if (

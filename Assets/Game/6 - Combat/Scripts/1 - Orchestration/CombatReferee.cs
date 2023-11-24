@@ -37,6 +37,7 @@ public class CombatReferee : MonoBehaviour
     // Phase State
     CombatPhase CurrentCombatPhase = CombatPhase.INIT;
     [SerializeField] bool CombatAwaitingUser = false;
+    bool UserRequestedRevertToAbilitySelection = false;
 
     void Awake() {
         eventProvider = new EventProvider();
@@ -54,6 +55,7 @@ public class CombatReferee : MonoBehaviour
     {
         eventProvider.OnInput_CombatantChoseAbility += HandleIncomingCombatantAbilityChoice;
         eventProvider.OnInput_CombatantChoseTarget += TargetSelected;
+        eventProvider.OnInput_BackOutOfTargetSelection += HandleUserTargetBackout;
         eventProvider.OnInput_BoonSelected += HandleUserChoseBoon;
         SetupParty();
         SetupWave();
@@ -175,6 +177,11 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE LOGIC GO
 Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED: " + CurrentCombatPhase.ToString());
                 while (CombatAwaitingUser) {
                     yield return new WaitForSeconds(0.1f);
+                }
+
+                if (UserRequestedRevertToAbilitySelection) {
+                    UserRequestedRevertToAbilitySelection = false;
+                    nextPhase = CombatPhase.CHARACTERTURN_CHOOSEABILITY;
                 }
 
                 if (CheckCombatWinConditions() != CombatResult.IN_PROGRESS) {
@@ -375,6 +382,11 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     void HandleUserChoseBoon(BaseBoonResolver selectedBoon) {
         selectedBoon.ApplyToEligible(PlayerParty.PartyMembers);
         WaveChangeover();
+    }
+
+    void HandleUserTargetBackout() {
+        UserRequestedRevertToAbilitySelection = true;
+        CombatAwaitingUser = false;
     }
 
 

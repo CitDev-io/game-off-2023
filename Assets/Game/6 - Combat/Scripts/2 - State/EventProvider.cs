@@ -25,13 +25,13 @@ public class EventProvider
     public EffectPlanDelegate OnEffectPlanExecutionComplete;
     public TurnOrderDelegate OnTurnOrderChanged;
 
-
     public CombatPhaseDelegate OnPhaseAwake;
     public CombatPhaseDelegate OnPhasePrompt;
     public CombatPhaseDelegate OnPhaseExiting;
     public StandardDelegate OnCombatHasEnded;
     public BoonsDelegate OnBoonOffer;
     public StandardDelegate OnWaveReady;
+    public StandardDelegate OnInput_BackOutOfTargetSelection;
     public AbilityCategoryDelegate OnInput_CombatantChoseAbility;
     public CharacterDelegate OnInput_CombatantChoseTarget;
     public BoonDelegate OnInput_BoonSelected;
