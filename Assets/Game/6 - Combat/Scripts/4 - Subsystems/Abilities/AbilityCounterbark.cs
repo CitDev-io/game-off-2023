@@ -14,7 +14,7 @@ public class AbilityCounterbark : Effect
     {
         var _e = new EffectPlan(source, source, this);
 
-        Buff cbBuff = new BuffCounterattack(source, source, 2);
+        Buff cbBuff = new BuffImprovedCounterAttack(source, source, 2);
         _e.Add(cbBuff);
 
         return _e;
