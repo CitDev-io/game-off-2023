@@ -21,8 +21,7 @@ git clone https://github.com/CitDev-io/game-off-2023.git
 - All other changes you make are safe to send
 
 ```sh
-> git add .
-> git reset HEAD -- ./Assets/Scenes/
+> git add -- /Assets/Scenes/
 > git commit -m "Describe Changes"
 > git push origin develop
 ```

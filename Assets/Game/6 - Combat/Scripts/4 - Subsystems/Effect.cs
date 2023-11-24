@@ -50,7 +50,7 @@ public abstract class Effect
                 AllCombatants,
                 character,
                 EligibleTargetScopeType.ANYOTHERALLY
-            ).Where(candidate => Mathf.Abs(candidate.PositionInfo.SpotId - character.PositionInfo.SpotId) <= 1).ToList();
+            ).Where(candidate => Mathf.Abs(candidate.PositionInfo.RelationalReferenceId - character.PositionInfo.RelationalReferenceId) <= 1).ToList();
     }
 
     protected bool TryChance(int percentChance) {

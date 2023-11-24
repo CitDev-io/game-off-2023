@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "V5kjKK2q6nQ",
+	"hash": "yEqSbjQdhqk",
 	"spine": "4.1.24",
 	"x": -232,
 	"y": -34,
@@ -35,7 +35,7 @@
 	"attack": {}
 },
 "animations": {
-	"animation": {
+	"attack": {
 		"bones": {
 			"jeremy": {
 				"rotate": [
@@ -79,6 +79,7 @@
 		"events": [
 			{ "time": 0.3333, "name": "attack" }
 		]
-	}
+	},
+	"idle": {}
 }
 }

@@ -293,6 +293,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
     // fine here
     void WaveChangeStep1() {
+        Debug.Log("WAVECHANGE1");
         combatState.MoveToNextCombatant(); // lets us make sure we cleaned up after last turn
         gameState.ScalesOwned += combatState.GetDefeatedCPUs().Count;
         if (gameState.ScalesOwned >= 5 && combatState.GetDefeatedPCs().Count > 0) {
@@ -537,6 +538,13 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
             CombatAwaitingUser = false;
         }
     }
+
+    [ContextMenu("Check dead")]
+    void checkdead() {
+        Debug.Log(combatState.GetDefeatedPCs().Count + "defeatedPC");
+        Debug.Log(combatState.GetTurnOrder().Count + "turnorder");
+    }
+    
     protected bool TryChance(int percentChance) {
         return UnityEngine.Random.Range(0, 100) < percentChance;
     }

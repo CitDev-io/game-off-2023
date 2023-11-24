@@ -69,3 +69,5 @@ I created the Counterattack buff but can't see it triggering. Revisit this logic
 If all types of Orders used the same interface, they could be placed on a stack and resolved within the Combat State resolver.
 
 DMG, BUFF need to be resolved all in one go from an effect plan so this might turn order stacks into something that needs more planning.
+
+Decision: Resolve EffectPlans in their entirety while gathering+searching for triggered responses. Fire the trigger responses in order. 
