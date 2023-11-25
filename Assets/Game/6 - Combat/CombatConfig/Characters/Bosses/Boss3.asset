@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1f911328fe241041bd769443387dfdb, type: 3}
   m_Name: Boss3
   m_EditorClassIdentifier: 
-  _Name: Boss 3
+  _Name: Rootsnarl
   _PowerType: 0
   _TeamType: 1
   _PlayerClass: 0
-  _Portrait: {fileID: 0}
+  _Portrait: {fileID: 21300000, guid: 950af7f63186b7646b172179a442af1f, type: 3}
   _Skin: {fileID: 21300000, guid: 8d57aeb40e2762c4185be4d141a119e4, type: 3}
   _SpineSkeleton: {fileID: 11400000, guid: 5ca9d2148250d154f9241d9caca88335, type: 2}
   _SpecialAttack: 21
@@ -25,9 +25,9 @@ MonoBehaviour:
   _BaseMitigation: 0
   _BaseHP: 1500
   _BaseSP: 850
-  _BaseAttackMin: 20
-  _BaseAttackMax: 160
-  _BaseSpecialMin: 20
-  _BaseSpecialMax: 160
+  _BaseAttackMin: 70
+  _BaseAttackMax: 70
+  _BaseSpecialMin: 70
+  _BaseSpecialMax: 70
   SupportTreeLevel: 0
   AttackTreeLevel: 0

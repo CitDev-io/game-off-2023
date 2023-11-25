@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1f911328fe241041bd769443387dfdb, type: 3}
   m_Name: Boss1
   m_EditorClassIdentifier: 
-  _Name: Boss 1
+  _Name: Puff n' Plunder
   _PowerType: 1
   _TeamType: 1
   _PlayerClass: 0
-  _Portrait: {fileID: 0}
+  _Portrait: {fileID: 21300000, guid: c8659f7053634054eb83394149690964, type: 3}
   _Skin: {fileID: 21300000, guid: 6537d370127738a49ae6005e2108621b, type: 3}
   _SpineSkeleton: {fileID: 11400000, guid: 084b5db025d174545a123820c8b0d069, type: 2}
   _SpecialAttack: 16
@@ -25,9 +25,9 @@ MonoBehaviour:
   _BaseMitigation: 0
   _BaseHP: 1000
   _BaseSP: 500
-  _BaseAttackMin: 20
-  _BaseAttackMax: 80
-  _BaseSpecialMin: 20
-  _BaseSpecialMax: 80
+  _BaseAttackMin: 30
+  _BaseAttackMax: 30
+  _BaseSpecialMin: 30
+  _BaseSpecialMax: 30
   SupportTreeLevel: 0
   AttackTreeLevel: 0

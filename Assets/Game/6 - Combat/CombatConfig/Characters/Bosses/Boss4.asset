@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1f911328fe241041bd769443387dfdb, type: 3}
   m_Name: Boss4
   m_EditorClassIdentifier: 
-  _Name: Boss 4
+  _Name: Butterbelch
   _PowerType: 1
   _TeamType: 1
   _PlayerClass: 0
-  _Portrait: {fileID: 21300000, guid: a18a56f6ccaf1244989224a589184749, type: 3}
+  _Portrait: {fileID: 21300000, guid: 4f9227e0503db8d44a208d4ed5b94e87, type: 3}
   _Skin: {fileID: 21300000, guid: 2cde9917c02989a458f6c6ea658e1a1f, type: 3}
   _SpineSkeleton: {fileID: 11400000, guid: be67eb827ddcb394eaa83cf8cbf9f6c8, type: 2}
   _SpecialAttack: 0
@@ -25,9 +25,9 @@ MonoBehaviour:
   _BaseMitigation: 0
   _BaseHP: 1800
   _BaseSP: 1100
-  _BaseAttackMin: 20
-  _BaseAttackMax: 200
-  _BaseSpecialMin: 20
-  _BaseSpecialMax: 200
+  _BaseAttackMin: 80
+  _BaseAttackMax: 80
+  _BaseSpecialMin: 80
+  _BaseSpecialMax: 80
   SupportTreeLevel: 0
   AttackTreeLevel: 0

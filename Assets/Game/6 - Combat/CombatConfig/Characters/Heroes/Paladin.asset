@@ -25,9 +25,9 @@ MonoBehaviour:
   _BaseMitigation: 12
   _BaseHP: 200
   _BaseSP: 0
-  _BaseAttackMin: 20
+  _BaseAttackMin: 100
   _BaseAttackMax: 100
-  _BaseSpecialMin: 20
-  _BaseSpecialMax: 100
-  SupportTreeLevel: 1
-  AttackTreeLevel: 1
+  _BaseSpecialMin: 200
+  _BaseSpecialMax: 200
+  SupportTreeLevel: 0
+  AttackTreeLevel: 0

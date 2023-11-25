@@ -12,22 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1f911328fe241041bd769443387dfdb, type: 3}
   m_Name: GhostLight
   m_EditorClassIdentifier: 
-  _Name: Ghost Dragon
+  _Name: Spookwing
   _PowerType: 0
   _TeamType: 1
   _PlayerClass: 0
-  _Portrait: {fileID: 0}
+  _Portrait: {fileID: 21300000, guid: 2f067ebebf5a57d4c8001e2536d4a8f7, type: 3}
   _Skin: {fileID: 21300000, guid: dd2414452430e1348826021768bd95fc, type: 3}
   _SpineSkeleton: {fileID: 11400000, guid: cce327313102c2547928b46c5d978a9f, type: 2}
   _SpecialAttack: 0
   _UltimateAbility: 0
   _NativeBuff: 2
   _BaseMitigation: 0
-  _BaseHP: 400
-  _BaseSP: 400
-  _BaseAttackMin: 10
-  _BaseAttackMax: 80
-  _BaseSpecialMin: 10
-  _BaseSpecialMax: 80
+  _BaseHP: 150
+  _BaseSP: 150
+  _BaseAttackMin: 30
+  _BaseAttackMax: 30
+  _BaseSpecialMin: 30
+  _BaseSpecialMax: 30
   SupportTreeLevel: 0
   AttackTreeLevel: 0

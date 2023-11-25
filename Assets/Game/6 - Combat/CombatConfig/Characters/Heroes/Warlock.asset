@@ -16,17 +16,18 @@ MonoBehaviour:
   _PowerType: 1
   _TeamType: 0
   _PlayerClass: 4
-  _Portrait: {fileID: 21300000, guid: 1c3f6fbdfd3302c47ad2e6d711b669b0, type: 3}
+  _Portrait: {fileID: 21300000, guid: cd556270a82580649afc2ff738853d39, type: 3}
   _Skin: {fileID: 21300000, guid: 2769367fcd5a49c45adf6da94205aa82, type: 3}
   _SpineSkeleton: {fileID: 11400000, guid: d466f28186c712d46bcfc30c03447766, type: 2}
   _SpecialAttack: 4
   _UltimateAbility: 8
+  _NativeBuff: 0
   _BaseMitigation: 2
   _BaseHP: 140
   _BaseSP: 0
-  _BaseAttackMin: 30
+  _BaseAttackMin: 120
   _BaseAttackMax: 120
-  _BaseSpecialMin: 30
-  _BaseSpecialMax: 120
+  _BaseSpecialMin: 240
+  _BaseSpecialMax: 240
   SupportTreeLevel: 0
   AttackTreeLevel: 0

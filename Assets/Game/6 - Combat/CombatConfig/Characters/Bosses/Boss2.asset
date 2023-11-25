@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1f911328fe241041bd769443387dfdb, type: 3}
   m_Name: Boss2
   m_EditorClassIdentifier: 
-  _Name: Boss 2
+  _Name: Grimbones
   _PowerType: 0
   _TeamType: 1
   _PlayerClass: 0
-  _Portrait: {fileID: 0}
+  _Portrait: {fileID: 21300000, guid: 4d34520f55914f54a8bca022c01159d7, type: 3}
   _Skin: {fileID: 21300000, guid: a22feb7f427495349b91a6f1ea1ea970, type: 3}
   _SpineSkeleton: {fileID: 11400000, guid: af5721c707754e9418674f88d346b5d7, type: 2}
   _SpecialAttack: 18
@@ -25,9 +25,9 @@ MonoBehaviour:
   _BaseMitigation: 0
   _BaseHP: 1200
   _BaseSP: 650
-  _BaseAttackMin: 20
-  _BaseAttackMax: 120
-  _BaseSpecialMin: 20
-  _BaseSpecialMax: 120
+  _BaseAttackMin: 50
+  _BaseAttackMax: 50
+  _BaseSpecialMin: 50
+  _BaseSpecialMax: 50
   SupportTreeLevel: 0
   AttackTreeLevel: 0
