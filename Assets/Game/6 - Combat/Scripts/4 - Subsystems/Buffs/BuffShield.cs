@@ -5,6 +5,6 @@ public class BuffShield : Buff
         Name = "Shield";
         Description = "Prevents the next " + charges + " damage taken";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
-        PortraitArt = "bufficons/blank";
+        PortraitArt = "bufficons/shield";
     }
 }

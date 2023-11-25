@@ -21,6 +21,8 @@ public class Character : MonoBehaviour
     [SerializeField]
     public List<Buff> Buffs = new List<Buff>();
     public int GenericWaveCounter = 0;
+    public bool IsHighlighted = false;
+    public Sprite AlternativePortrait;
 
     public void SetPositionInfo(BattlefieldPosition pos) {
         PositionInfo = pos;
@@ -49,8 +51,10 @@ public class Character : MonoBehaviour
         return Buffs.Any(buff => buff is T);
     }
 
-    public void RemoveBuff<T>() where T : Buff {
+    public Buff RemoveBuff<T>() where T : Buff {
+        Buff buffToRemove = Buffs.FirstOrDefault(buff => buff is T);
         Buffs.RemoveAll(buff => buff is T);
+        return buffToRemove;
     }
 
     public List<AbilityCategory> GetAvailableAbilities(int LightPoints, int ShadowPoints) {
@@ -95,13 +99,13 @@ public class Character : MonoBehaviour
         Buffs.Add(newBuff);
     }
 
-    public void AgeBuffsForPhase(CombatPhase phase) {
+    public List<Buff> AgeBuffsForPhase(CombatPhase phase) {
         var buffsToAge = Buffs.Where(buff => buff.AgingPhase == phase);
         foreach (var buff in buffsToAge)
         {
             buff.Tick();
         }
-        RemoveAgedBuffs();
+        return RemoveAgedBuffs();
     }
 
     public void RemoveRandomDebuff() {
@@ -118,9 +122,12 @@ public class Character : MonoBehaviour
         Buffs.Clear();
     }
 
-    void RemoveAgedBuffs() {
-        if (Buffs.Count == 0) return;
+    List<Buff> RemoveAgedBuffs() {
+        if (Buffs.Count == 0) return new List<Buff>();
+        
+        var agedBuffs = Buffs.Where(buff => buff.TurnsRemaining < 1).ToList();
         Buffs.RemoveAll(buff => buff.TurnsRemaining < 1);
+        return agedBuffs;
     }
 
     public void RestoreStagger() {

@@ -17,7 +17,7 @@ public class AbilityVolcanicBowelBlast : Effect
         var _e = new EffectPlan(source, source, this);
 
         List<Character> NearbyAllies = GetNearbyAlliesOfCharacter(source, AllCombatants);
-
+        UnityEngine.Debug.Log("Nearby allies: " + NearbyAllies.Count);
         if (NearbyAllies.Count == 0) {
             return _e;
         }

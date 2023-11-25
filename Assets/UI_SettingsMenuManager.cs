@@ -10,17 +10,17 @@ public class UI_SettingsMenuManager : MonoBehaviour
     public GameObject SettingsPanelUI;
 
     bool IsMoving = false;
-    float TargetRotation = 180.1f;
+    float TargetRotation = 179.9f;
     void Awake() {
         SwooshModal.SetActive(false);
         SettingsPanelUI.SetActive(false);
     }
 
     void ToggleRotationDirection() {
-        if (TargetRotation == 180.1f) {
-            TargetRotation = 0f;
+        if (TargetRotation == 0f) {
+            TargetRotation = 179.9f;
         } else {
-            TargetRotation = 180.1f;
+            TargetRotation = 0f;
         }
     }
 
@@ -40,13 +40,13 @@ public class UI_SettingsMenuManager : MonoBehaviour
         while (Mathf.Abs(SwooshModal.transform.rotation.eulerAngles.z - TargetRotation) > 0.5f) {
             SwooshModal.transform.rotation = Quaternion.Lerp(SwooshModal.transform.rotation, Quaternion.Euler(0f, 0f, TargetRotation), SPINSPEED);
 
-            SettingsPanelUI.SetActive(SwooshModal.transform.rotation.eulerAngles.z > 310f || SwooshModal.transform.rotation.eulerAngles.z < 10f);
+            SettingsPanelUI.SetActive(SwooshModal.transform.rotation.eulerAngles.z > 140f);
 
             Button.transform.rotation = Quaternion.Euler(0f, 0f, 2f * TargetRotation == 0f ? 1 : -1);
             yield return new WaitForSeconds(WAITSPEED);
         }
         SwooshModal.transform.rotation = Quaternion.Euler(0f, 0f, TargetRotation);
-        if (TargetRotation == 180.1f) {
+        if (TargetRotation == 0f) {
             SwooshModal.SetActive(false);
         }
         IsMoving = false;

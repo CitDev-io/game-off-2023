@@ -18,6 +18,10 @@ public class UI_PortraitController : MonoBehaviour
     public Sprite NoPortraitArt;
 
     public Character Character;
+
+    [Header("Peer Objects")]
+    public GameObject Pointer;
+
     [Header("Buff Icons")]
     public Image Buff1;
     public Image Buff2;
@@ -34,8 +38,10 @@ public class UI_PortraitController : MonoBehaviour
             return;
         }
 
-        NameText.text = Character.Config.Name;
-        if (Character.Config.Portrait != null) {
+        NameText.text = Character.gameObject.name;
+        if (Character.AlternativePortrait != null) {
+            PortraitArt.sprite = Character.AlternativePortrait;
+        } else if (Character.Config.Portrait != null) {
             PortraitArt.sprite = Character.Config.Portrait;
         } else {
             PortraitArt.sprite = NoPortraitArt;
@@ -56,6 +62,8 @@ public class UI_PortraitController : MonoBehaviour
             SPFillBar.rectTransform.sizeDelta = new Vector2(62f *
                 ((float)Character.currentStagger / (float)Character.Config.BaseSP), SPFillBar.rectTransform.sizeDelta.y);
         }
+
+        Pointer.SetActive(Character.IsHighlighted);
 
 
         Sprite blank = Resources.Load<Sprite>("bufficons/blank");

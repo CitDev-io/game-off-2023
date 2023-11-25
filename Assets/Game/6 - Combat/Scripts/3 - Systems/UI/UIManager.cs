@@ -10,7 +10,7 @@ public class UIManager : MonoBehaviour
     public GameObject BoonUI;
     EventProvider _eventProvider;
     public UI_AbilitySelection AbilitySelectionUI;
-    public UI_TargetSelection TargetSelectionUI;
+    // public UI_TargetSelection TargetSelectionUI;
     public UI_TextCrawler TextCrawlUI;
     public UI_ScalePanelManager ScalePanelUI;
     public UI_TurnOrderManager TurnOrderUI;
@@ -70,20 +70,20 @@ public class UIManager : MonoBehaviour
 
         if (
             IsSelectingTarget && (
-                Input.GetKeyDown(KeyCode.UpArrow)
+                Input.GetKeyDown(KeyCode.LeftArrow)
                 ||
-                Input.GetKeyDown(KeyCode.W)
+                Input.GetKeyDown(KeyCode.A)
         )) {
-            TargetSelectionUI.ToggleUp();
+            TurnOrderUI.ToggleLeft();
         }
 
         if (
             IsSelectingTarget && (
-                Input.GetKeyDown(KeyCode.DownArrow)
+                Input.GetKeyDown(KeyCode.RightArrow)
                 ||
-                Input.GetKeyDown(KeyCode.S)
+                Input.GetKeyDown(KeyCode.D)
         )) {
-            TargetSelectionUI.ToggleDown();
+            TurnOrderUI.ToggleRight();
         }
 
         if (IsSelectingTarget && (
@@ -117,7 +117,7 @@ public class UIManager : MonoBehaviour
             ||
             Input.GetKeyDown(KeyCode.Return)
         )) {
-            TargetSelected(TargetSelectionUI.CurrentSelection);
+            TargetSelected(TurnOrderUI.CurrentSelection);
         }
     }
 
@@ -178,7 +178,7 @@ public class UIManager : MonoBehaviour
     }
 
     void HandleAbilityPhasePromptForCharacter(Character combatant) {
-        TargetSelectionUI.gameObject.SetActive(false);
+        // TurnOrderUI.gameObject.SetActive(false);
         if (combatant.Config.TeamType == TeamType.PLAYER) {
             List<AbilityCategory> availableAbilities = combatant.GetAvailableAbilities(LightRef, ShadowRef);
             if (availableAbilities.Contains(AbilityCategory.SPECIALATTACK)) {
@@ -198,48 +198,30 @@ public class UIManager : MonoBehaviour
         if (combatant.Config.TeamType == TeamType.PLAYER) {
             IsSelectingAbility = false;
             IsSelectingTarget = true;
-            TargetSelectionUI.ToggleEligibleTarget(0);
             AbilitySelectionUI.gameObject.SetActive(false);
-            TargetSelectionUI.gameObject.SetActive(true);
+            
+            TurnOrderUI.SetSelectionMode(true);
         }
     }
     void HandleExecutionPhasePromptForCharacter(Character combatant) {
-        TargetSelectionUI.gameObject.SetActive(false);
+        TurnOrderUI.SetSelectionMode(false);
         AbilitySelectionUI.gameObject.SetActive(false);
         IsSelectingTarget = false;
     }
 
     void HandleDamageResolved(CalculatedDamage dmg) {
-        string damageDealt =  dmg.Target.Config.Name;
-            if (dmg.DamageToHealth < 0) {
-                damageDealt += " was healed for ";
-            } else {
-                damageDealt += " took ";
-            }
-            damageDealt += Mathf.Abs(dmg.DamageToHealth);
-            if (dmg.DamageToHealth < 0) {
-                damageDealt += " health";
-            } else {
-                damageDealt += " damage (" + dmg.DamageToStagger + " stagger)";
-            }
-            
-            TextCrawlUI.EnqueueMessage(damageDealt);
-
-            if (dmg.Target.isDead) {
-                string targetDied = dmg.Target.Config.Name + " has been defeated!";
-                TextCrawlUI.EnqueueMessage(targetDied);
-            } else if (dmg.StaggerCrackedByThis) {
-                string staggerCracked = dmg.Target.Config.Name + "'s stagger has been cracked!";
-                TextCrawlUI.EnqueueMessage(staggerCracked);
-            }
+        if (dmg.Target.isDead) {
+            string targetDied = dmg.Target.Config.Name + " has been defeated!";
+            TextCrawlUI.EnqueueMessage(targetDied);
+        }
     }
 
     void HandleBuffAdded(Buff buff) {
-        if (buff.Target.isDead) {
-            return;
-        }
-        string buffApplied = buff.Target.Config.Name + " has been afflicted by " + buff.Name + "!";
-        TextCrawlUI.EnqueueMessage(buffApplied);
+        // if (buff.Target.isDead) {
+        //     return;
+        // }
+        // string buffApplied = buff.Target.Config.Name + " has been afflicted by " + buff.Name + "!";
+        // TextCrawlUI.EnqueueMessage(buffApplied);
     }
 
     void HandleEffectPlanExecutionStart(EffectPlan executedAbility) {
@@ -251,11 +233,11 @@ public class UIManager : MonoBehaviour
     }
 
     void HandleEligibleTargetsChanged(List<Character> targets) {
-        TargetSelectionUI.SetEligibleTargets(targets);
+        TurnOrderUI.SetEligibleTargets(targets);
     }
 
     void HandleBoonOffer(List<BaseBoonResolver> boons) {
-        TargetSelectionUI.gameObject.SetActive(false);
+        TurnOrderUI.SetSelectionMode(false);
         AbilitySelectionUI.gameObject.SetActive(false);
         BoonUI.GetComponent<UI_BoonMenuManager>().OfferBoons(boons);
     }

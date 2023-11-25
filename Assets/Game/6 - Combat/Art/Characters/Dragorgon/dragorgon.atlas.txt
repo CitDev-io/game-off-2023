@@ -1,14 +1,15 @@
 dragorgon.png
-size:612,375
+size:810,496
 filter:Linear,Linear
 pma:true
-scale:0.75
 dragorgon
-bounds:2,2,371,522
+bounds:2,2,492,694
+offsets:1,1,494,696
 rotate:90
 dragorgon shadow
-bounds:526,115,258,84
-offsets:1,1,260,86
+bounds:698,151,343,110
+offsets:1,2,346,114
 rotate:90
 root
-bounds:526,109,4,4
+bounds:698,146,3,3
+offsets:1,1,5,5

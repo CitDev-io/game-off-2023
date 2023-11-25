@@ -5,6 +5,6 @@ public class BuffPyroPeakboo : Buff
         Name = "Pyro Peakboo";
         Description = "Will revive when killed";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
-        PortraitArt = "bufficons/blank";
+        PortraitArt = "bufficons/peakaboo";
     }
 }

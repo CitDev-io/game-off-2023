@@ -93,10 +93,10 @@ public class CombatState
         ExecuteEffectList(abilityEffects);
     }
 
-    public void SummonUnitForTeam(CharacterConfig config, TeamType team) {
+    public Character SummonUnitForTeam(CharacterConfig config, TeamType team) {
         BattlefieldPosition bfInfo = FindOpenSpotForTeam(team);
         if (bfInfo == null) {
-            return; // no space
+            return null; // no space
         }
         Character character = _bfpProvider.InstantiateNewCharacterForConfig(config);
 
@@ -105,6 +105,9 @@ public class CombatState
         character.Config = config;
         character.SetPositionInfo(bfInfo);
         character.FirstTimeInitialization();
+        _eventProvider.OnCharacterSummoned?.Invoke(character);
+
+        return character;
     }
 
     public void SummonUnitForTeam(SummonOrder order) {
@@ -343,7 +346,9 @@ public class CombatState
         foreach(CalculatedDamage dmg in _e.DamageResults) {
             if (!dmg.Target.isDead) continue;
             if (dmg.Target.HasBuff<BuffVolcanicBowelSyndrome>()) {
-                dmg.Target.RemoveBuff<BuffVolcanicBowelSyndrome>();
+                Buff buffRemoved = dmg.Target.RemoveBuff<BuffVolcanicBowelSyndrome>();
+                _eventProvider.OnBuffExpired?.Invoke(buffRemoved);
+
                 AbilityVolcanicBowelBlast bb = new AbilityVolcanicBowelBlast();
                 EffectPlan blastResponse = bb.GetUncommitted(
                     dmg.Target,
@@ -355,7 +360,9 @@ public class CombatState
 
             // rez effects should go last since it clears buffs
             if (dmg.Target.HasBuff<BuffPyroPeakboo>()) {
-                dmg.Target.RemoveBuff<BuffPyroPeakboo>();
+                Buff buffRemoved = dmg.Target.RemoveBuff<BuffPyroPeakboo>();
+                _eventProvider.OnBuffExpired?.Invoke(buffRemoved);
+
                 AbilityPyroPeakaboo pp = new AbilityPyroPeakaboo();
                 EffectPlan peakResponse = pp.GetUncommitted(
                     dmg.Target,

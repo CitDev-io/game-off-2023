@@ -1,0 +1,11 @@
+fish.png
+size:279,238
+filter:Linear,Linear
+pma:true
+shadow
+bounds:250,135,101,27
+offsets:2,1,104,30
+rotate:90
+zebrafish
+bounds:2,2,246,234
+offsets:1,1,248,236

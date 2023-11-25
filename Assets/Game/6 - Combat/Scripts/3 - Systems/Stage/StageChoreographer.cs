@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class StageChoreographer : MonoBehaviour
@@ -21,6 +23,8 @@ public class StageChoreographer : MonoBehaviour
 
     */
 
+    List<ActorCharacter> MyActors = new List<ActorCharacter>();
+
     void Awake() {
         _eventProvider = GetComponent<CombatReferee>().eventProvider;
         SetupHooks();
@@ -32,6 +36,48 @@ public class StageChoreographer : MonoBehaviour
         _eventProvider.OnEffectPlanExecutionComplete += HandleAbilityExecuted;
         _eventProvider.OnCharacterRevived += HandleCharacterRevived;
         _eventProvider.OnDamageResolved += HandleDamageResolved;
+        _eventProvider.OnEffectPlanExecutionStart += HandleEffectPlanExecutionStart;
+        _eventProvider.OnBuffAdded += HandleBuffAdded;
+        _eventProvider.OnBuffExpired += HandleBuffRemoved;
+        _eventProvider.OnStageComplete += HandleStageComplete;
+        _eventProvider.OnCharacterSummoned += HandleCharacterSummoned;
+    }
+
+    void HandleCharacterSummoned(Character character) {
+        MyActors.Add(character.GetComponent<ActorCharacter>());
+    }
+
+    void HandleStageComplete() {
+        Debug.Log("CHECK " + MyActors.Count);
+        MyActors
+            .Where(actor => actor._character.isDead && actor._character.Config.TeamType == TeamType.PLAYER)
+            .ToList()
+            .ForEach(actor => {
+            if (actor.GetComponent<Character>().isDead) {
+                actor.EnqueuePerformance(CharacterActorPerformance.FADEOUT);
+            }
+        });
+    }
+
+    void PolymorphCharacter(Character character, bool isPolymorphed) {
+        ActorCharacter actor = character.GetComponent<ActorCharacter>();
+        if (isPolymorphed) {
+            actor.EnqueuePerformance(CharacterActorPerformance.POLYMORPH);
+        } else {
+            actor.EnqueuePerformance(CharacterActorPerformance.UNPOLYMORPH);
+        }
+    }
+
+    void HandleBuffAdded(Buff buff) {
+        if (buff is BuffPolymorph) {
+            PolymorphCharacter(buff.Target, true);
+        }
+    }
+
+    void HandleBuffRemoved(Buff buff) {
+        if (buff is BuffPolymorph) {
+            PolymorphCharacter(buff.Target, false);
+        }
     }
 
     void HandleWaveReady() {
@@ -54,13 +100,21 @@ public class StageChoreographer : MonoBehaviour
         StartCoroutine(WaitPerformance(1f));
     }
 
-    void HandleDamageResolved(CalculatedDamage cd) {
-        ActorCharacter sourceMotor = cd.Attacker.GetComponent<ActorCharacter>();
-        if (cd.Source is AbilityBasicAttack) {
-            sourceMotor.EnqueuePerformance(CharacterActorPerformance.BASICATTACK);
+    void HandleEffectPlanExecutionStart(EffectPlan plan) {
+        if (plan.Source is AbilityBasicAttack) {
+            plan.Caster.GetComponent<ActorCharacter>().EnqueuePerformance(CharacterActorPerformance.BASICATTACK);
         } else {
-            sourceMotor.EnqueuePerformance(CharacterActorPerformance.SPECIALATTACK);
+            plan.Caster.GetComponent<ActorCharacter>().EnqueuePerformance(CharacterActorPerformance.SPECIALATTACK);
         }
+    }
+
+    void HandleDamageResolved(CalculatedDamage cd) {
+        // ActorCharacter sourceMotor = cd.Attacker.GetComponent<ActorCharacter>();
+        // if (cd.Source is AbilityBasicAttack) {
+        //     sourceMotor.EnqueuePerformance(CharacterActorPerformance.BASICATTACK);
+        // } else {
+        //     sourceMotor.EnqueuePerformance(CharacterActorPerformance.SPECIALATTACK);
+        // }
 
         if (cd.DamageToHealth > 0) {
             ActorCharacter victimMotor = cd.Target.GetComponent<ActorCharacter>();

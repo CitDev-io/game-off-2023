@@ -22,8 +22,14 @@ public class ActorCharacter : MonoBehaviour
     bool IN_SPINE_MODE = false;
     public bool IsActing = false;
     Queue<CharacterActorPerformance> _performanceQueue = new Queue<CharacterActorPerformance>();
+    [Header("Polymorph")]
+    public SkeletonDataAsset CritterSkin;
+    public Sprite CritterSkinSprite;
+    public SkeletonDataAsset CritterSkin2;
+    public Sprite CritterSkinSprite2;
 
-    Character _character;
+
+    public Character _character;
     void Awake() {
         _character = GetComponent<Character>();
         _displayLayer = transform.Find("DisplayLayer").gameObject;
@@ -65,6 +71,15 @@ public class ActorCharacter : MonoBehaviour
                         break;
                     case CharacterActorPerformance.REVIVE:
                         StartCoroutine(RevivedPerformance());
+                        break;
+                    case CharacterActorPerformance.POLYMORPH:
+                        StartCoroutine(PolymorphPerformance());
+                        break;
+                    case CharacterActorPerformance.UNPOLYMORPH:
+                        StartCoroutine(UnpolymorphPerformance());
+                        break;
+                    case CharacterActorPerformance.FADEOUT:
+                        StartCoroutine(FadeOutPerformance());
                         break;
                 }
             }
@@ -262,14 +277,43 @@ public class ActorCharacter : MonoBehaviour
             } else {
                 yield return new WaitForSeconds(0.75f);
             }
+            if (_character.Config.TeamType != TeamType.PLAYER) {
+                float alpha = 1f;
+                while (alpha > 0f) {
+                    _spineSkin.skeleton.A = alpha;
+                    alpha -= DEATH_FADE_INCREMENT;
+                    yield return new WaitForSeconds(DEATH_FADE_SPEED);
+                }
+                _displayLayer.SetActive(false);
+                yield return new WaitForSeconds(1.0f);
+            }
+            IsActing = false;
+        } else {
+            yield return new WaitForSeconds(0.75f);
+            IsActing = true;
             float alpha = 1f;
             while (alpha > 0f) {
-                _spineSkin.skeleton.A = alpha;
+                _skin.color = new Color(1f, 1f, 1f, alpha);
                 alpha -= DEATH_FADE_INCREMENT;
                 yield return new WaitForSeconds(DEATH_FADE_SPEED);
             }
             _displayLayer.SetActive(false);
-            yield return new WaitForSeconds(1.0f);
+            _skin.color = Color.white;
+            IsActing = false;
+        }
+    }
+
+    IEnumerator FadeOutPerformance() {
+        if (IN_SPINE_MODE) {
+            IsActing = true;
+            float alpha = 1f;
+                while (alpha > 0f) {
+                    _spineSkin.skeleton.A = alpha;
+                    alpha -= DEATH_FADE_INCREMENT;
+                    yield return new WaitForSeconds(DEATH_FADE_SPEED);
+                }
+                _displayLayer.SetActive(false);
+                yield return new WaitForSeconds(1.0f);
             IsActing = false;
         } else {
             yield return new WaitForSeconds(0.75f);
@@ -321,5 +365,41 @@ public class ActorCharacter : MonoBehaviour
             _skin.color = Color.white;
             IsActing = false;
         }
+    }
+
+    IEnumerator PolymorphPerformance() {
+        if (IN_SPINE_MODE) {
+            IsActing = true;
+
+            // _spineSkin.skeletonDataAsset = _character.Config.SpineSkeleton;
+            bool flipACoin = UnityEngine.Random.Range(0, 2) == 0;
+
+            if (flipACoin) {
+                _spineSkin.skeletonDataAsset = CritterSkin;
+                _character.AlternativePortrait = CritterSkinSprite;
+            } else {
+                _spineSkin.skeletonDataAsset = CritterSkin2;
+                _character.AlternativePortrait = CritterSkinSprite2;
+            }
+            _spineSkin.Initialize(true);
+            SetAnimation(0, ActorAnimations.idle, true);
+            yield return new WaitForSeconds(0.75f);
+            IsActing = false;
+        }
+            yield return null;
+    }
+
+    IEnumerator UnpolymorphPerformance() {
+        if (IN_SPINE_MODE) {
+            IsActing = true;
+
+            _spineSkin.skeletonDataAsset = _character.Config.SpineSkeleton;
+            _character.AlternativePortrait = null;
+            _spineSkin.Initialize(true);
+            SetAnimation(0, ActorAnimations.idle, true);
+            yield return new WaitForSeconds(0.75f);
+            IsActing = false;
+        }
+            yield return null;
     }
 }

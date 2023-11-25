@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 // this fella should live in monospace on the same GameManager object
 public class SpawnPointProvider : MonoBehaviour, IBattlefieldPositionProvider
@@ -38,7 +39,13 @@ public class SpawnPointProvider : MonoBehaviour, IBattlefieldPositionProvider
     public Character InstantiateNewCharacterForConfig(CharacterConfig config) {
         GameObject newPc = Instantiate(CharacterPuckPrefab);
         newPc.transform.parent = transform;
-        newPc.name = config.Name;
+        int countExisting = GameObject.FindObjectsOfType<Character>().Count(go => go.name.StartsWith(config.Name));
+
+        if (countExisting > 1) {
+            newPc.name = config.Name + " " + countExisting.ToString();
+        } else {
+            newPc.name = config.Name;
+        }
         Character character = newPc.GetComponent<Character>();
         return character;
     }

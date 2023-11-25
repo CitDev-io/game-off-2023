@@ -1,12 +1,12 @@
 fire.png
-size:250,191
+size:491,375
 filter:Linear,Linear
 pma:true
-scale:0.5
 fire dragon
-bounds:2,2,187,204
+bounds:2,2,371,405
+offsets:1,1,373,407
 rotate:90
 fire dragon shadow
-bounds:208,63,126,40
-offsets:1,1,128,42
+bounds:409,121,252,80
+offsets:2,2,255,84
 rotate:90

@@ -1,11 +1,11 @@
 mouse.png
-size:231,211
+size:452,416
 filter:Linear,Linear
 pma:true
-scale:0.5
 mouse dragon
-bounds:2,2,211,207
+bounds:2,2,419,412
+offsets:1,1,421,414
 mouse shadow
-bounds:215,158,51,14
-offsets:1,0,52,15
+bounds:423,313,101,27
+offsets:2,1,104,30
 rotate:90

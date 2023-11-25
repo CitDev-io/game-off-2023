@@ -1,0 +1,12 @@
+squirrel.png
+size:349,195
+filter:Linear,Linear
+pma:true
+shadow
+bounds:320,92,101,27
+offsets:2,1,104,30
+rotate:90
+squirrel
+bounds:2,2,191,316
+offsets:2,1,194,318
+rotate:90

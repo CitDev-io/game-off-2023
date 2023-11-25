@@ -6,6 +6,6 @@ public class BuffVolcanicBowelSyndrome : Buff
         Description = "When this creature is defeated, it explodes, dealing damage to nearby allies";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = true;
-        PortraitArt = "bufficons/blank";
+        PortraitArt = "bufficons/volcanic";
     }
 }

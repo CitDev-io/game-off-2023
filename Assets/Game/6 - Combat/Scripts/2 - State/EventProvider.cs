@@ -19,11 +19,15 @@ public class EventProvider
 {
     public CalculatedDamageDelegate OnDamageResolved;
     public BuffDelegate OnBuffAdded;
+    public BuffDelegate OnBuffExpired;
     public CharacterDelegate OnCharacterRevived;
     public ScaleDelegate OnScaleChanged;
     public EffectPlanDelegate OnEffectPlanExecutionStart;
     public EffectPlanDelegate OnEffectPlanExecutionComplete;
     public TurnOrderDelegate OnTurnOrderChanged;
+    public StandardDelegate OnStageComplete;
+    public CharacterDelegate OnCharacterSummoned;
+
 
     public CombatPhaseDelegate OnPhaseAwake;
     public CombatPhaseDelegate OnPhasePrompt;

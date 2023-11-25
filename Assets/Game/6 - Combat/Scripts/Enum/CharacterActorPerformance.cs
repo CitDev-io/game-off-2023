@@ -4,5 +4,8 @@ public enum CharacterActorPerformance {
     SPECIALATTACK,
     CRACKED,
     DIE,
-    REVIVE
+    REVIVE,
+    POLYMORPH,
+    UNPOLYMORPH,
+    FADEOUT
 }

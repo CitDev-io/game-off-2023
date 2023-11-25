@@ -143,7 +143,8 @@ public class CombatReferee : MonoBehaviour
         }
 
         // age buffs for phase on combatant
-        combatState.CurrentCombatant.AgeBuffsForPhase(CurrentPhase);
+        List<Buff> agedOutBuffs = combatState.CurrentCombatant.AgeBuffsForPhase(CurrentPhase);
+        agedOutBuffs.ForEach(buff => eventProvider.OnBuffExpired?.Invoke(buff));
 
         return NextPhase;
     }
@@ -294,8 +295,8 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         if (doIt && gameState.ScalesOwned >= 5) {
             gameState.ScalesOwned -= 5;
             ReviveAllPCs();
-            WaveChangeStep2();
         }
+        WaveChangeStep2();
     }
 
     // fine here
@@ -331,16 +332,16 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         gameState.ScalesOwned += combatState.GetDefeatedCPUs().Count;
         gameState.StageNumber++;
         gameState.WaveNumber = 1;
+        eventProvider.OnStageComplete?.Invoke();
         StageResetPlayerCharacters();
         SetupWave();
     }
 
     // fine here
     void StageResetPlayerCharacters() {
-        List<Character> PCs = combatState.GetAllPCs();
+        List<Character> PCs = combatState.GetAlivePCs();
         foreach (Character pc in PCs) {
             pc.currentHealth = pc.Config.BaseHP;
-            pc.isDead = false;
         }
     }
 

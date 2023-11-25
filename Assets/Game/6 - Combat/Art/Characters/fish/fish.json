@@ -1,0 +1,96 @@
+{
+"skeleton": {
+	"hash": "qvzZ+O55uY8",
+	"spine": "4.1.24",
+	"x": -118.28,
+	"y": -13,
+	"width": 248,
+	"height": 266.76,
+	"images": "./fish/images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/fish"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "fish", "parent": "root", "length": 240.31, "rotation": 43.7, "x": -90.73, "y": 72.32 },
+	{ "name": "shadow", "parent": "root", "x": 1050.33, "y": -881.85 }
+],
+"slots": [
+	{ "name": "shadow", "bone": "shadow", "attachment": "shadow" },
+	{ "name": "zebrafish", "bone": "fish", "attachment": "zebrafish" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"shadow": {
+				"shadow": { "x": -1050.33, "y": 883.85, "width": 104, "height": 30 }
+			},
+			"zebrafish": {
+				"zebrafish": { "x": 113.56, "y": -20.78, "rotation": -43.7, "width": 248, "height": 236 }
+			}
+		}
+	}
+],
+"events": {
+	"attack": {}
+},
+"animations": {
+	"attack": {
+		"bones": {
+			"fish": {
+				"rotate": [
+					{ "time": 0.1667 },
+					{ "time": 0.2, "value": 42.62 },
+					{ "time": 0.3, "value": -30.54 },
+					{ "time": 0.4333, "value": -39.08 },
+					{ "time": 0.5, "value": 59.56 },
+					{ "time": 0.8 }
+				],
+				"translate": [
+					{},
+					{ "time": 0.2, "x": -33.01 },
+					{ "time": 0.4333, "x": 285.41 },
+					{ "time": 0.5, "x": 225.08, "y": 25.96 },
+					{ "time": 0.8 }
+				],
+				"scale": [
+					{ "time": 0.4 },
+					{ "time": 0.4333, "x": -0.031 },
+					{ "time": 0.5 }
+				]
+			},
+			"shadow": {
+				"translate": [
+					{},
+					{ "time": 0.1, "x": -38.14 },
+					{ "time": 0.2, "x": -84.66 },
+					{ "time": 0.4333, "x": 235.05 },
+					{ "time": 0.6, "x": 92.15 },
+					{ "time": 0.8 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.4333, "name": "attack" }
+		]
+	},
+	"idle": {
+		"bones": {
+			"fish": {
+				"translate": [
+					{
+						"curve": [ 0.111, 0, 0.222, 0, 0.13, 33.41, 0.222, 38.43 ]
+					},
+					{
+						"time": 0.3333,
+						"y": 38.43,
+						"curve": [ 0.481, 0, 0.519, 0, 0.487, 38.43, 0.264, 51.15 ]
+					},
+					{ "time": 0.6667, "curve": "stepped" },
+					{ "time": 0.8 }
+				]
+			}
+		}
+	}
+}
+}
