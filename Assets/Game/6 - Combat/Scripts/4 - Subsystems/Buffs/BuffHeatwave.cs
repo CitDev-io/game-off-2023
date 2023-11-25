@@ -14,7 +14,7 @@ public class BuffHeatwave : Buff
         isDebuff = false;
         hh = new EffectHeavyweightHeatwave();
         AllEnemies = allEnemies;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/stunned");
+        PortraitArt = "bufficons/heatwave";
     }
 
     public override EffectPlan ResolvePreflightEffects()

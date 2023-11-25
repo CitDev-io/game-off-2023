@@ -6,6 +6,6 @@ public class BuffWeakness : Buff
         Description = "Damage and Healing Done reduced by 50%";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = true;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/stunned");
+        PortraitArt = "bufficons/weakness";
     }
 }

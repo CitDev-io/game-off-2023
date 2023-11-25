@@ -6,6 +6,6 @@ public class BuffBlinded : Buff
         Description = "Reduced chance to hit";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = true;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/stunned");
+        PortraitArt = "bufficons/blind";
     }
 }

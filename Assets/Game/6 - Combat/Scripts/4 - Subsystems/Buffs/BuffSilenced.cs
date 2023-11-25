@@ -6,6 +6,6 @@ public class BuffSilenced : Buff
         Description = "Cannot use Special Ability or Ult";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = true;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/stunned");
+        PortraitArt = "bufficons/silent";
     }
 }

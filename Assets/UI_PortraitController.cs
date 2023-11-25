@@ -18,6 +18,12 @@ public class UI_PortraitController : MonoBehaviour
     public Sprite NoPortraitArt;
 
     public Character Character;
+    [Header("Buff Icons")]
+    public Image Buff1;
+    public Image Buff2;
+    public Image Buff3;
+    public Image Buff4;
+    public Image Buff5;
 
     public void SetCharacter(Character character) {
         Character = character;
@@ -50,5 +56,18 @@ public class UI_PortraitController : MonoBehaviour
             SPFillBar.rectTransform.sizeDelta = new Vector2(62f *
                 ((float)Character.currentStagger / (float)Character.Config.BaseSP), SPFillBar.rectTransform.sizeDelta.y);
         }
+
+
+        Sprite blank = Resources.Load<Sprite>("bufficons/blank");
+
+        Buff1.sprite = Character.Buffs.Count > 0 ? Resources.Load<Sprite>(Character.Buffs[0].PortraitArt) : blank;
+
+        Buff2.sprite = Character.Buffs.Count > 1 ? Resources.Load<Sprite>(Character.Buffs[1].PortraitArt) : blank;
+
+        Buff3.sprite = Character.Buffs.Count > 2 ? Resources.Load<Sprite>(Character.Buffs[2].PortraitArt) : blank;
+
+        Buff4.sprite = Character.Buffs.Count > 3 ? Resources.Load<Sprite>(Character.Buffs[3].PortraitArt) : blank;
+
+        Buff5.sprite = Character.Buffs.Count > 4 ? Resources.Load<Sprite>(Character.Buffs[4].PortraitArt) : blank;
     }
 }

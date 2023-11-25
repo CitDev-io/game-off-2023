@@ -6,6 +6,6 @@ public class BuffCharmed : Buff
         Description = "Will basic attack an ally on their next turn";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = true;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/stunned");
+        PortraitArt = "bufficons/charm";
     }
 }
