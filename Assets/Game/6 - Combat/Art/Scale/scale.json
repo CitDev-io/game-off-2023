@@ -1,0 +1,1197 @@
+{
+"skeleton": {
+	"hash": "3URp2lJjlyo",
+	"spine": "4.1.24",
+	"x": -361,
+	"y": -1,
+	"width": 717,
+	"height": 602,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Scale"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "base", "parent": "root", "x": -0.61, "y": 252.21 },
+	{ "name": "mountain", "parent": "base", "x": 6.4, "y": 226.03 },
+	{ "name": "sunmoon", "parent": "root", "length": 32.01, "rotation": 90, "x": 16.63, "y": 345.28 },
+	{ "name": "sun eyes", "parent": "sunmoon", "x": 37.92, "y": -0.49 },
+	{ "name": "moon eyes", "parent": "sunmoon", "x": 19.2, "y": 69.92 },
+	{ "name": "arms", "parent": "base", "length": 312.33, "rotation": -90.59, "x": 2.63, "y": 112.97 },
+	{ "name": "left arm", "parent": "arms", "length": 206.55, "rotation": -89.85, "x": -2.66, "y": -22.84 },
+	{ "name": "right arm", "parent": "arms", "length": 249.44, "rotation": 89.54, "x": -2.97, "y": 35.06 },
+	{ "name": "sun orb 2", "parent": "right arm", "x": 132.61, "y": -7.13 },
+	{ "name": "sun orb 1", "parent": "right arm", "x": 197.78, "y": -9.04 },
+	{ "name": "moon orb 1", "parent": "left arm", "x": 220.99, "y": 12.29 },
+	{ "name": "moon orb 2", "parent": "left arm", "x": 154.73, "y": 13.78 },
+	{ "name": "moon 1 cover", "parent": "base", "x": -203.92, "y": 30.58 },
+	{ "name": "moon 2 cover", "parent": "base", "x": -89.79, "y": -99.7 },
+	{ "name": "sun 2 cover", "parent": "base", "x": 92.82, "y": -88.01 },
+	{ "name": "sun 1 cover", "parent": "base", "x": 222.54, "y": 30.02 }
+],
+"slots": [
+	{ "name": "mounttain", "bone": "mountain", "attachment": "mounttain" },
+	{ "name": "base", "bone": "base", "attachment": "base" },
+	{ "name": "moon 1 cover", "bone": "moon 1 cover", "attachment": "moon 1 cover" },
+	{ "name": "moon 2 cover", "bone": "moon 2 cover", "attachment": "moon 2 cover" },
+	{ "name": "sun 2 cover", "bone": "sun 2 cover", "attachment": "sun 2 cover" },
+	{ "name": "sun 1 cover", "bone": "sun 1 cover", "attachment": "sun 1 cover" },
+	{ "name": "right arm", "bone": "right arm", "attachment": "right arm" },
+	{ "name": "right orb 2", "bone": "sun orb 2" },
+	{ "name": "right orb 1", "bone": "sun orb 1" },
+	{ "name": "arm left", "bone": "left arm", "attachment": "arm left" },
+	{ "name": "left orb 2", "bone": "moon orb 2" },
+	{ "name": "left orb 1", "bone": "moon orb 1" },
+	{ "name": "sunmoon", "bone": "root", "attachment": "sunmoon" },
+	{ "name": "sun eye", "bone": "root", "attachment": "sun eye open" },
+	{ "name": "moon eye", "bone": "moon eyes", "attachment": "moon eye open" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"arm left": {
+				"arm left": { "x": 136.18, "y": 5.33, "rotation": -179.85, "width": 308, "height": 94 }
+			},
+			"base": {
+				"base": { "x": -1.89, "y": -67.71, "width": 717, "height": 371 }
+			},
+			"left orb 1": {
+				"left orb 1": { "x": -0.8, "y": -7.73, "rotation": -179.85, "width": 46, "height": 46 }
+			},
+			"left orb 2": {
+				"left orb 2": { "x": 1.45, "y": -9.39, "rotation": -179.85, "width": 46, "height": 46 }
+			},
+			"moon 1 cover": {
+				"moon 1 cover": { "x": 36.02, "y": -38.78, "width": 335, "height": 242 }
+			},
+			"moon 2 cover": {
+				"moon 2 cover": { "x": -28.11, "y": 39.99, "width": 241, "height": 339 }
+			},
+			"moon eye": {
+				"moon eye closed": { "x": 2.52, "y": 0.2, "rotation": -90, "width": 19, "height": 18 },
+				"moon eye open": { "x": 0.52, "y": -0.3, "rotation": -90, "width": 16, "height": 16 }
+			},
+			"mounttain": {
+				"mounttain": { "x": -12.29, "y": -2.73, "width": 661, "height": 251 }
+			},
+			"right arm": {
+				"right arm": { "x": 114.96, "y": -3.42, "rotation": 0.77, "width": 308, "height": 94 }
+			},
+			"right orb 1": {
+				"right orb 1": { "x": 1.16, "y": 7.74, "rotation": 0.77, "width": 46, "height": 46 }
+			},
+			"right orb 2": {
+				"right orb 2": { "x": 2.33, "y": 4.98, "rotation": 0.77, "width": 46, "height": 46 }
+			},
+			"sun 1 cover": {
+				"sun 1 cover": { "x": -55.93, "y": -36.73, "width": 332, "height": 239 }
+			},
+			"sun 2 cover": {
+				"sun 2 cover": { "x": 25.29, "y": 28.3, "width": 239, "height": 339 }
+			},
+			"sun eye": {
+				"sun eye closed": { "x": 19.5, "y": 377.5, "width": 67, "height": 17 },
+				"sun eye open": { "x": 19.5, "y": 377, "width": 63, "height": 20 }
+			},
+			"sunmoon": {
+				"sunmoon": { "x": 26.5, "y": 369.5, "width": 217, "height": 235 }
+			}
+		}
+	}
+],
+"events": {
+	"click": {}
+},
+"animations": {
+	"idle-moon1sun0": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"moon 1 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": 23.28, "curve": "stepped" },
+					{ "time": 1.6, "value": 23.28 }
+				]
+			}
+		}
+	},
+	"idle-moon2sun0": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"left orb 2": {
+				"attachment": [
+					{ "name": "left orb 2" }
+				]
+			},
+			"moon 1 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"moon 2 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": 65.17, "curve": "stepped" },
+					{ "time": 1.6, "value": 65.17 }
+				]
+			}
+		}
+	},
+	"idle-moon2sun1": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"left orb 2": {
+				"attachment": [
+					{ "name": "left orb 2" }
+				]
+			},
+			"moon 1 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": 23.28, "curve": "stepped" },
+					{ "time": 1.6, "value": 23.28 }
+				]
+			}
+		}
+	},
+	"idle-sun0moon0": {
+		"slots": {
+			"moon eye": {
+				"attachment": [
+					{ "time": 1.1333, "name": "moon eye closed" },
+					{ "time": 1.2667, "name": "moon eye open" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.8, "name": "sun eye closed" },
+					{ "time": 0.9667, "name": "sun eye open" },
+					{ "time": 1.6, "name": "sun eye open" }
+				]
+			}
+		}
+	},
+	"idle-sun1moon0": {
+		"slots": {
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"sun 1 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": -22.39, "curve": "stepped" },
+					{ "time": 1.6, "value": -22.39 }
+				]
+			}
+		}
+	},
+	"idle-sun1moon1": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 1.1333, "name": "moon eye closed" },
+					{ "time": 1.2667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.8, "name": "sun eye closed" },
+					{ "time": 0.9667, "name": "sun eye open" },
+					{ "time": 1.6, "name": "sun eye open" }
+				]
+			}
+		}
+	},
+	"idle-sun2moon0": {
+		"slots": {
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"right orb 2": {
+				"attachment": [
+					{ "name": "right orb 2" }
+				]
+			},
+			"sun 1 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"sun 2 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": -65.69, "curve": "stepped" },
+					{ "time": 1.6, "value": -65.69 }
+				]
+			}
+		}
+	},
+	"idle-sun2moon1": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"right orb 2": {
+				"attachment": [
+					{ "name": "right orb 2" }
+				]
+			},
+			"sun 1 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": -22.39, "curve": "stepped" },
+					{ "time": 1.6, "value": -22.39 }
+				]
+			}
+		}
+	},
+	"idle-sun2moon2": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"left orb 2": {
+				"attachment": [
+					{ "name": "left orb 2" }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 1.1333, "name": "moon eye closed" },
+					{ "time": 1.2667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"right orb 2": {
+				"attachment": [
+					{ "name": "right orb 2" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.8, "name": "sun eye closed" },
+					{ "time": 0.9667, "name": "sun eye open" },
+					{ "time": 1.6, "name": "sun eye open" }
+				]
+			}
+		}
+	},
+	"moon0-1sun0": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"moon 1 cover": {
+				"attachment": [
+					{ "time": 0.2 }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{},
+					{ "time": 0.8, "value": 25.99 },
+					{ "time": 0.8667, "value": 20.21 },
+					{ "time": 0.9, "value": 23.28, "curve": "stepped" },
+					{ "time": 1.6, "value": 23.28 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"moon0-1sun1": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"left orb 2": {
+				"attachment": [
+					{ "name": "left orb 2" }
+				]
+			},
+			"moon 1 cover": {
+				"attachment": [
+					{ "time": 0.2 }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{},
+					{ "time": 0.8, "value": 25.99 },
+					{ "time": 0.8667, "value": 20.21 },
+					{ "time": 0.9, "value": 23.28, "curve": "stepped" },
+					{ "time": 1.6, "value": 23.28 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"moon1-0sun0": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"moon 1 cover": {
+				"attachment": [
+					{},
+					{ "time": 0.7, "name": "moon 1 cover" }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": 23.28 },
+					{ "time": 0.8, "value": -4.5 },
+					{ "time": 0.8667, "value": 3.22 },
+					{ "time": 0.9, "curve": "stepped" },
+					{ "time": 1.6 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"moon1-0sun1": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"moon 1 cover": {
+				"attachment": [
+					{},
+					{ "time": 0.7, "name": "moon 1 cover" }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": 23.28 },
+					{ "time": 0.8, "value": -4.5 },
+					{ "time": 0.8667, "value": 3.22 },
+					{ "time": 0.9, "curve": "stepped" },
+					{ "time": 1.6 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"moon1-0sun2": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"left orb 2": {
+				"attachment": [
+					{ "name": "left orb 2" }
+				]
+			},
+			"moon 1 cover": {
+				"attachment": [
+					{},
+					{ "time": 0.7, "name": "moon 1 cover" }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"right orb 2": {
+				"attachment": [
+					{ "name": "right orb 2" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": 23.28 },
+					{ "time": 0.8, "value": -4.5 },
+					{ "time": 0.8667, "value": 3.22 },
+					{ "time": 0.9, "curve": "stepped" },
+					{ "time": 1.6 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"moon1-2sun0": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"left orb 2": {
+				"attachment": [
+					{ "name": "left orb 2" }
+				]
+			},
+			"moon 1 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"moon 2 cover": {
+				"attachment": [
+					{ "time": 0.3667 }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": 23.28 },
+					{ "time": 0.8, "value": 69.54 },
+					{ "time": 0.8667, "value": 63.43 },
+					{ "time": 0.9, "value": 65.17, "curve": "stepped" },
+					{ "time": 1.6, "value": 65.17 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"moon2-1sun0": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"moon 1 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"moon 2 cover": {
+				"attachment": [
+					{},
+					{ "time": 0.3667, "name": "moon 2 cover" }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": 65.17 },
+					{ "time": 0.8, "value": 19.48 },
+					{ "time": 0.8667, "value": 19.99 },
+					{ "time": 0.9, "value": 23.28, "curve": "stepped" },
+					{ "time": 1.6, "value": 23.28 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"moon2-1sun1": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"left orb 2": {
+				"attachment": [
+					{ "name": "left orb 2" }
+				]
+			},
+			"moon 1 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"moon 2 cover": {
+				"attachment": [
+					{},
+					{ "time": 0.3667, "name": "moon 2 cover" }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": 65.17 },
+					{ "time": 0.8, "value": 19.48 },
+					{ "time": 0.8667, "value": 19.99 },
+					{ "time": 0.9, "value": 23.28, "curve": "stepped" },
+					{ "time": 1.6, "value": 23.28 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"sun0-1moon0": {
+		"slots": {
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"sun 1 cover": {
+				"attachment": [
+					{ "time": 0.2 }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{},
+					{ "time": 0.8, "value": -26.8 },
+					{ "time": 0.8667, "value": -20.85 },
+					{ "time": 0.9, "value": -22.39, "curve": "stepped" },
+					{ "time": 1.6, "value": -22.39 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"sun0-1moon1": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"right orb 2": {
+				"attachment": [
+					{ "name": "right orb 2" }
+				]
+			},
+			"sun 1 cover": {
+				"attachment": [
+					{ "time": 0.2 }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{},
+					{ "time": 0.8, "value": -26.8 },
+					{ "time": 0.8667, "value": -20.85 },
+					{ "time": 0.9, "value": -22.39, "curve": "stepped" },
+					{ "time": 1.6, "value": -22.39 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"sun1-0moon0": {
+		"slots": {
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"sun 1 cover": {
+				"attachment": [
+					{},
+					{ "time": 0.7, "name": "sun 1 cover" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": -26.8 },
+					{ "time": 0.8 },
+					{ "time": 0.8667, "value": 4.31 },
+					{ "time": 0.9, "curve": "stepped" },
+					{ "time": 1.6 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"sun1-0moon1": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"sun 1 cover": {
+				"attachment": [
+					{},
+					{ "time": 0.7, "name": "sun 1 cover" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": -26.8 },
+					{ "time": 0.8 },
+					{ "time": 0.8667, "value": 4.31 },
+					{ "time": 0.9, "curve": "stepped" },
+					{ "time": 1.6 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"sun1-0moon2": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"left orb 2": {
+				"attachment": [
+					{ "name": "left orb 2" }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"right orb 2": {
+				"attachment": [
+					{ "name": "right orb 2" }
+				]
+			},
+			"sun 1 cover": {
+				"attachment": [
+					{},
+					{ "time": 0.7, "name": "sun 1 cover" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": -26.8 },
+					{ "time": 0.8 },
+					{ "time": 0.8667, "value": 4.31 },
+					{ "time": 0.9, "curve": "stepped" },
+					{ "time": 1.6 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"sun1-2moon0": {
+		"slots": {
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"right orb 2": {
+				"attachment": [
+					{ "name": "right orb 2" }
+				]
+			},
+			"sun 1 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"sun 2 cover": {
+				"attachment": [
+					{ "time": 0.4333 }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": -22.39 },
+					{ "time": 0.8, "value": -69.98 },
+					{ "time": 0.8667, "value": -61.38 },
+					{ "time": 0.9, "value": -65.69, "curve": "stepped" },
+					{ "time": 1.6, "value": -65.69 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"sun2-1moon0": {
+		"slots": {
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"sun 1 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"sun 2 cover": {
+				"attachment": [
+					{},
+					{ "time": 0.3333, "name": "sun 2 cover" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": -65.69 },
+					{ "time": 0.8, "value": -17.35 },
+					{ "time": 0.8667, "value": -23.72 },
+					{ "time": 0.9, "value": -22.39, "curve": "stepped" },
+					{ "time": 1.6, "value": -22.39 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	},
+	"sun2-1moon1": {
+		"slots": {
+			"left orb 1": {
+				"attachment": [
+					{ "name": "left orb 1" }
+				]
+			},
+			"moon eye": {
+				"attachment": [
+					{ "time": 0.2333, "name": "moon eye closed" },
+					{ "time": 0.3667, "name": "moon eye open" }
+				]
+			},
+			"right orb 1": {
+				"attachment": [
+					{ "name": "right orb 1" }
+				]
+			},
+			"right orb 2": {
+				"attachment": [
+					{ "name": "right orb 2" }
+				]
+			},
+			"sun 1 cover": {
+				"attachment": [
+					{}
+				]
+			},
+			"sun 2 cover": {
+				"attachment": [
+					{},
+					{ "time": 0.3333, "name": "sun 2 cover" }
+				]
+			},
+			"sun eye": {
+				"attachment": [
+					{ "time": 0.5333, "name": "sun eye closed" },
+					{ "time": 0.6667, "name": "sun eye open" }
+				]
+			}
+		},
+		"bones": {
+			"arms": {
+				"rotate": [
+					{ "value": -65.69 },
+					{ "time": 0.8, "value": -17.35 },
+					{ "time": 0.8667, "value": -23.72 },
+					{ "time": 0.9, "value": -22.39, "curve": "stepped" },
+					{ "time": 1.6, "value": -22.39 }
+				]
+			}
+		},
+		"events": [
+			{ "time": 0.8333, "name": "click" }
+		]
+	}
+}
+}

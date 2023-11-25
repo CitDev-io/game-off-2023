@@ -6,6 +6,6 @@ public class BuffImprovedCounterAttack : Buff
         Description = "When any enemy uses a Special Attack or Ultimate ability, this unit will attack that enemy";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = false;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/stunned");
+        PortraitArt = "bufficons/improved counter attack";
     }
 }

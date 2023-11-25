@@ -6,6 +6,6 @@ public class BuffSkeletalShield : Buff
         Description = "Resistant to both Light and Shadow";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = false;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/elementalweakness");
+        PortraitArt = "bufficons/blank";
     }
 }

@@ -6,6 +6,6 @@ public class BuffTaunted : Buff
         Description = "Will basic attack the source of Taunt on their next turn";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = true;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/taunted");
+        PortraitArt = "bufficons/blank";
     }
 }

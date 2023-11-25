@@ -6,6 +6,6 @@ public class BuffCounterattack : Buff
         Description = "When taking damage, this unit will attack the source back";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = false;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/stunned");
+        PortraitArt = "bufficons/counterattack";
     }
 }

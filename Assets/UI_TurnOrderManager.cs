@@ -7,7 +7,7 @@ public class UI_TurnOrderManager : MonoBehaviour
 {
     // public TextMeshProUGUI Flavor1;
     // public TextMeshProUGUI Flavor2;
-    public TextMeshProUGUI Flavor3;
+    // public TextMeshProUGUI Flavor3;
 
     public List<UI_PortraitController> Portraits;
     public void UpdateTurnOrder(Character CurrentCharacter, List<Character> QueuedCharacters)
@@ -19,7 +19,7 @@ public class UI_TurnOrderManager : MonoBehaviour
         Portraits[0].SetCharacter(CurrentCharacter);
         // Flavor1.text = CurrentCharacter.Config.Name + "'s Turn";
         // Flavor2.text = CurrentCharacter.Config.Name + "'s Battlecry goes here";
-        Flavor3.text = CurrentCharacter.currentHealth + "/" + CurrentCharacter.Config.BaseHP + " HP";
+        // Flavor3.text = CurrentCharacter.currentHealth + "/" + CurrentCharacter.Config.BaseHP + " HP";
 
 
         for (int i = 1; i < Portraits.Count; i++)
@@ -30,12 +30,12 @@ public class UI_TurnOrderManager : MonoBehaviour
                 Portraits[i].gameObject.SetActive(false);
                 continue;
             }
-            if (QueuedCharacters[i - 1] == CurrentCharacter && i == QueuedCharacters.Count)
-            {
-                Portraits[i].SetCharacter(null);
-                Portraits[i].gameObject.SetActive(false);
-                continue;
-            }
+            // if (QueuedCharacters[i - 1] == CurrentCharacter && i == QueuedCharacters.Count)
+            // {
+            //     Portraits[i].SetCharacter(null);
+            //     Portraits[i].gameObject.SetActive(false);
+            //     continue;
+            // }
             Portraits[i].gameObject.SetActive(true);
             Portraits[i].SetCharacter(QueuedCharacters[i - 1]);
         }

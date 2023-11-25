@@ -92,9 +92,7 @@ public class Character : MonoBehaviour
         {
             Buffs.Remove(existingBuff);
         }
-        UnityEngine.Debug.Log("DOING IT FOR " + Config.Name + " " + Buffs.Count());
         Buffs.Add(newBuff);
-        UnityEngine.Debug.Log("DID IT " + Buffs.Count());
     }
 
     public void AgeBuffsForPhase(CombatPhase phase) {

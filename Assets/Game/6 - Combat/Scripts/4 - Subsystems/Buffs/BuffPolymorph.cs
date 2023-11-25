@@ -6,6 +6,6 @@ public class BuffPolymorph : Buff
         Description = "Enemy is transformed into a harmless sheep";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = true;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/polymorph");
+        PortraitArt = "bufficons/polymorph";
     }
 }

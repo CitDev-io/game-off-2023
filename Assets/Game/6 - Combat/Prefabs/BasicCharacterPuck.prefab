@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4465826505431619985
 RectTransform:
   m_ObjectHideFlags: 0
@@ -288,7 +288,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6407774165849115080
 RectTransform:
   m_ObjectHideFlags: 0
@@ -738,7 +738,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6807464997833760212
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1024,7 +1024,6 @@ MonoBehaviour:
   currentStagger: 0
   isDead: 0
   IsCurrentCombatant: 0
-  BattlefieldPosition: -10
   GenericWaveCounter: 0
 --- !u!114 &3860794572793705091
 MonoBehaviour:

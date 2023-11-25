@@ -1,11 +1,8 @@
-using System.Collections.Generic;
-using UnityEngine;
-
 public abstract class Buff
 {
     public string Name { get; protected set; }
     public string Description { get; protected set; }
-    public Sprite PortraitArt { get; protected set; }
+    public string PortraitArt { get; protected set; }
     public int TurnsRemaining { get; private set; }
     public Character Source { get; protected set; }
     public Character Target { get; protected set; }

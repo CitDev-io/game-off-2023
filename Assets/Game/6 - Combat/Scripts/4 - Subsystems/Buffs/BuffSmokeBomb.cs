@@ -6,6 +6,6 @@ public class BuffSmokeBomb : Buff
         Description = "Reduced chance to choose to attack the source of Smoke Bomb";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = true;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/stunned");
+        PortraitArt = "bufficons/smokebomb";
     }
 }

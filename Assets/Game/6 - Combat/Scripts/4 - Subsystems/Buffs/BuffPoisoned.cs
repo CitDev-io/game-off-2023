@@ -8,7 +8,7 @@ public class BuffPoisoned : Buff
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         DotAbility = new EffectFlatDotDamage(damage, "Poison Damage", "Enemy is Poisoned");
         isDebuff = true;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/Poisoned");
+        PortraitArt = "bufficons/poison";
     }
 
     public override EffectPlan ResolvePreflightEffects()

@@ -5,6 +5,6 @@ public class BuffStrengthen : Buff
         Name = "Strengthen";
         Description = "Damage and Healing Done is increased by 50%";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/stunned");
+        PortraitArt = "bufficons/strengthen";
     }
 }

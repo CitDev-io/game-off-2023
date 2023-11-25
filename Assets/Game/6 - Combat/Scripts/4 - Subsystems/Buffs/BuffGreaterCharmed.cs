@@ -6,6 +6,6 @@ public class BuffGreaterCharmed : Buff
         Description = "Will target the wrong team with Basic Attack or Special Ability on their next turn";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = true;
-        // PortraitArt = Resources.Load<Sprite>("Sprites/Icons/greatercharmed");
+        PortraitArt = "bufficons/greater charm";
     }
 }
