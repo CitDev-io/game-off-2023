@@ -33,6 +33,6 @@ public class UI_VolumePanel : MonoBehaviour, IPointerClickHandler
     }
 
     void SetIconToVolumeLevel(int volume) {
-        GetComponent<Image>().sprite = (Sprite) Resources.Load("Icons/volume" + volume, typeof(Sprite));
+        GetComponent<Image>().sprite = (Sprite) Resources.Load("Icons/sound" + volume, typeof(Sprite));
     }
 }

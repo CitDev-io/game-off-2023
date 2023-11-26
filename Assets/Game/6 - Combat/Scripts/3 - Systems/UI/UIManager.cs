@@ -180,6 +180,7 @@ public class UIManager : MonoBehaviour
     void HandleAbilityPhasePromptForCharacter(Character combatant) {
         // TurnOrderUI.gameObject.SetActive(false);
         if (combatant.Config.TeamType == TeamType.PLAYER) {
+        Debug.Log("ABILITY PHASE PROMPT");
             List<AbilityCategory> availableAbilities = combatant.GetAvailableAbilities(LightRef, ShadowRef);
             if (availableAbilities.Contains(AbilityCategory.SPECIALATTACK)) {
                 AbilitySelectionUI.SetSpecialAbilityName(combatant.Config.SpecialAttack.ToString());

@@ -36,7 +36,6 @@ public class UI_ScalePanelManager : MonoBehaviour
         if (_spineSkin.skeletonDataAsset.GetSkeletonData(true).FindAnimation(animation) != null) {
             return true;
         }
-        Debug.Log("NO ANIMATION NAMED" + animation);
         return false;
     }
 

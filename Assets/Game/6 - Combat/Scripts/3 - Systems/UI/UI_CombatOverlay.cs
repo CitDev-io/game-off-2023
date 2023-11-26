@@ -18,6 +18,7 @@ public class UI_CombatOverlay : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (_combatReferee == null) return;
         if (StageText != null) StageText.text = "Stage: " + _combatReferee.gameState.StageNumber.ToString();
         if (WaveText != null) WaveText.text = "Wave: " + _combatReferee.gameState.WaveNumber.ToString();
         if (ScaleCountText != null) ScaleCountText.text = "x" + _combatReferee.gameState.ScalesOwned.ToString();

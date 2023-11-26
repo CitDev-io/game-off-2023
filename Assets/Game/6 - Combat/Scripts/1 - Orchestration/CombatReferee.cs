@@ -155,7 +155,7 @@ public class CombatReferee : MonoBehaviour
         bool CombatIsComplete = false;
 
         while (!CombatIsComplete) {
-            while (__uiManager.IsPerforming || __stageChoreographer.IsPerforming) {
+            while (__uiManager.IsPerforming || __stageChoreographer.IsPerforming()) {
                 yield return new WaitForSeconds(0.1f);
             }
 Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " - PHASE SET TO: " + nextPhase.ToString());
@@ -163,7 +163,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " - PHASE SET TO
 
             eventProvider.OnPhaseAwake?.Invoke(CurrentCombatPhase, combatState.CurrentCombatant);
 
-            while (__uiManager.IsPerforming || __stageChoreographer.IsPerforming) {
+            while (__uiManager.IsPerforming || __stageChoreographer.IsPerforming()) {
                 yield return new WaitForSeconds(0.1f);
             }
 
@@ -191,7 +191,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
                 }
             }
 
-            while (__uiManager.IsPerforming || __stageChoreographer.IsPerforming) {
+            while (__uiManager.IsPerforming || __stageChoreographer.IsPerforming()) {
                 yield return new WaitForSeconds(0.1f);
             }
 
@@ -241,9 +241,6 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
    
     // TODO: Simplify into less calls to combatState
     void SetupWave() {
-        // make sure the queue is empty
-        combatState.ClearTurnOrder();
-
         // TODO: orchestrate through stagechoreo
         ClearStage();
 
@@ -258,12 +255,14 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         combatState.ClearWaveCounters();
 
         // set up combatant queue
+        combatState.ClearTurnOrder();
         SeedCombatQueue();
 
         // set up current combatant
         combatState.MoveToNextCombatant();
 
         eventProvider.OnWaveReady?.Invoke();
+        Debug.Log(combatState.CurrentCombatant.Config.name + " ACTS FIRST");
         // let the phase driver run this
         StartCoroutine(CombatPhaseDriver());
     }

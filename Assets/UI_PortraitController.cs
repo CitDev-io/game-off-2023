@@ -52,14 +52,14 @@ public class UI_PortraitController : MonoBehaviour
         } else {
             AffinityArt.sprite = ShadowAffinityArt;
         }
-        HPFillBar.rectTransform.sizeDelta = new Vector2(62f * (
+        HPFillBar.rectTransform.sizeDelta = new Vector2(166f * (
             (float)Character.currentHealth / (float)Character.Config.BaseHP), HPFillBar.rectTransform.sizeDelta.y
         );
         if (Character.Config.BaseSP == 0) {
             StaggerRoot.gameObject.SetActive(false);
         } else {
             StaggerRoot.gameObject.SetActive(true);
-            SPFillBar.rectTransform.sizeDelta = new Vector2(62f *
+            SPFillBar.rectTransform.sizeDelta = new Vector2(166f *
                 ((float)Character.currentStagger / (float)Character.Config.BaseSP), SPFillBar.rectTransform.sizeDelta.y);
         }
 

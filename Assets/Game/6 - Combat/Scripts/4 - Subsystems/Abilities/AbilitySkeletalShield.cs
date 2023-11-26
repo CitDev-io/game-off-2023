@@ -1,13 +1,11 @@
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 
 public class AbilitySkeletalShield : Effect
 {
     public AbilitySkeletalShield() {
         Name = "Skeletal Shield";
         Description = "Casts a shield that grants elemental resistance to Light and Shadow";
-        TargetScope = EligibleTargetScopeType.ENEMY;
+        TargetScope = EligibleTargetScopeType.NONE;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/ShieldBash");   
     }
 

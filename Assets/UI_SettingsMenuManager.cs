@@ -5,22 +5,21 @@ using UnityEngine;
 public class UI_SettingsMenuManager : MonoBehaviour
 {
     [Header("Temp Plumbing")]
-    public GameObject Button;
     public GameObject SwooshModal;
     public GameObject SettingsPanelUI;
 
     bool IsMoving = false;
-    float TargetRotation = 179.9f;
+    float TargetRotation = 90f;
     void Awake() {
         SwooshModal.SetActive(false);
         SettingsPanelUI.SetActive(false);
     }
 
     void ToggleRotationDirection() {
-        if (TargetRotation == 0f) {
-            TargetRotation = 179.9f;
+        if (TargetRotation == 90f) {
+            TargetRotation = 270f;
         } else {
-            TargetRotation = 0f;
+            TargetRotation = 90f;
         }
     }
 
@@ -38,11 +37,10 @@ public class UI_SettingsMenuManager : MonoBehaviour
         IsMoving = true;
 
         while (Mathf.Abs(SwooshModal.transform.rotation.eulerAngles.z - TargetRotation) > 0.5f) {
-            SwooshModal.transform.rotation = Quaternion.Lerp(SwooshModal.transform.rotation, Quaternion.Euler(0f, 0f, TargetRotation), SPINSPEED);
+            SwooshModal.transform.rotation = Quaternion.Lerp(SwooshModal.transform.rotation, Quaternion.Euler(0f, 0f, TargetRotation+0.1f), SPINSPEED);
 
-            SettingsPanelUI.SetActive(SwooshModal.transform.rotation.eulerAngles.z > 140f);
+            SettingsPanelUI.SetActive(SwooshModal.transform.rotation.eulerAngles.z > 200f);
 
-            Button.transform.rotation = Quaternion.Euler(0f, 0f, 2f * TargetRotation == 0f ? 1 : -1);
             yield return new WaitForSeconds(WAITSPEED);
         }
         SwooshModal.transform.rotation = Quaternion.Euler(0f, 0f, TargetRotation);

@@ -101,6 +101,7 @@ public class CombatState
         Character character = _bfpProvider.InstantiateNewCharacterForConfig(config);
 
         FullCombatantList.Add(character);
+        AddCharacterToTurnOrder(character);
 
         character.Config = config;
         character.SetPositionInfo(bfInfo);

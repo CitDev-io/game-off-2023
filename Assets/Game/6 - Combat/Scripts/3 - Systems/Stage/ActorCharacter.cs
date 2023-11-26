@@ -20,7 +20,8 @@ public class ActorCharacter : MonoBehaviour
     SpriteRenderer _skin;
     SkeletonAnimation _spineSkin;
     bool IN_SPINE_MODE = false;
-    public bool IsActing = false;
+    bool IsActing = false;
+    public bool IsPerforming = false;
     Queue<CharacterActorPerformance> _performanceQueue = new Queue<CharacterActorPerformance>();
     [Header("Polymorph")]
     public SkeletonDataAsset CritterSkin;
@@ -48,7 +49,9 @@ public class ActorCharacter : MonoBehaviour
 
     IEnumerator BrilliantActing() {
         while (true) {
-            yield return new WaitForSeconds(0.05f);
+            yield return null;
+
+            IsPerforming = IsActing || _performanceQueue.Count > 0;
 
             if (!IsActing && _performanceQueue.Count > 0) {
                 CharacterActorPerformance performance = _performanceQueue.Dequeue();
@@ -81,6 +84,8 @@ public class ActorCharacter : MonoBehaviour
                     case CharacterActorPerformance.FADEOUT:
                         StartCoroutine(FadeOutPerformance());
                         break;
+                    default:
+                        break;
                 }
             }
         }
@@ -90,6 +95,7 @@ public class ActorCharacter : MonoBehaviour
 
     public void EnqueuePerformance(CharacterActorPerformance performance) {
         Debug.Log("ENQUEUE " + performance.ToString() + " for " + gameObject.name);
+        IsPerforming = true;
         _performanceQueue.Enqueue(performance);
     }
 
@@ -231,13 +237,13 @@ public class ActorCharacter : MonoBehaviour
             yield return new WaitForSeconds(0.75f);
             IsActing = false;
         } else {
+            IsActing = true;
             Vector3 startingPosition = transform.position;
             Vector3 forwardPosition = transform.position;
             forwardPosition.x += 2f * (_character.Config.TeamType == TeamType.CPU ? 1 : -1);
 
             // move to forward position and back
             float moveSpeed = 20f;
-            IsActing = true;
             while (transform.position != forwardPosition) {
                 transform.position = Vector3.MoveTowards(transform.position, forwardPosition, Time.deltaTime * moveSpeed);
                 yield return new WaitForSeconds(0.01f);

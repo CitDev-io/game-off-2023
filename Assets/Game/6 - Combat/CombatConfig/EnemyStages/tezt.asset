@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: tezt
   m_EditorClassIdentifier: 
   Wave1:
-  - {fileID: 11400000, guid: 14122647f411d72408e8a236eac2d907, type: 2}
+  - {fileID: 11400000, guid: daff1d6cbeae45e4796862a86f2886f8, type: 2}
   Wave2: []
   Wave3: []
   Wave4: []

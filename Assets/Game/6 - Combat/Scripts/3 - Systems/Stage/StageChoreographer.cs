@@ -6,8 +6,7 @@ using UnityEngine;
 public class StageChoreographer : MonoBehaviour
 {
     EventProvider _eventProvider;
-    public bool IsPerforming = false;
-
+    List<string> PerformancesInFlight = new List<string>();
     /*
         WILO
 
@@ -23,6 +22,11 @@ public class StageChoreographer : MonoBehaviour
 
     */
 
+    public bool IsPerforming() {
+        int MyPerformanceCount = PerformancesInFlight.Count;
+            int MyActorsPerformingCount = MyActors.Count(actor => actor.IsPerforming);
+        return MyPerformanceCount > 0 || MyActorsPerformingCount > 0;
+    }
     List<ActorCharacter> MyActors = new List<ActorCharacter>();
 
     void Awake() {
@@ -81,13 +85,15 @@ public class StageChoreographer : MonoBehaviour
     }
 
     void HandleWaveReady() {
-        StartCoroutine(WaitPerformance(1.5f));
+        StartCoroutine(WaitPerformance(1.5f, "wavereadylull"));
     }
 
-    IEnumerator WaitPerformance(float duration) {
-        IsPerforming = true;
+    IEnumerator WaitPerformance(float duration, string name) {
+        PerformancesInFlight.Add(name);
+        Debug.Log("IN " + name);
         yield return new WaitForSeconds(duration);
-        IsPerforming = false;
+        PerformancesInFlight.Remove(name);
+        Debug.Log("OUT " + name);
     }
 
     void HandlePhasePrompts(CombatPhase phase, Character combatant) {
@@ -97,7 +103,7 @@ public class StageChoreographer : MonoBehaviour
     }
 
     void HandleExecutionPhasePromptForCharacter(Character combatant) {
-        StartCoroutine(WaitPerformance(1f));
+        // StartCoroutine(WaitPerformance(10f, "executionlull"));
     }
 
     void HandleEffectPlanExecutionStart(EffectPlan plan) {
@@ -105,6 +111,11 @@ public class StageChoreographer : MonoBehaviour
             plan.Caster.GetComponent<ActorCharacter>().EnqueuePerformance(CharacterActorPerformance.BASICATTACK);
         } else {
             plan.Caster.GetComponent<ActorCharacter>().EnqueuePerformance(CharacterActorPerformance.SPECIALATTACK);
+        }
+
+        if (plan.Source is AbilityHollowHowl) {
+            Debug.Log("RAAAAAWR");
+            WaitPerformance(4f, "howling");
         }
     }
 
