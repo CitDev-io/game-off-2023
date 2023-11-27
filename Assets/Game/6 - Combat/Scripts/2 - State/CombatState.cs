@@ -276,7 +276,7 @@ public class CombatState
 
         TeamType opposingTeam = _e.Caster.Config.TeamType == TeamType.PLAYER ? TeamType.CPU : TeamType.PLAYER;
 
-        List<Character> impCounterAttackers = FullCombatantList.FindAll(combatant => combatant.Config.TeamType == opposingTeam && combatant.HasBuff<BuffImprovedCounterAttack>());
+        List<Character> impCounterAttackers = FullCombatantList.FindAll(combatant => combatant.Config.TeamType == opposingTeam && combatant.HasBuff<BuffImprovedCounterAttack>() && !combatant.isDead);
 
         impCounterAttackers.ForEach(ica => {
             EffectPlan ea = new AbilityCounterattack().GetUncommitted(

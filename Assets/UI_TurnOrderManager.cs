@@ -70,7 +70,7 @@ public class UI_TurnOrderManager : MonoBehaviour
         }
     }
 
-    public void ToggleLeft() {
+    public void ToggleRight() {
         Character next = findEligibleToTheLeft();
         if (next == null) return;
         CurrentSelection.IsHighlighted = false;
@@ -79,7 +79,7 @@ public class UI_TurnOrderManager : MonoBehaviour
         CurrentSelection.IsHighlighted = true;
     }
 
-    public void ToggleRight() {
+    public void ToggleLeft() {
         Character next = findEligibleToTheRight();
         if (next == null) return;
         CurrentSelection.IsHighlighted = false;
