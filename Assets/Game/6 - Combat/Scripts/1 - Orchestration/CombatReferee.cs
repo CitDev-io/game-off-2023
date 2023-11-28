@@ -380,7 +380,9 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
     // good for ref
     void HandleUserChoseBoon(BaseBoonResolver selectedBoon) {
-        selectedBoon.ApplyToEligible(PlayerParty.PartyMembers);
+        if (selectedBoon != null) {
+            selectedBoon.ApplyToEligible(PlayerParty.PartyMembers);
+        }
         WaveChangeover();
     }
 

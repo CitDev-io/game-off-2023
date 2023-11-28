@@ -4,7 +4,7 @@ public class AbilityCelestialBarrage : Effect
 {
     public AbilityCelestialBarrage() {
         Name = "Celestial Barrage";
-        Description = "Beckons 8 Celestial Light Strikes to rain down on random enemies";
+        Description = "Deal LOW LIGHT DAMAGE to random enemies 8 times";
         IsUltimate = true;
         TargetScope = EligibleTargetScopeType.NONE;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/ShieldBash");   

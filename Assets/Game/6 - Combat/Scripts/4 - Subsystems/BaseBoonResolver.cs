@@ -5,7 +5,10 @@ using System.Linq;
 public abstract class BaseBoonResolver {
     public string Name { get; protected set; }
     public string Description { get; protected set; }
-    public Sprite PortraitArt { get; protected set; }
+    public string UpgradeType { get; protected set; }
+    public string UpgradeDescription;
+    public string Level;
+    public PCAdventureClassType Character { get; protected set; }
 
     public abstract void ApplyToEligible(List<CharacterConfig> character);
 

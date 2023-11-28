@@ -7,7 +7,7 @@ public class UIManager : MonoBehaviour
     public bool IsPerforming = false;
 
     [Header("Temp Plumbing: UI Panels")]
-    public GameObject BoonUI;
+    public UI_BoonMenuManager BoonUI;
     EventProvider _eventProvider;
     // public UI_AbilitySelection AbilitySelectionUI;
     // public UI_TargetSelection TargetSelectionUI;
@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour
     public UI_TurnOrderManager TurnOrderUI;
     bool IsSelectingAbility = false;
     bool IsSelectingTarget = false;
+    bool IsSelectingBoon = false;
     bool BoonTimeout = false;
 
     public void TargetSelected(Character target) {
@@ -30,17 +31,19 @@ public class UIManager : MonoBehaviour
         if (BoonTimeout) {
             return;
         }
+        BoonTimeout = true;
         StartCoroutine(BoonTimeoutRoutine());
+        BoonUI.Dismiss();
         _eventProvider.OnInput_BoonSelected?.Invoke(boon);
     }
 
     public void RequestBackupToAbilitySelection() {
+        TurnOrderUI.ClearSelection();
         _eventProvider.OnInput_BackOutOfTargetSelection?.Invoke();
     }
 
     IEnumerator BoonTimeoutRoutine() {
-        BoonTimeout = true;
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(3f);
         BoonTimeout = false;
     }
 
@@ -87,6 +90,24 @@ public class UIManager : MonoBehaviour
             TurnOrderUI.ToggleRight();
         }
 
+        if (
+            IsSelectingBoon && (
+                Input.GetKeyDown(KeyCode.LeftArrow)
+                ||
+                Input.GetKeyDown(KeyCode.A)
+        )) {
+            BoonUI.ToggleLeft();
+        }
+
+        if (
+            IsSelectingBoon && (
+                Input.GetKeyDown(KeyCode.RightArrow)
+                ||
+                Input.GetKeyDown(KeyCode.D)
+        )) {
+            BoonUI.ToggleRight();
+        }
+
         if (IsSelectingTarget && (
             Input.GetMouseButtonDown(1)
             ||
@@ -120,10 +141,21 @@ public class UIManager : MonoBehaviour
         )) {
             TargetSelected(TurnOrderUI.CurrentSelection);
         }
+
+        if (
+            IsSelectingBoon && (
+            Input.GetKeyDown(KeyCode.Space)
+            ||
+            Input.GetKeyDown(KeyCode.KeypadEnter)
+            ||
+            Input.GetKeyDown(KeyCode.Return)
+        )) {
+            BoonSelected(BoonUI.CurrentSelection);
+        }
     }
 
     void SetupHooks() {
-        _eventProvider.OnBoonOffer += HandleBoonOffer;
+        _eventProvider.OnBoonOffer += HandleBoonPhasePrompt;
         _eventProvider.OnPhasePrompt += HandlePhasePrompts;
         _eventProvider.OnWaveReady += HandleWaveReady;
         _eventProvider.OnEligibleTargetsChanged += HandleEligibleTargetsChanged;
@@ -178,27 +210,44 @@ public class UIManager : MonoBehaviour
         TextCrawlUI.EnqueueMessage(combatant.Config.Name + "'s turn to act!");
     }
 
+    void HandleBoonPhasePrompt(List<BaseBoonResolver> boons) {
+        IsSelectingAbility = false;
+        IsSelectingBoon = true;
+        IsSelectingTarget = false;
+        TurnOrderUI.SetSelectionMode(false);
+        AbilityUI.gameObject.SetActive(false);
+        BoonUI.OfferBoons(boons);
+    }
+
     void HandleAbilityPhasePromptForCharacter(Character combatant) {
         // TurnOrderUI.gameObject.SetActive(false);
         if (combatant.Config.TeamType == TeamType.PLAYER) {
         Debug.Log("ABILITY PHASE PROMPT");
             List<AbilityCategory> availableAbilities = combatant.GetAvailableAbilities(LightRef, ShadowRef);
             if (availableAbilities.Contains(AbilityCategory.SPECIALATTACK)) {
-                AbilityUI.SetSpecialAbilityName(combatant.Config.SpecialAttack.ToString());
+                AbilityUI.SetSpecialAbilityName(
+                    AttackTypeToAbility.Lookup(combatant.Config.SpecialAttack, combatant.Config).Name
+                );
             }
             if (availableAbilities.Contains(AbilityCategory.ULTIMATE)) {
-                AbilityUI.SetUltimateAbilityName(combatant.Config.UltimateAbility.ToString());
+                AbilityUI.SetUltimateAbilityName(
+                    AttackTypeToAbility.Lookup(combatant.Config.UltimateAbility, combatant.Config).Name
+                );
             }
             AbilityUI.SetAvailableAbilities(availableAbilities);
             AbilityUI.ToggleToSelectedAbility((int) AbilityCategory.BASICATTACK);
             AbilityUI.gameObject.SetActive(true);
+            AbilityUI.gameObject.transform.position = combatant.transform.position + new Vector3(-2.25f, 3.35f, .25f);
             IsSelectingAbility = true;
+            IsSelectingBoon = false;
+            IsSelectingTarget = false;
         }
     }
     void HandleTargetPhasePromptForCharacter(Character combatant) {
         AbilityUI.gameObject.SetActive(false);
         if (combatant.Config.TeamType == TeamType.PLAYER) {
             IsSelectingAbility = false;
+            IsSelectingBoon = false;
             IsSelectingTarget = true;
             AbilityUI.gameObject.SetActive(false);
             
@@ -208,6 +257,8 @@ public class UIManager : MonoBehaviour
     void HandleExecutionPhasePromptForCharacter(Character combatant) {
         TurnOrderUI.SetSelectionMode(false);
         AbilityUI.gameObject.SetActive(false);
+        IsSelectingAbility = false;
+        IsSelectingBoon = false;
         IsSelectingTarget = false;
     }
 
@@ -236,11 +287,5 @@ public class UIManager : MonoBehaviour
 
     void HandleEligibleTargetsChanged(List<Character> targets) {
         TurnOrderUI.SetEligibleTargets(targets);
-    }
-
-    void HandleBoonOffer(List<BaseBoonResolver> boons) {
-        TurnOrderUI.SetSelectionMode(false);
-        AbilityUI.gameObject.SetActive(false);
-        BoonUI.GetComponent<UI_BoonMenuManager>().OfferBoons(boons);
     }
 }

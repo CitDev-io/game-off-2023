@@ -12,6 +12,7 @@ public class UI_PortraitController : MonoBehaviour
     public Image PortraitArt;
     public Image AffinityArt;
     public TextMeshProUGUI NameText;
+    public bool ShowPointer = true;
 
     public Sprite LightAffinityArt;
     public Sprite ShadowAffinityArt;
@@ -63,7 +64,9 @@ public class UI_PortraitController : MonoBehaviour
                 ((float)Character.currentStagger / (float)Character.Config.BaseSP), SPFillBar.rectTransform.sizeDelta.y);
         }
 
-        Pointer.SetActive(Character.IsHighlighted);
+        if (ShowPointer) {
+            Pointer.SetActive(Character.IsHighlighted);
+        }
 
 
         Sprite blank = Resources.Load<Sprite>("bufficons/blank");

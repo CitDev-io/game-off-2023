@@ -142,8 +142,8 @@ MonoBehaviour:
   PortraitArt: {fileID: 6468955705626471868}
   AffinityArt: {fileID: 5324206241829467126}
   NameText: {fileID: 6951082568854906587}
-  LightAffinityArt: {fileID: 21300000, guid: f503b1ab9919f3944ab80f889d7ad963, type: 3}
-  ShadowAffinityArt: {fileID: 21300000, guid: 7e00b50960c5e3746af82e2380ad8ae1, type: 3}
+  LightAffinityArt: {fileID: 21300000, guid: 50a0bc41a1e23e741962e5516dafd12e, type: 3}
+  ShadowAffinityArt: {fileID: 21300000, guid: 965b1a73c2a039743b83df01434c620e, type: 3}
   NoPortraitArt: {fileID: 21300000, guid: 8370efe973ae75e4e971b6961513d5f0, type: 3}
   Character: {fileID: 0}
   Pointer: {fileID: 2766310542098156643}
@@ -1342,7 +1342,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7e00b50960c5e3746af82e2380ad8ae1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 965b1a73c2a039743b83df01434c620e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

@@ -7,9 +7,11 @@ using System.Collections.Generic;
 public class UI_BattleMenu : MonoBehaviour
 {
    
-    public TextMeshPro BasicAttackText;
-    public TextMeshPro SpecialAttackText;
-    public TextMeshPro UltimateText;
+    public GameObject BasicAttackBox;
+    public GameObject SpecialAttackBox;
+    public GameObject UltimateBox;
+    public TextMeshProUGUI SpecialAttackText;
+    public TextMeshProUGUI UltimateText;
     public GameObject Cursor1;
     public GameObject Cursor2;
     public GameObject Cursor3;
@@ -18,13 +20,13 @@ public class UI_BattleMenu : MonoBehaviour
     AbilityCategory Selected = AbilityCategory.BASICATTACK;
    
    public void SetAvailableAbilities(List<AbilityCategory> categories) {
-        BasicAttackText.gameObject.SetActive(
+        BasicAttackBox.gameObject.SetActive(
             categories.Contains(AbilityCategory.BASICATTACK)
         );
-        SpecialAttackText.gameObject.SetActive(
+        SpecialAttackBox.gameObject.SetActive(
             categories.Contains(AbilityCategory.SPECIALATTACK)
         );
-        UltimateText.gameObject.SetActive(
+        UltimateBox.gameObject.SetActive(
             categories.Contains(AbilityCategory.ULTIMATE)
         );
    }
@@ -35,13 +37,13 @@ public class UI_BattleMenu : MonoBehaviour
 
    int ActiveOptionCount() {
        int activeOptions = 0;
-       if (BasicAttackText.gameObject.activeSelf) {
+       if (BasicAttackBox.gameObject.activeSelf) {
            activeOptions++;
        }
-       if (SpecialAttackText.gameObject.activeSelf) {
+       if (SpecialAttackBox.gameObject.activeSelf) {
            activeOptions++;
        }
-       if (UltimateText.gameObject.activeSelf) {
+       if (UltimateBox.gameObject.activeSelf) {
            activeOptions++;
        }
        return activeOptions;

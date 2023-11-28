@@ -10,7 +10,7 @@ public class AbilityShieldBash : Effect
         _attackLevel = AttackLevel;
         _supportLevel = SupportLevel;
         Name = "Shield Bash";
-        Description = "Bashes an enemy upside the head";
+        Description = "Deal DAMAGE to target enemy with a CHANCE to STUN for 1 round";
         TargetScope = EligibleTargetScopeType.ENEMY;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/ShieldBash");   
     }

@@ -1,58 +1,64 @@
 scale.png
-size:1953,494
+size:1343,773
 filter:Linear,Linear
 pma:true
 arm left
-bounds:2,29,305,92
+bounds:373,18,305,92
 offsets:2,1,308,94
 base
-bounds:2,123,713,369
+bounds:2,58,713,369
 offsets:2,1,717,371
-left orb 1
-bounds:616,77,43,44
-offsets:2,1,46,46
-left orb 2
-bounds:616,31,43,44
-offsets:2,1,46,46
-moon 1 cover
-bounds:1056,2,333,239
-offsets:1,2,335,242
-moon 2 cover
-bounds:1378,254,238,336
-offsets:2,1,241,339
 rotate:90
+left orb 1
+bounds:1093,16,136,132
+offsets:9,9,154,150
+rotate:90
+left orb 2
+bounds:958,16,136,133
+offsets:9,9,154,150
+rotate:90
+moon 1 cover
+bounds:863,438,333,239
+offsets:1,2,335,242
+rotate:90
+moon 2 cover
+bounds:718,96,238,336
+offsets:2,1,241,339
 moon eye closed
-bounds:1933,414,17,15
+bounds:2,19,17,15
 offsets:1,2,19,18
+rotate:90
 moon eye open
-bounds:661,61,14,14
+bounds:19,22,14,14
 offsets:1,1,16,16
 mounttain
-bounds:717,243,659,249
+bounds:373,112,659,249
 offsets:1,1,661,251
-right arm
-bounds:309,29,305,92
-offsets:1,1,308,94
-right orb 1
-bounds:661,77,43,44
-offsets:1,1,46,46
-right orb 2
-bounds:661,77,43,44
-offsets:1,1,46,46
-sun 1 cover
-bounds:1391,15,330,237
-offsets:1,1,332,239
-sun 2 cover
-bounds:717,4,237,337
-offsets:1,1,239,339
 rotate:90
+right arm
+bounds:624,127,305,92
+offsets:1,1,308,94
+rotate:90
+right orb 1
+bounds:958,296,140,140
+offsets:9,5,158,150
+right orb 2
+bounds:958,154,140,140
+offsets:9,9,158,158
+sun 1 cover
+bounds:1104,441,330,237
+offsets:1,1,332,239
+rotate:90
+sun 2 cover
+bounds:624,434,237,337
+offsets:1,1,239,339
 sun eye closed
-bounds:2,12,65,15
+bounds:2,2,65,15
 offsets:1,1,67,17
 sun eye open
-bounds:1933,431,61,18
+bounds:2,38,61,18
 offsets:1,1,63,20
-rotate:90
 sunmoon
-bounds:1716,259,215,233
+bounds:1104,224,215,233
 offsets:1,1,217,235
+rotate:90

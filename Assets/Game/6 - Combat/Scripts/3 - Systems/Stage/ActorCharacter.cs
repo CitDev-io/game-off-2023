@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using Spine.Unity;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class ActorCharacter : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class ActorCharacter : MonoBehaviour
     public TMP_Text StaggerTicker; 
     [SerializeField]
     public GameObject TurnIndicator;
+    public GameObject HighlightIndicator;
     public UI_CharacterElementIndicator ElementIndicator;
     GameObject _displayLayer;
     SpriteRenderer _skin;
@@ -94,9 +96,12 @@ public class ActorCharacter : MonoBehaviour
 
 
     public void EnqueuePerformance(CharacterActorPerformance performance) {
-        Debug.Log("ENQUEUE " + performance.ToString() + " for " + gameObject.name);
+        if (performance == CharacterActorPerformance.DIE && _performanceQueue.Contains(CharacterActorPerformance.DIE)) {
+            return;
+        }
         IsPerforming = true;
         _performanceQueue.Enqueue(performance);
+
     }
 
     void SpineEventSubscribe() {
@@ -155,12 +160,6 @@ public class ActorCharacter : MonoBehaviour
         GameObject.Find("GameManager").GetComponent<UIManager>().TargetSelected(_character);
     }
 
-    void Update() {
-        if (gameObject.name == "Boss 3") {
-            Debug.Log("BOSS 3 IS " + _character.Buffs.Count + " BUFFS");
-        }
-    }
-
     void FixedUpdate()
     {
         if (HealthTicker != null) {
@@ -179,6 +178,12 @@ public class ActorCharacter : MonoBehaviour
             } else {
                 TurnIndicator.SetActive(false);
             }
+        }
+
+        if (_character.IsHighlighted) {
+            HighlightIndicator.SetActive(true);
+        } else {
+            HighlightIndicator.SetActive(false);
         }
     }
 

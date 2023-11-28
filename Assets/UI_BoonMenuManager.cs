@@ -12,12 +12,32 @@ public class UI_BoonMenuManager : MonoBehaviour
 
     public Image Icon;
     public Image Spinner;
+    public UI_BoonOptionMgr Option1;
+    public UI_BoonOptionMgr Option2;
+    public UI_BoonOptionMgr Option3;
 
     public TextMeshProUGUI Name1;
     public TextMeshProUGUI Name2;
     public TextMeshProUGUI Name3;
 
     List<BaseBoonResolver> _boons;
+    public BaseBoonResolver CurrentSelection;
+
+    public void ToggleLeft() {
+        if (_boons.Count == 0) return;
+
+        int currentIndex = _boons.IndexOf(CurrentSelection);
+        int newIndex = (currentIndex - 1 + _boons.Count) % _boons.Count;
+        ToggleToBoonByIndex(newIndex);
+    }
+
+    public void ToggleRight() {
+        if (_boons.Count == 0) return;
+
+        int currentIndex = _boons.IndexOf(CurrentSelection);
+        int newIndex = (currentIndex + 1) % _boons.Count;
+        ToggleToBoonByIndex(newIndex);
+    }
 
     void Awake() {
         SwooshModal.SetActive(false);
@@ -29,25 +49,51 @@ public class UI_BoonMenuManager : MonoBehaviour
 
     public void OfferBoons(List<BaseBoonResolver> boons) {
         SetBoonOffers(boons);
-        StartCoroutine(DoAppear(0.55f, 0f));
+        StartCoroutine(DoAppear(0.55f, 179.9f));
         StartCoroutine(IconAppear());
     }
 
     void SetBoonOffers(List<BaseBoonResolver> boons) {
-        Name1.text = boons[0].Name;
-        Name2.text = boons[1].Name;
-        Name3.text = boons[2].Name;
+        if (boons.Count > 0) {
+            Option1.SetContent(boons[0]);
+            CurrentSelection = boons[0];
+        }
+        if (boons.Count > 1) {
+            Option2.SetContent(boons[1]);
+        }
+        if (boons.Count > 2) {
+            Option3.SetContent(boons[2]);
+        }
+        Option1.gameObject.SetActive(boons.Count > 0);
+        Option2.gameObject.SetActive(boons.Count > 1);
+        Option3.gameObject.SetActive(boons.Count > 2);
+
+        Option1.SetSelected(true);
+        Option2.SetSelected(false);
+        Option3.SetSelected(false);
         _boons = boons;
     }
 
-    public void UserSelectBoonByIndex(int index) {
-        BaseBoonResolver selectedBoon = _boons[index];
-        GameObject.Find("GameManager").GetComponent<UIManager>().BoonSelected(selectedBoon);
+    public void ToggleToBoonByIndex(int index) {
+        CurrentSelection = _boons[index];
+        Option1.SetSelected(index == 0);
+        Option2.SetSelected(index == 1);
+        Option3.SetSelected(index == 2);
+    }
+
+    public void Dismiss() {
+        CurrentSelection = null;
+        DoDisappearPerformance();
+    }
+
+    public void UserSelectBoon() {
+        GameObject.Find("GameManager").GetComponent<UIManager>().BoonSelected(CurrentSelection);
+        CurrentSelection = null;
         DoDisappearPerformance();
     }
 
     void DoDisappearPerformance() {
-        StartCoroutine(DoAppear(0f, 179.9f));
+        StartCoroutine(DoAppear(0f, 0f));
         StartCoroutine(IconDisappear());
     }
 
@@ -85,14 +131,16 @@ public class UI_BoonMenuManager : MonoBehaviour
         SwooshModal.SetActive(true);
         yield return new WaitForSeconds(initialDelay);
 
+        Debug.Log(Mathf.Abs(SwooshModal.transform.rotation.eulerAngles.z - TargetRotation) );
         while (Mathf.Abs(SwooshModal.transform.rotation.eulerAngles.z - TargetRotation) > 0.5f) {
-            SwooshModal.transform.rotation = Quaternion.RotateTowards(SwooshModal.transform.rotation, Quaternion.Euler(0f, 0f, TargetRotation), SPINSPEED);
+            SwooshModal.transform.rotation = Quaternion.Lerp(SwooshModal.transform.rotation, Quaternion.Euler(0f, 0f, TargetRotation+0.1f), SPINSPEED);
 
-            PanelUI.SetActive(SwooshModal.transform.rotation.eulerAngles.z < 40f);
+            PanelUI.SetActive(SwooshModal.transform.rotation.eulerAngles.z < -120f || SwooshModal.transform.rotation.eulerAngles.z > 120);
+
             yield return new WaitForSeconds(WAITSPEED);
         }
         SwooshModal.transform.rotation = Quaternion.Euler(0f, 0f, TargetRotation);
-        if (TargetRotation == 179.9f) {
+        if (TargetRotation == 0f) {
             SwooshModal.SetActive(false);
         }
     }

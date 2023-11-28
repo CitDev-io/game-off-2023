@@ -7,10 +7,19 @@ public class BoonAttackRankUp : BaseBoonResolver
     PCAdventureClassType EligibleType = PCAdventureClassType.NONE;
     int MAX_RANK = 3;
 
-    public BoonAttackRankUp(PCAdventureClassType classType) {
-        Name = classType.ToString() + " Attack Tier";
-        Description = "Upgrade " + classType.ToString() + " Special Attack (Support)";
-        PortraitArt = null;
+    public BoonAttackRankUp(
+        PCAdventureClassType classType,
+        string name,
+        string description,
+        string upgradeDescription,
+        string level) {
+        Name = name;
+        Description = description;
+        UpgradeType = "Enhanced Attack";
+        UpgradeDescription = upgradeDescription;
+        Level = level;
+        Character = classType;
+
         EligibleType = classType;
     }
 

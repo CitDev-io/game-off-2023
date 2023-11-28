@@ -119,6 +119,11 @@ public class UI_TurnOrderManager : MonoBehaviour
         }
     }
 
+    public void ClearSelection() {
+        CurrentSelection.IsHighlighted = false;
+        CurrentSelection = null;
+    }
+
     public void CurrentPortraitClickReports() {
         if (EligibleTargets.Contains(TopPortrait.Character)) {
             CurrentSelection.IsHighlighted = false;

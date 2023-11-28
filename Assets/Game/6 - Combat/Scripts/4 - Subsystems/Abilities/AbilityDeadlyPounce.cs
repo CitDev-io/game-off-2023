@@ -3,8 +3,8 @@ using System.Collections.Generic;
 public class AbilityDeadlyPounce : Effect
 {
     public AbilityDeadlyPounce() {
-        Name = "Deadly Pounce";
-        Description = "Deals a massive blow and stuns the enemy";
+        Name = "Stunning Slash";
+        Description = "Deal HIGH DAMAGE to target enemy and STUN for 1 round";
         TargetScope = EligibleTargetScopeType.ENEMY;
         IsUltimate = true;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/DeadlyPounce");

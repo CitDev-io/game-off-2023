@@ -4,7 +4,7 @@ public class AbilityPolymorph : Effect
 {
     public AbilityPolymorph() {
         Name = "Polymorph";
-        Description = "Transforms an enemy into a harmless sheep and negates elemental resistances for 2 turns";
+        Description = "Target is GREATLY WEAKENED with ELEMENTAL WEAKNESS for 2 rounds";
         TargetScope = EligibleTargetScopeType.ENEMY;
         IsUltimate = true;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Polymorph");");   

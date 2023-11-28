@@ -9,7 +9,7 @@ public class AbilityBlessing : Effect
         _attackLevel = AttackLevel;
         _supportLevel = SupportLevel;
         Name = "Blessing";
-        Description = "Heal a friendly target";
+        Description = "HEAL a target hero";
         TargetScope = _attackLevel > 0 ? EligibleTargetScopeType.ANYALIVE : EligibleTargetScopeType.FRIENDLYORSELF;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");
     }

@@ -7,8 +7,8 @@ public class AbilitySneakAttack : Effect
     public AbilitySneakAttack(int AttackLevel = 0, int SupportLevel = 0) {
         _attackLevel = AttackLevel;
         _supportLevel = SupportLevel;
-        Name = "Poison Strike";
-        Description = "Attacks an enemy and applies Poisoned";
+        Name = "Sneak Attack";
+        Description = "Deal DAMAGE to target enemy & POISON for 1 round";
         TargetScope = EligibleTargetScopeType.ENEMY;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/PoisonStrike");   
     }

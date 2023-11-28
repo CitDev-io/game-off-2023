@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "3URp2lJjlyo",
+	"hash": "vvs4LaBiLsU",
 	"spine": "4.1.24",
 	"x": -361,
 	"y": -1,
@@ -56,10 +56,10 @@
 				"base": { "x": -1.89, "y": -67.71, "width": 717, "height": 371 }
 			},
 			"left orb 1": {
-				"left orb 1": { "x": -0.8, "y": -7.73, "rotation": -179.85, "width": 46, "height": 46 }
+				"left orb 1": { "x": -0.8, "y": -7.73, "rotation": -179.85, "width": 154, "height": 150 }
 			},
 			"left orb 2": {
-				"left orb 2": { "x": 1.45, "y": -9.39, "rotation": -179.85, "width": 46, "height": 46 }
+				"left orb 2": { "x": 1.45, "y": -9.39, "rotation": -179.85, "width": 154, "height": 150 }
 			},
 			"moon 1 cover": {
 				"moon 1 cover": { "x": 36.02, "y": -38.78, "width": 335, "height": 242 }
@@ -78,10 +78,10 @@
 				"right arm": { "x": 114.96, "y": -3.42, "rotation": 0.77, "width": 308, "height": 94 }
 			},
 			"right orb 1": {
-				"right orb 1": { "x": 1.16, "y": 7.74, "rotation": 0.77, "width": 46, "height": 46 }
+				"right orb 1": { "x": 1.16, "y": 7.74, "rotation": 0.77, "width": 158, "height": 150 }
 			},
 			"right orb 2": {
-				"right orb 2": { "x": 2.33, "y": 4.98, "rotation": 0.77, "width": 46, "height": 46 }
+				"right orb 2": { "x": 2.33, "y": 4.98, "rotation": 0.77, "width": 158, "height": 158 }
 			},
 			"sun 1 cover": {
 				"sun 1 cover": { "x": -55.93, "y": -36.73, "width": 332, "height": 239 }

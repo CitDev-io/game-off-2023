@@ -5,7 +5,7 @@ public class AbilityMassHeal : Effect
     public AbilityMassHeal()
     {
         Name = "Mass Heal";
-        Description = "Heals all friendly targets";
+        Description = "HEAL all heroes";
         TargetScope = EligibleTargetScopeType.NONE;
         IsUltimate = true;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/Blessing");

@@ -8,10 +8,19 @@ public class BoonSupportRankUp : BaseBoonResolver
 
     int MAX_RANK = 3;
 
-    public BoonSupportRankUp(PCAdventureClassType classType) {
-        Name = classType.ToString() + " Support Tier";
-        Description = "Upgrade " + classType.ToString() + " Special Attack (Support)";
-        PortraitArt = null;
+    public BoonSupportRankUp(
+        PCAdventureClassType classType,
+        string name,
+        string description,
+        string upgradeDescription,
+        string level) {
+        Name = name;
+        Description = description;
+        UpgradeType = "Enhanced Support";
+        UpgradeDescription = upgradeDescription;
+        Level = level;
+        Character = classType;
+
         EligibleType = classType;
     }
 

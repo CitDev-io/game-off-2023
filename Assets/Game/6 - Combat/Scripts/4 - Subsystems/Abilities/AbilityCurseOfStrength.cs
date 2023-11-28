@@ -9,7 +9,7 @@ public class AbilityCurseOfStrength : Effect
         _attackLevel = AttackLevel;
         _supportLevel = SupportLevel;
         Name = "Curse of Strength";
-        Description = "Curses an Enemy and Empowers an Ally";
+        Description = "Apply WEAKNESS to 1 random enemy & STRENGTH to 1 random hero";
 
         TargetScope = _attackLevel > 0 ? EligibleTargetScopeType.ENEMY : EligibleTargetScopeType.NONE;
         // PortraitArt = Resources.Load<Sprite>("Sprites/Abilities/ShieldBash");
@@ -74,7 +74,8 @@ public class AbilityCurseOfStrength : Effect
             EligibleTargetScopeType.FRIENDLYORSELF
         );
         if (RandomAlly != null) {
-            Buff strengthenBuff = new BuffStrengthen(source, RandomAlly, 1);
+            int Rounds = RandomAlly == source ? 2 : 1;
+            Buff strengthenBuff = new BuffStrengthen(source, RandomAlly, Rounds);
             _e.Add(strengthenBuff);
         }
 
