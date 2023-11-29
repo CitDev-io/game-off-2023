@@ -54,7 +54,7 @@ public class UI_BoonMenuManager : MonoBehaviour
         if (_sunRoutine != null) StopCoroutine(_sunRoutine);
         _sunRoutine = StartCoroutine(IconAppear());
         if (_swipeyRoutine != null) StopCoroutine(_swipeyRoutine);
-        _swipeyRoutine = StartCoroutine(DoAppear(0.55f, 179.9f));
+        _swipeyRoutine = StartCoroutine(DoAppear(0.55f, 90f));
     }
 
     void SetBoonOffers(List<BaseBoonResolver> boons) {
@@ -98,7 +98,7 @@ public class UI_BoonMenuManager : MonoBehaviour
 
     void DoDisappearPerformance() {
         if (_swipeyRoutine != null) StopCoroutine(_swipeyRoutine);
-        _swipeyRoutine = StartCoroutine(DoAppear(0f, 0f));
+        _swipeyRoutine = StartCoroutine(DoAppear(0f, 270f));
         if (_sunRoutine != null) StopCoroutine(_sunRoutine);
         _sunRoutine = StartCoroutine(IconDisappear());
     }
@@ -137,16 +137,15 @@ public class UI_BoonMenuManager : MonoBehaviour
         SwooshModal.SetActive(true);
         yield return new WaitForSeconds(initialDelay);
 
-        while (Mathf.Abs(SwooshModal.transform.rotation.eulerAngles.z - TargetRotation) > 0.5f) {
-            SwooshModal.transform.rotation = Quaternion.Lerp(SwooshModal.transform.rotation, Quaternion.Euler(0f, 0f, TargetRotation+0.1f), SPINSPEED);
+        while (Mathf.Abs(SwooshModal.transform.rotation.eulerAngles.z - TargetRotation) > 10f) {
+            SwooshModal.transform.rotation =  Quaternion.Euler(0f, 0f, SwooshModal.transform.rotation.eulerAngles.z - SPINSPEED);
 
-            PanelUI.SetActive(SwooshModal.transform.rotation.eulerAngles.z < -120f || SwooshModal.transform.rotation.eulerAngles.z > 120);
+            PanelUI.SetActive(SwooshModal.transform.rotation.eulerAngles.z > -40f && SwooshModal.transform.rotation.eulerAngles.z < 120);
 
             yield return new WaitForSeconds(WAITSPEED);
         }
         SwooshModal.transform.rotation = Quaternion.Euler(0f, 0f, TargetRotation);
-        if (TargetRotation == 0f) {
-            SwooshModal.transform.rotation = Quaternion.identity;
+        if (TargetRotation == 270f) {
             SwooshModal.SetActive(false);
             PanelUI.SetActive(false);
         }

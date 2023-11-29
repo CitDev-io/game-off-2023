@@ -16,6 +16,7 @@ MonoBehaviour:
   _PowerType: 1
   _TeamType: 1
   _PlayerClass: 0
+  ScaleBounty: 5
   _Portrait: {fileID: 21300000, guid: 4f9227e0503db8d44a208d4ed5b94e87, type: 3}
   _Skin: {fileID: 21300000, guid: 2cde9917c02989a458f6c6ea658e1a1f, type: 3}
   _SpineSkeleton: {fileID: 11400000, guid: be67eb827ddcb394eaa83cf8cbf9f6c8, type: 2}
@@ -31,3 +32,11 @@ MonoBehaviour:
   _BaseSpecialMax: 80
   SupportTreeLevel: 0
   AttackTreeLevel: 0
+  IsBoss: 1
+  WaveIntroTaunt: "Buuuuuuuuuuurp! You came for little ones? Hahaha, I ate them.
+    Surprise! Quite anticlim\u2026anticlimate\u2026anticlimate-attic\u2026arg! You
+    know what I mean! Now I eat you!"
+  WaveDefeatTaunt: "I just wanted snack! Those kids tricked me. Drew faces on rocks
+    and ran away. Maybe they home now, laughing. I not laughing. Tummy not feel good.
+    Feel like ate boulder. You win, okay. Uh oh\u2026gotta go. My lair about to become
+    stinky sauna. Ruuuuuun!"

@@ -46,10 +46,8 @@ public class UI_TurnOrderManager : MonoBehaviour
 
         int currentIndex = selectablePortraits.IndexOf(selectablePortraits.Find(p => p.Character == CurrentSelection));
         if (currentIndex == 0) {
-            Debug.Log("current" + currentIndex + " - " + (selectablePortraits.Count - 1));
             return selectablePortraits[selectablePortraits.Count - 1].Character;
         } else {
-            Debug.Log("current" + currentIndex + " - " + (currentIndex - 1));
             return selectablePortraits[currentIndex - 1].Character;
         }
     }

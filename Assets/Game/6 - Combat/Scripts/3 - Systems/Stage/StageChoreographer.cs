@@ -7,21 +7,11 @@ public class StageChoreographer : MonoBehaviour
 {
     EventProvider _eventProvider;
     List<string> PerformancesInFlight = new List<string>();
-    /*
-        WILO
-
-        Would love to keep a running tally of all of my
-        actors.
-
-        when we receive a waveclear signal, we should wait
-        for all of the actors to complete their performances
-        then we send an ALL CLEAR to the event provider
-
-        
-        referee should wait for ALL CLEAR before proceeding
-
-    */
-
+    [SerializeField]
+    bool PerforminRN = false;
+    void Update() {
+        PerforminRN = IsPerforming();
+    }
     public bool IsPerforming() {
         int MyPerformanceCount = PerformancesInFlight.Count;
             int MyActorsPerformingCount = MyActors.Count(actor => actor.IsPerforming);
@@ -36,14 +26,14 @@ public class StageChoreographer : MonoBehaviour
 
     void SetupHooks() {
         _eventProvider.OnPhasePrompt += HandlePhasePrompts;
-        _eventProvider.OnWaveReady += HandleWaveReady;
+        // _eventProvider.OnWaveReady += HandleWaveReady;
         _eventProvider.OnEffectPlanExecutionComplete += HandleAbilityExecuted;
         _eventProvider.OnCharacterRevived += HandleCharacterRevived;
         _eventProvider.OnDamageResolved += HandleDamageResolved;
         _eventProvider.OnEffectPlanExecutionStart += HandleEffectPlanExecutionStart;
         _eventProvider.OnBuffAdded += HandleBuffAdded;
         _eventProvider.OnBuffExpired += HandleBuffRemoved;
-        _eventProvider.OnStageComplete += HandleStageComplete;
+        // _eventProvider.OnStageComplete += HandleStageComplete;
         _eventProvider.OnCharacterSummoned += HandleCharacterSummoned;
     }
 
@@ -51,16 +41,16 @@ public class StageChoreographer : MonoBehaviour
         MyActors.Add(character.GetComponent<ActorCharacter>());
     }
 
-    void HandleStageComplete() {
-        MyActors
-            .Where(actor => actor._character.isDead && actor._character.Config.TeamType == TeamType.PLAYER)
-            .ToList()
-            .ForEach(actor => {
-            if (actor.GetComponent<Character>().isDead) {
-                actor.EnqueuePerformance(CharacterActorPerformance.FADEOUT);
-            }
-        });
-    }
+    // void HandleStageComplete() {
+        // MyActors
+        //     .Where(actor => actor._character.isDead && actor._character.Config.TeamType == TeamType.PLAYER)
+        //     .ToList()
+        //     .ForEach(actor => {
+        //     if (actor.GetComponent<Character>().isDead) {
+        //         actor.EnqueuePerformance(CharacterActorPerformance.FADEOUT);
+        //     }
+        // });
+    // }
 
     void PolymorphCharacter(Character character, bool isPolymorphed) {
         ActorCharacter actor = character.GetComponent<ActorCharacter>();
@@ -85,16 +75,14 @@ public class StageChoreographer : MonoBehaviour
         buff.Target.GetComponent<ActorCharacter>().FloatingBuffUp(buff);
     }
 
-    void HandleWaveReady() {
-        StartCoroutine(WaitPerformance(1.5f, "wavereadylull"));
-    }
+    // void HandleWaveReady(int waveNum) {
+
+    // }
 
     IEnumerator WaitPerformance(float duration, string name) {
         PerformancesInFlight.Add(name);
-        Debug.Log("IN " + name);
         yield return new WaitForSeconds(duration);
         PerformancesInFlight.Remove(name);
-        Debug.Log("OUT " + name);
     }
 
     void HandlePhasePrompts(CombatPhase phase, Character combatant) {
@@ -115,7 +103,6 @@ public class StageChoreographer : MonoBehaviour
         }
 
         if (plan.Source is AbilityHollowHowl) {
-            Debug.Log("RAAAAAWR");
             WaitPerformance(4f, "howling");
         }
     }

@@ -16,6 +16,7 @@ MonoBehaviour:
   _PowerType: 0
   _TeamType: 1
   _PlayerClass: 0
+  ScaleBounty: 5
   _Portrait: {fileID: 21300000, guid: 4d34520f55914f54a8bca022c01159d7, type: 3}
   _Skin: {fileID: 21300000, guid: a22feb7f427495349b91a6f1ea1ea970, type: 3}
   _SpineSkeleton: {fileID: 11400000, guid: af5721c707754e9418674f88d346b5d7, type: 2}
@@ -31,3 +32,10 @@ MonoBehaviour:
   _BaseSpecialMax: 50
   SupportTreeLevel: 0
   AttackTreeLevel: 0
+  IsBoss: 1
+  WaveIntroTaunt: "Hark, intruders! Pitiful pretenders to heroism. You shall prove
+    more satisfying than those little ones, and oh, how I hunger. Bone voyage to
+    you, and bone app\xE9tit to Grimbones!"
+  WaveDefeatTaunt: "By the marrow of the underworld - defeat once more! It\u2019s
+    clear I lacked the guts to face you. A fibula I spun before\u2014the tots are
+    safe. That is until Rootsnarl spirits them away. To haste!"

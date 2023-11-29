@@ -1262,6 +1262,8 @@ MonoBehaviour:
   BuffDownPrefab: {fileID: 9095441452850595814, guid: 0b5ce8fd42cda1b459003d6209b51036, type: 3}
   FloatingBrokenIcon: {fileID: 3703561631417178704}
   TurnIndicator: {fileID: 6807464998815831213}
+  HighlightIndicatorLight: {fileID: 21300000, guid: da712f0fcef910e4f84897f5f829273c, type: 3}
+  HighlightIndicatorShadow: {fileID: 21300000, guid: 49c8407767b316c49b0dd67079964630, type: 3}
   HighlightIndicator: {fileID: 153229657695382188}
   _character: {fileID: 0}
 --- !u!1 &6807464998815831213

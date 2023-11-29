@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class WaveProvider : IWaveProvider
@@ -36,6 +37,16 @@ public class WaveProvider : IWaveProvider
         }
         return 0;
     }
+
+    public WaveInfo GetWaveInfo(int stageNum, int waveNum) {
+        CharacterConfig Boss = GetEnemyWave(stageNum, waveNum).FirstOrDefault(c => c.IsBoss);
+        return new WaveInfo(
+            Boss,
+            waveNum,
+            stageNum
+        );
+    }
+
     public WaveProvider(PartyConfig partyConfig, EnemySetList enemySetList)
     {
         _partyConfig = partyConfig;

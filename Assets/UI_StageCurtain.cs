@@ -1,23 +1,27 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_StageCurtain : MonoBehaviour
 {
-    Image _curtainSprite;
+    public Image _curtainSprite;
+    Coroutine _runningRoutine;
 
     void Awake() {
-        _curtainSprite = GetComponent<Image>();
+        _curtainSprite.gameObject.SetActive(true);
         _curtainSprite.color = Color.black;
     }
 
     public void CurtainUp() {
-        StartCoroutine(CurtainUpRoutine());
+        if (!_curtainSprite.gameObject.activeSelf) return;
+        if (_runningRoutine != null) StopCoroutine(_runningRoutine);
+        _runningRoutine = StartCoroutine(CurtainUpRoutine());
     }
 
     public void CurtainDown() {
-        StartCoroutine(CurtainDownRoutine());
+        if (_curtainSprite.gameObject.activeSelf && (_curtainSprite.color.a == 1f || _runningRoutine != null)) return;
+        if (_runningRoutine != null) StopCoroutine(_runningRoutine);
+        _runningRoutine = StartCoroutine(CurtainDownRoutine());
     }
 
     IEnumerator CurtainUpRoutine() {

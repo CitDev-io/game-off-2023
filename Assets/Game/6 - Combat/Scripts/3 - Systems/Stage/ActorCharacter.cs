@@ -35,10 +35,13 @@ public class ActorCharacter : MonoBehaviour
     [Header("Static Decorators")]
     public GameObject FloatingBrokenIcon;
     public GameObject TurnIndicator;
+    public Sprite HighlightIndicatorLight;
+    public Sprite HighlightIndicatorShadow;
     public GameObject HighlightIndicator;
 
     [HideInInspector]
     public Character _character;
+
     void Awake() {
         _character = GetComponent<Character>();
         _displayLayer = transform.Find("DisplayLayer").gameObject;
@@ -65,7 +68,7 @@ public class ActorCharacter : MonoBehaviour
 
             if (!IsActing && _performanceQueue.Count > 0) {
                 CharacterActorPerformance performance = _performanceQueue.Dequeue();
-                Debug.Log("DEQUEUE " + performance.ToString() + " for " + gameObject.name);
+
                 switch(performance) {
                     case CharacterActorPerformance.BASICATTACK:
                         StartCoroutine(BasicAttackPerformance());
@@ -201,7 +204,7 @@ public class ActorCharacter : MonoBehaviour
     void OnMouseDown()
     {
         if (_character.isDead) return;
-        Debug.Log(gameObject.name + " was clicked!");
+
         GameObject.Find("GameManager").GetComponent<UIManager>().TargetSelected(_character);
     }
 
@@ -226,6 +229,7 @@ public class ActorCharacter : MonoBehaviour
         }
 
         if (_character.IsHighlighted) {
+            HighlightIndicator.GetComponent<SpriteRenderer>().sprite = _character.Config.PowerType == PowerType.LIGHT ? HighlightIndicatorLight : HighlightIndicatorShadow;
             HighlightIndicator.SetActive(true);
         } else {
             HighlightIndicator.SetActive(false);
@@ -406,13 +410,15 @@ public class ActorCharacter : MonoBehaviour
         _displayLayer.SetActive(true);
         if (IN_SPINE_MODE) {
             IsActing = true;
-            float alpha = 0f;
-            while (alpha < 0.95f) {
-                _spineSkin.skeleton.A = alpha;
-                alpha += DEATH_FADE_INCREMENT;
-                yield return new WaitForSeconds(DEATH_FADE_SPEED);
+            if (_spineSkin.skeleton.A == 0f) {
+                float alpha = 0f;
+                while (alpha < 0.95f) {
+                    _spineSkin.skeleton.A = alpha;
+                    alpha += DEATH_FADE_INCREMENT;
+                    yield return new WaitForSeconds(DEATH_FADE_SPEED);
+                }
+                _spineSkin.skeleton.A = 1f;
             }
-            _spineSkin.skeleton.A = 1f;
             yield return new WaitForSeconds(0.75f);
             SetAnimation(0, ActorAnimations.idle, true);
             IsActing = false;

@@ -16,6 +16,7 @@ MonoBehaviour:
   _PowerType: 0
   _TeamType: 0
   _PlayerClass: 2
+  ScaleBounty: 0
   _Portrait: {fileID: 21300000, guid: d9673f7862ffe4748928fe03d736f6d4, type: 3}
   _Skin: {fileID: 21300000, guid: 45e9f32f100d39a43b4ece54333ea101, type: 3}
   _SpineSkeleton: {fileID: 11400000, guid: 0d9b339989e467942a2bcd2888cba64b, type: 2}

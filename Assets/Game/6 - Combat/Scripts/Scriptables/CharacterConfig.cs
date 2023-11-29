@@ -23,7 +23,7 @@ public class CharacterConfig : ScriptableObject
     [Tooltip("Select NONE for Enemies")]
     private PCAdventureClassType _PlayerClass;
     public PCAdventureClassType PlayerClass => _PlayerClass;
-
+    public int ScaleBounty = 1;
 
     [Header("Art")]
     [Tooltip("Portrait Sprite")]
@@ -100,4 +100,9 @@ public class CharacterConfig : ScriptableObject
     public int SupportTreeLevel = 0;
     [HideInInspector]
     public int AttackTreeLevel = 0;
+
+    [Header("Boss Settings")]
+    public bool IsBoss = false;
+    public string WaveIntroTaunt = "";
+    public string WaveDefeatTaunt = "";
 }

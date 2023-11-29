@@ -20,7 +20,6 @@ public class UI_OccassionalFlip : MonoBehaviour
     IEnumerator FlipOccassionally() {
         while (true) {
             yield return new WaitForSeconds(Random.Range(5f, 22f));
-            Debug.Log("FLIP");
             GetComponent<SkeletonGraphic>().AnimationState.AddAnimation(0, "victory", false, 0f);
             // GetComponent<SkeletonGraphic>().AnimationState.AddAnimation(0, "victory", false, 0f);
         }

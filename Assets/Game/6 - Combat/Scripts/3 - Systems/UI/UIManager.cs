@@ -1,6 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+enum SelectionState {
+    NONE,
+    ABILITY,
+    TARGET,
+    BOON,
+    REVIVE
+}
 
 public class UIManager : MonoBehaviour
 {
@@ -11,31 +18,47 @@ public class UIManager : MonoBehaviour
     EventProvider _eventProvider;
     // public UI_AbilitySelection AbilitySelectionUI;
     // public UI_TargetSelection TargetSelectionUI;
+    public UI_BossTaunt BossTauntUI;
     public UI_BattleMenu AbilityUI;
     public UI_TextCrawler TextCrawlUI;
+    public UI_GameOverPanel GameOverUI;
     public UI_ScalePanelManager ScalePanelUI;
     public UI_TurnOrderManager TurnOrderUI;
     public UI_StageCurtain StageCurtainUI;
     public UI_StageNameIntro StageNameUI;
     public SpriteRenderer BackgroundImage;
-    bool IsSelectingAbility = false;
-    bool IsSelectingTarget = false;
-    bool IsSelectingBoon = false;
+    public GameObject WinUI;
+    public GameObject ReviveUI;
+    SelectionState CurrentSelectionState = SelectionState.NONE;
+
     bool BoonTimeout = false;
 
+    public void UserRetryResponse() {
+        GameOverUI.gameObject.SetActive(false);
+        _eventProvider.OnInput_RetryResponse?.Invoke();
+    }
+
+    public void UserReviveResponse(bool revive) {
+        if (CurrentSelectionState != SelectionState.REVIVE) return;
+
+        CurrentSelectionState = SelectionState.NONE;
+        ReviveUI.SetActive(false);
+        _eventProvider.OnInput_ReviveResponse?.Invoke(revive);
+    }
     public void TargetSelected(Character target) {
+        CurrentSelectionState = SelectionState.NONE;
         _eventProvider.OnInput_CombatantChoseTarget?.Invoke(target);
     }
     public void AbilitySelected(AbilityCategory category) {
+        CurrentSelectionState = SelectionState.NONE;
         _eventProvider.OnInput_CombatantChoseAbility?.Invoke(category);
     }
 
     public void BoonSelected(BaseBoonResolver boon) {
-        if (BoonTimeout || !IsSelectingBoon) {
+        if (BoonTimeout || CurrentSelectionState != SelectionState.BOON) {
             return;
         }
-        Debug.Log("SELECTED A BOON");
-        IsSelectingBoon = false;
+        CurrentSelectionState = SelectionState.NONE;
         BoonTimeout = true;
         StartCoroutine(BoonTimeoutRoutine());
         BoonUI.Dismiss();
@@ -60,7 +83,7 @@ public class UIManager : MonoBehaviour
 
     void Update() {
         if (
-            IsSelectingAbility && (
+            CurrentSelectionState == SelectionState.ABILITY && (
             Input.GetKeyDown(KeyCode.UpArrow)
             ||
             Input.GetKeyDown(KeyCode.W)
@@ -69,7 +92,7 @@ public class UIManager : MonoBehaviour
         }
 
         if (
-            IsSelectingAbility && (
+            CurrentSelectionState == SelectionState.ABILITY && (
             Input.GetKeyDown(KeyCode.DownArrow)
             ||
             Input.GetKeyDown(KeyCode.S)
@@ -78,7 +101,7 @@ public class UIManager : MonoBehaviour
         }
 
         if (
-            IsSelectingTarget && (
+            CurrentSelectionState == SelectionState.TARGET && (
                 Input.GetKeyDown(KeyCode.LeftArrow)
                 ||
                 Input.GetKeyDown(KeyCode.A)
@@ -87,7 +110,7 @@ public class UIManager : MonoBehaviour
         }
 
         if (
-            IsSelectingTarget && (
+            CurrentSelectionState == SelectionState.TARGET && (
                 Input.GetKeyDown(KeyCode.RightArrow)
                 ||
                 Input.GetKeyDown(KeyCode.D)
@@ -96,7 +119,7 @@ public class UIManager : MonoBehaviour
         }
 
         if (
-            IsSelectingBoon && (
+            CurrentSelectionState == SelectionState.BOON && (
                 Input.GetKeyDown(KeyCode.LeftArrow)
                 ||
                 Input.GetKeyDown(KeyCode.A)
@@ -105,7 +128,7 @@ public class UIManager : MonoBehaviour
         }
 
         if (
-            IsSelectingBoon && (
+            CurrentSelectionState == SelectionState.BOON && (
                 Input.GetKeyDown(KeyCode.RightArrow)
                 ||
                 Input.GetKeyDown(KeyCode.D)
@@ -113,7 +136,7 @@ public class UIManager : MonoBehaviour
             BoonUI.ToggleRight();
         }
 
-        if (IsSelectingTarget && (
+        if (CurrentSelectionState == SelectionState.TARGET && (
             Input.GetMouseButtonDown(1)
             ||
             Input.GetKeyDown(KeyCode.Escape)
@@ -126,7 +149,7 @@ public class UIManager : MonoBehaviour
         }
         
         if (
-            IsSelectingAbility && (
+            CurrentSelectionState == SelectionState.ABILITY && (
             Input.GetKeyDown(KeyCode.Space)
             ||
             Input.GetKeyDown(KeyCode.KeypadEnter)
@@ -137,7 +160,7 @@ public class UIManager : MonoBehaviour
         }
 
         if (
-            IsSelectingTarget && (
+            CurrentSelectionState == SelectionState.TARGET && (
             Input.GetKeyDown(KeyCode.Space)
             ||
             Input.GetKeyDown(KeyCode.KeypadEnter)
@@ -148,7 +171,7 @@ public class UIManager : MonoBehaviour
         }
 
         if (
-            IsSelectingBoon && (
+            CurrentSelectionState == SelectionState.BOON && (
             Input.GetKeyDown(KeyCode.Space)
             ||
             Input.GetKeyDown(KeyCode.KeypadEnter)
@@ -170,6 +193,34 @@ public class UIManager : MonoBehaviour
         _eventProvider.OnEffectPlanExecutionStart += HandleEffectPlanExecutionStart;
         _eventProvider.OnTurnOrderChanged += HandleTurnOrderChanged;
         _eventProvider.OnStageSetup += HandleStageSetup;
+        _eventProvider.OnReviveOffered += HandleReviveOffered;
+        _eventProvider.OnGameOver += HandleGameOver;
+        _eventProvider.OnGameVictory += HandleGameVictory;
+        _eventProvider.OnWaveComplete += HandleWaveComplete;
+        _eventProvider.OnWaveSetupStart += HandleWaveSetupStart;
+        _eventProvider.OnStageComplete += HandleStageComplete;
+    }
+
+    void HandleWaveComplete() {
+        TextCrawlUI.ClearQueue();
+        TurnOrderUI.SetSelectionMode(false);
+        AbilityUI.gameObject.SetActive(false);
+        CurrentSelectionState = SelectionState.NONE;
+    }
+
+    void HandleGameVictory() {
+        WinUI.SetActive(true);
+    }
+
+    void HandleGameOver(int livesLeft) {
+        StageCurtainUI.CurtainDown();
+        GameOverUI.SetRetries(livesLeft);
+        GameOverUI.gameObject.SetActive(true);
+    }
+
+    void HandleReviveOffered() {
+        CurrentSelectionState = SelectionState.REVIVE;
+        ReviveUI.SetActive(true);
     }
 
     void HandleStageSetup(StageConfig stageConfig) {
@@ -182,9 +233,7 @@ public class UIManager : MonoBehaviour
     }
 
     IEnumerator IntroduceStageRoutine() {
-        
         yield return new WaitForSeconds(1f);
-        StageCurtainUI.gameObject.SetActive(true);
         StageCurtainUI.CurtainUp();
         yield return new WaitForSeconds(0.5f);
         StageNameUI.IntroduceStage();
@@ -192,13 +241,66 @@ public class UIManager : MonoBehaviour
         IsPerforming = false;
     }
 
+    void HandleStageComplete(WaveInfo wave) {
+        IsPerforming = true;
+        StartCoroutine(StageCompleteRoutine(wave));
+    }
+
+    IEnumerator StageCompleteRoutine(WaveInfo wave) {
+        bool isBossInWave = wave.Boss != null;
+
+        if (isBossInWave) {
+            StageCurtainUI.CurtainDown();
+            yield return new WaitForSeconds(1.5f);
+            BossTauntUI.Taunt(wave.Boss.Portrait, wave.Boss.Name, wave.Boss.WaveDefeatTaunt);
+
+            yield return new WaitForSeconds(8f);
+            BossTauntUI.Stow();
+        } else {
+            yield return new WaitForSeconds(0.5f);
+        }
+        IsPerforming = false;
+    }
+
     void HandleTurnOrderChanged(Character character, List<Character> InQueue) {
         TurnOrderUI.UpdateTurnOrder(character, InQueue);
     }
 
-    void HandleWaveReady() {
+    void HandleWaveSetupStart(WaveInfo waveInfo) {
         IsPerforming = true;
+        StartCoroutine(EarlyIntroduceWaveRoutine(waveInfo));
+    }
+
+    void HandleWaveReady(WaveInfo waveInfo) {
         AbilityUI.gameObject.SetActive(false);
+        IsPerforming = true;
+
+        StartCoroutine(IntroduceWaveRoutine(waveInfo));
+    }
+
+    IEnumerator EarlyIntroduceWaveRoutine(WaveInfo waveInfo) {
+        bool isBossInWave = waveInfo.Boss != null;
+
+        if (isBossInWave) {
+            StageCurtainUI.CurtainDown();
+            yield return new WaitForSeconds(1.5f);
+        }
+        IsPerforming = false;
+    }
+
+    IEnumerator IntroduceWaveRoutine(WaveInfo waveInfo) {
+        bool isBossInWave = waveInfo.Boss != null;
+
+        if (isBossInWave) {
+            yield return new WaitForSeconds(.5f);
+            // setup boss UI
+            BossTauntUI.Taunt(waveInfo.Boss.Portrait, waveInfo.Boss.Name, waveInfo.Boss.WaveIntroTaunt);
+
+            //wait 
+            yield return new WaitForSeconds(8f);
+            BossTauntUI.Stow();
+        }
+        StageCurtainUI.CurtainUp();
         IsPerforming = false;
     }
 
@@ -237,18 +339,21 @@ public class UIManager : MonoBehaviour
     }
 
     void HandleBoonPhasePrompt(List<BaseBoonResolver> boons) {
-        IsSelectingAbility = false;
-        IsSelectingBoon = true;
-        IsSelectingTarget = false;
+        CurrentSelectionState = SelectionState.NONE;
         TurnOrderUI.SetSelectionMode(false);
         AbilityUI.gameObject.SetActive(false);
         BoonUI.OfferBoons(boons);
+        StartCoroutine(TimedBoonOffer());
+    }
+
+    IEnumerator TimedBoonOffer() {
+        yield return new WaitForSeconds(1.5f);
+        CurrentSelectionState = SelectionState.BOON;
     }
 
     void HandleAbilityPhasePromptForCharacter(Character combatant) {
         // TurnOrderUI.gameObject.SetActive(false);
         if (combatant.Config.TeamType == TeamType.PLAYER) {
-        Debug.Log("ABILITY PHASE PROMPT");
             List<AbilityCategory> availableAbilities = combatant.GetAvailableAbilities(LightRef, ShadowRef);
             if (availableAbilities.Contains(AbilityCategory.SPECIALATTACK)) {
                 AbilityUI.SetSpecialAbilityName(
@@ -264,17 +369,13 @@ public class UIManager : MonoBehaviour
             AbilityUI.ToggleToSelectedAbility((int) AbilityCategory.BASICATTACK);
             AbilityUI.gameObject.SetActive(true);
             AbilityUI.gameObject.transform.position = combatant.transform.position + new Vector3(-2.5f, 3.35f, .25f);
-            IsSelectingAbility = true;
-            IsSelectingBoon = false;
-            IsSelectingTarget = false;
+            CurrentSelectionState = SelectionState.ABILITY;
         }
     }
     void HandleTargetPhasePromptForCharacter(Character combatant) {
         AbilityUI.gameObject.SetActive(false);
         if (combatant.Config.TeamType == TeamType.PLAYER) {
-            IsSelectingAbility = false;
-            IsSelectingBoon = false;
-            IsSelectingTarget = true;
+            CurrentSelectionState = SelectionState.TARGET;
             AbilityUI.gameObject.SetActive(false);
             
             TurnOrderUI.SetSelectionMode(true);
@@ -283,9 +384,7 @@ public class UIManager : MonoBehaviour
     void HandleExecutionPhasePromptForCharacter(Character combatant) {
         TurnOrderUI.SetSelectionMode(false);
         AbilityUI.gameObject.SetActive(false);
-        IsSelectingAbility = false;
-        IsSelectingBoon = false;
-        IsSelectingTarget = false;
+        CurrentSelectionState = SelectionState.NONE;
     }
 
     void HandleDamageResolved(CalculatedDamage dmg) {

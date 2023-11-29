@@ -15,6 +15,8 @@ public delegate void CalculatedDamageDelegate(CalculatedDamage cd);
 public delegate void BuffDelegate(Buff buff);
 public delegate void TurnOrderDelegate(Character character, List<Character> InQueue);
 public delegate void StageDelegate(StageConfig stageConfig);
+public delegate void IntDelegate(int integer);
+public delegate void WaveInfoDelegate(WaveInfo waveInfo);
 
 public class EventProvider
 {
@@ -26,8 +28,13 @@ public class EventProvider
     public EffectPlanDelegate OnEffectPlanExecutionStart;
     public EffectPlanDelegate OnEffectPlanExecutionComplete;
     public TurnOrderDelegate OnTurnOrderChanged;
+    public StandardDelegate OnReviveOffered;
+    public IntDelegate OnGameOver;
+    public StandardDelegate OnGameVictory;
+    public StandardDelegate OnWaveComplete;
+    public IntDelegate OnWaveVictory;
 
-    public StandardDelegate OnStageComplete;
+    public WaveInfoDelegate OnStageComplete;
     public CharacterDelegate OnCharacterSummoned;
     public StageDelegate OnStageSetup;
 
@@ -36,10 +43,14 @@ public class EventProvider
     public CombatPhaseDelegate OnPhaseExiting;
     public StandardDelegate OnCombatHasEnded;
     public BoonsDelegate OnBoonOffer;
-    public StandardDelegate OnWaveReady;
+    public WaveInfoDelegate OnWaveSetupStart;
+    public WaveInfoDelegate OnWaveReady;
+    public CharactersDelegate OnEligibleTargetsChanged;
+
+    public StandardDelegate OnInput_RetryResponse;
+    public BoolDelegate OnInput_ReviveResponse;
     public StandardDelegate OnInput_BackOutOfTargetSelection;
     public AbilityCategoryDelegate OnInput_CombatantChoseAbility;
     public CharacterDelegate OnInput_CombatantChoseTarget;
     public BoonDelegate OnInput_BoonSelected;
-    public CharactersDelegate OnEligibleTargetsChanged;
 }

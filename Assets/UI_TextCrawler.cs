@@ -11,9 +11,15 @@ public class UI_TextCrawler : MonoBehaviour
     public float DISPLAY_DURATION = 1.25f;
     public float CHECK_QUEUE_TIMEOUT = 0.25f;
     string SpellItOut = "";
+    Coroutine _runningCoroutine;
 
     void Start() {
         StartCoroutine(Crawl());
+    }
+
+    public void ClearQueue() {
+        MessageQueue.Clear();
+        _CrawlText.text = "";
     }
 
     IEnumerator Crawl() {
@@ -39,6 +45,10 @@ public class UI_TextCrawler : MonoBehaviour
         }
     }
     public void EnqueueMessage(string message) {
+        Debug.Log("QUEUE" + message);
+        if (MessageQueue.Contains(message)) {
+            return;
+        }
         MessageQueue.Enqueue(message);
     }
 }

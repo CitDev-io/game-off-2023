@@ -16,6 +16,7 @@ MonoBehaviour:
   _PowerType: 0
   _TeamType: 1
   _PlayerClass: 0
+  ScaleBounty: 5
   _Portrait: {fileID: 21300000, guid: 950af7f63186b7646b172179a442af1f, type: 3}
   _Skin: {fileID: 21300000, guid: 8d57aeb40e2762c4185be4d141a119e4, type: 3}
   _SpineSkeleton: {fileID: 11400000, guid: 5ca9d2148250d154f9241d9caca88335, type: 2}
@@ -31,3 +32,10 @@ MonoBehaviour:
   _BaseSpecialMax: 70
   SupportTreeLevel: 0
   AttackTreeLevel: 0
+  IsBoss: 1
+  WaveIntroTaunt: "Well, well, look who\u2019s wandered quite near. You\u2019re either
+    very brave or foolish, my dear. Come to find children, no, trouble\u2019s what
+    you\u2019ll meet. Like those before you, your journey ends in defeat!"
+  WaveDefeatTaunt: "Defeat? No biggie. My roots are quite spry. I\u2019ll sprout
+    back in no time, no need for goodbye. Butterbelch fancied a snack, I\u2019m kind
+    so I share. He awaits you below, venture further if you dare."

@@ -12,16 +12,7 @@ public class CombatReferee : MonoBehaviour
     private PartyConfig PlayerParty;
 
     [Space(height: 20)]
-
-    [Header("Temporary Exposed Plumbing")]
-    
-    // TODO: Give to UIManager
-    public GameObject WinUI;
-    // TODO: Give to UIManager
-    public GameObject LoseUI;
-    //TODO: give to UIManager
-    public GameObject ReviveUI;
-
+  
     // Long-Term Referee Stuff
     public GameState gameState;
     public CombatState combatState;
@@ -57,8 +48,17 @@ public class CombatReferee : MonoBehaviour
         eventProvider.OnInput_CombatantChoseTarget += TargetSelected;
         eventProvider.OnInput_BackOutOfTargetSelection += HandleUserTargetBackout;
         eventProvider.OnInput_BoonSelected += HandleUserChoseBoon;
+        eventProvider.OnInput_ReviveResponse += UserResponse_Revive;
+        eventProvider.OnInput_RetryResponse += HandleWaveRetryRequest;
         SetupParty();
         StartCoroutine(SetupWave());
+    }
+
+    void HandleWaveRetryRequest() {
+        if (gameState.LivesLeft == 0) return;
+
+        gameState.LivesLeft--;
+        WaveRetry();
     }
 
 
@@ -127,7 +127,6 @@ public class CombatReferee : MonoBehaviour
                 combatState.CurrentCombatant.TurnEnd();
 
                 if (combatState.CurrentCombatant.HasBuff<BuffMultistrike>()) {
-                    Debug.Log(combatState.CurrentCombatant.gameObject.name + " - MULTISTRIKE TRIGGER. Adding another turn.");
                     combatState.AddCharacterTurnNext(combatState.CurrentCombatant);
                 }
 
@@ -150,7 +149,6 @@ public class CombatReferee : MonoBehaviour
     }
 
     IEnumerator CombatPhaseDriver() {
-        Debug.Log("PHASE DRIVER STARTED");
         CombatPhase nextPhase = CombatPhase.INIT;
         bool CombatIsComplete = false;
 
@@ -158,7 +156,6 @@ public class CombatReferee : MonoBehaviour
             while (__uiManager.IsPerforming || __stageChoreographer.IsPerforming()) {
                 yield return new WaitForSeconds(0.1f);
             }
-Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " - PHASE SET TO: " + nextPhase.ToString());
             CurrentCombatPhase = nextPhase;
 
             eventProvider.OnPhaseAwake?.Invoke(CurrentCombatPhase, combatState.CurrentCombatant);
@@ -167,7 +164,6 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " - PHASE SET TO
                 yield return new WaitForSeconds(0.1f);
             }
 
-Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE LOGIC GO: " + CurrentCombatPhase.ToString());
             nextPhase = ExecuteGameLogicForPhase(CurrentCombatPhase);
 
             if (CheckCombatWinConditions() != CombatResult.IN_PROGRESS) {
@@ -175,7 +171,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE LOGIC GO
                 eventProvider.OnCombatHasEnded?.Invoke();
             } else {
                 eventProvider.OnPhasePrompt?.Invoke(CurrentCombatPhase, combatState.CurrentCombatant);
-Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED: " + CurrentCombatPhase.ToString());
+
                 while (CombatAwaitingUser) {
                     yield return new WaitForSeconds(0.1f);
                 }
@@ -241,9 +237,13 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
    
     // TODO: Simplify into less calls to combatState
     IEnumerator SetupWave() {
-         // TODO: orchestrate through stagechoreo
-        ClearStage();
+        WaveInfo info = waveProvider.GetWaveInfo(gameState.StageNumber, gameState.WaveNumber);
+        eventProvider.OnWaveSetupStart?.Invoke(info);
+        while (__uiManager.IsPerforming || __stageChoreographer.IsPerforming()) {
+            yield return new WaitForSeconds(0.1f);
+        }
 
+        ClearStage();
         // clear out enemies from last wave
         combatState.FullCombatantList.RemoveAll(combatant => combatant.Config.TeamType == TeamType.CPU);
 
@@ -260,7 +260,6 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
         // set up current combatant
         combatState.MoveToNextCombatant();
-
         if (gameState.WaveNumber == 1) {
             StageConfig stageConfig = waveProvider.GetStageConfig(gameState.StageNumber);
             eventProvider.OnStageSetup?.Invoke(stageConfig);
@@ -269,8 +268,11 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         while (__uiManager.IsPerforming || __stageChoreographer.IsPerforming()) {
             yield return new WaitForSeconds(0.1f);
         }
+        eventProvider.OnWaveReady?.Invoke(info);
 
-        eventProvider.OnWaveReady?.Invoke();
+        while (__uiManager.IsPerforming || __stageChoreographer.IsPerforming()) {
+            yield return new WaitForSeconds(0.1f);
+        }
         // let the phase driver run this
         StartCoroutine(CombatPhaseDriver());
     }
@@ -298,27 +300,23 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     }
 
     public void UserResponse_Revive(bool doIt) {
-        ReviveUI.SetActive(false);
         if (doIt && gameState.ScalesOwned >= 5) {
             gameState.ScalesOwned -= 5;
-            ReviveAllPCs();
+            ReviveAndHealAllPCs();
         }
         WaveChangeStep2();
     }
 
-    // fine here
     void WaveChangeStep1() {
-        Debug.Log("WAVECHANGE1");
         combatState.MoveToNextCombatant(); // lets us make sure we cleaned up after last turn
         gameState.ScalesOwned += combatState.GetDefeatedCPUs().Count;
         if (gameState.ScalesOwned >= 5 && combatState.GetDefeatedPCs().Count > 0) {
-            ReviveUI.SetActive(true);
+            eventProvider.OnReviveOffered?.Invoke();
         } else {
             WaveChangeStep2();
         }
     }
 
-    // fine here
     void WaveChangeStep2() {
         // make up the boon offer
         List<BaseBoonResolver> boons = boonLibrary.GetRandomBoonOptionsForParty(3);
@@ -327,56 +325,59 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         eventProvider.OnBoonOffer?.Invoke(boons);
     }
 
-    // fine here
+    void WaveRetry() {
+        combatState.LightPoints = 0;
+        combatState.ShadowPoints = 0;
+        ReviveAndHealAllPCs();
+        StartCoroutine(SetupWave());
+    }
+
     void WaveChangeover() {
         gameState.WaveNumber++;
         StartCoroutine(SetupWave());
     }
 
-    // fine here
-    void StageChangeover() {
+    IEnumerator StageChangeover() {
         combatState.MoveToNextCombatant(); // lets us make sure we cleaned up after last turn
-        gameState.ScalesOwned += combatState.GetDefeatedCPUs().Count;
+        gameState.ScalesOwned += combatState.GetDefeatedCPUs().Sum(c => c.Config.ScaleBounty);
+        WaveInfo FinalWaveDefeated = waveProvider.GetWaveInfo(gameState.StageNumber, gameState.WaveNumber);
+        eventProvider.OnStageComplete?.Invoke(FinalWaveDefeated);
+        while (__uiManager.IsPerforming || __stageChoreographer.IsPerforming()) {
+            yield return new WaitForSeconds(0.1f);
+        }
         gameState.StageNumber++;
         gameState.WaveNumber = 1;
-        eventProvider.OnStageComplete?.Invoke();
-        StageResetPlayerCharacters();
+        ReviveAndHealAllPCs();
         StartCoroutine(SetupWave());
-    }
-
-    // fine here
-    void StageResetPlayerCharacters() {
-        List<Character> PCs = combatState.GetAlivePCs();
-        foreach (Character pc in PCs) {
-            pc.currentHealth = pc.Config.BaseHP;
-        }
     }
 
     // TODO: needs love, but is close
     void PROGRESSBOARD() {
         // Check Win Conditions
         if (combatState.GetAlivePCs().Count == 0) {
-            // TODO: Should trigger an event and let UI Manager handle this.
-            Debug.Log("The CPUs have won!");
-            LoseUI.SetActive(true);
+            eventProvider.OnWaveComplete?.Invoke();
+            eventProvider.OnGameOver?.Invoke(gameState.LivesLeft);
             return;
         } else if (combatState.GetAliveCPUs().Count == 0) {
             if (gameState.WaveNumber == waveProvider.WaveCountInStage(gameState.StageNumber)) {
                 if (gameState.StageNumber == waveProvider.StageCount) {
-                    // TODO: Should trigger an event and let UI Manager handle this.
-                    Debug.Log("The PCs have won the game!");
-                    WinUI.SetActive(true);
+                    eventProvider.OnWaveComplete?.Invoke();
+                    eventProvider.OnGameVictory?.Invoke();
                     return;
                 } else {
-                    StageChangeover();
+                    eventProvider.OnWaveComplete?.Invoke();
+                    StartCoroutine(StageChangeover());
                     return;
                 }
             } else {
+                eventProvider.OnWaveComplete?.Invoke();
+                eventProvider.OnWaveVictory?.Invoke(gameState.WaveNumber);
                 WaveChangeStep1();
                 return;
             }
         }
-    }    
+    }
+
 
     // good for ref
     void TargetSelected(Character selectedCharacter) {
@@ -539,16 +540,18 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         }
 
         if (Input.GetKeyDown(KeyCode.R)) {
-            ReviveAllPCs();
+            ReviveAndHealAllPCs();
         }
     }
 
     [ContextMenu("Revive All PCs")]
-    void ReviveAllPCs() {
-        List<Character> PCs = combatState.GetAllPCs();
+    void ReviveAndHealAllPCs() {
+        List<Character> PCs = combatState.GetAllPCs().Where(p => p.isDead).ToList();
         PCs.ForEach(c => combatState.ReviveCharacter(
             new ReviveOrder(c, 100, null)
         ));
+
+        combatState.GetAllPCs().ForEach(c => c.currentHealth = c.Config.BaseHP);
     }
 
     [ContextMenu("Defeat Wave")]
