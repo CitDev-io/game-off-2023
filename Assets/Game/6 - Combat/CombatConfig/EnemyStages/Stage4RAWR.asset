@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a37d62a4904393d4ba8b4798c11a8be6, type: 3}
   m_Name: Stage4RAWR
   m_EditorClassIdentifier: 
+  StageName: Molten Roost
+  BossName: Butterbelch
+  BossImage: {fileID: 21300000, guid: 7b678ddd6bf5f5e47acbd518055243d6, type: 3}
+  BackgroundImage: {fileID: 21300000, guid: 927768e619be54a4caa0a1a11f9d4f59, type: 3}
   Wave1:
   - {fileID: 11400000, guid: caec8b81c4b040949825129bd2b75c91, type: 2}
   - {fileID: 11400000, guid: 13ecd230498328c458c7cc32b2b04d67, type: 2}
@@ -37,7 +41,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6e6f8707d6ee5c844a6790e6a381f532, type: 2}
   Wave5:
   - {fileID: 11400000, guid: 266441538e9eefa4a9c2b5bcfb98ea6c, type: 2}
-  - {fileID: 11400000, guid: 266441538e9eefa4a9c2b5bcfb98ea6c, type: 2}
   - {fileID: 11400000, guid: 14122647f411d72408e8a236eac2d907, type: 2}
+  - {fileID: 11400000, guid: 266441538e9eefa4a9c2b5bcfb98ea6c, type: 2}
   Wave6: []
   Wave7: []

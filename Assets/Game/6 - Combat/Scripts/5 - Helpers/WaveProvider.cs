@@ -8,6 +8,14 @@ public class WaveProvider : IWaveProvider
     private EnemySetList _enemySetList;
 
     public int StageCount => _enemySetList.GameStages.Count;
+
+    public StageConfig GetStageConfig(int stageNum) {
+        if (_enemySetList.GameStages.Count < stageNum) {
+            return _enemySetList.GameStages[0];
+        }
+        return _enemySetList.GameStages[stageNum-1];
+    }
+
     public int WaveCountInStage(int stageNum) {
         if (_enemySetList.GameStages.Count < stageNum) {
             return 1;

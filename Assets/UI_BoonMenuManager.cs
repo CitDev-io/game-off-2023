@@ -22,6 +22,8 @@ public class UI_BoonMenuManager : MonoBehaviour
 
     List<BaseBoonResolver> _boons;
     public BaseBoonResolver CurrentSelection;
+    Coroutine _swipeyRoutine;
+    Coroutine _sunRoutine;
 
     public void ToggleLeft() {
         if (_boons.Count == 0) return;
@@ -49,8 +51,10 @@ public class UI_BoonMenuManager : MonoBehaviour
 
     public void OfferBoons(List<BaseBoonResolver> boons) {
         SetBoonOffers(boons);
-        StartCoroutine(DoAppear(0.55f, 179.9f));
-        StartCoroutine(IconAppear());
+        if (_sunRoutine != null) StopCoroutine(_sunRoutine);
+        _sunRoutine = StartCoroutine(IconAppear());
+        if (_swipeyRoutine != null) StopCoroutine(_swipeyRoutine);
+        _swipeyRoutine = StartCoroutine(DoAppear(0.55f, 179.9f));
     }
 
     void SetBoonOffers(List<BaseBoonResolver> boons) {
@@ -93,8 +97,10 @@ public class UI_BoonMenuManager : MonoBehaviour
     }
 
     void DoDisappearPerformance() {
-        StartCoroutine(DoAppear(0f, 0f));
-        StartCoroutine(IconDisappear());
+        if (_swipeyRoutine != null) StopCoroutine(_swipeyRoutine);
+        _swipeyRoutine = StartCoroutine(DoAppear(0f, 0f));
+        if (_sunRoutine != null) StopCoroutine(_sunRoutine);
+        _sunRoutine = StartCoroutine(IconDisappear());
     }
 
     IEnumerator IconDisappear() {
@@ -131,7 +137,6 @@ public class UI_BoonMenuManager : MonoBehaviour
         SwooshModal.SetActive(true);
         yield return new WaitForSeconds(initialDelay);
 
-        Debug.Log(Mathf.Abs(SwooshModal.transform.rotation.eulerAngles.z - TargetRotation) );
         while (Mathf.Abs(SwooshModal.transform.rotation.eulerAngles.z - TargetRotation) > 0.5f) {
             SwooshModal.transform.rotation = Quaternion.Lerp(SwooshModal.transform.rotation, Quaternion.Euler(0f, 0f, TargetRotation+0.1f), SPINSPEED);
 
@@ -141,7 +146,9 @@ public class UI_BoonMenuManager : MonoBehaviour
         }
         SwooshModal.transform.rotation = Quaternion.Euler(0f, 0f, TargetRotation);
         if (TargetRotation == 0f) {
+            SwooshModal.transform.rotation = Quaternion.identity;
             SwooshModal.SetActive(false);
+            PanelUI.SetActive(false);
         }
     }
 }

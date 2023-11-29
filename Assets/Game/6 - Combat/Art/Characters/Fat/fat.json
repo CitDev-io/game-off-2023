@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "i9wFGAY3gAc",
+	"hash": "sPmMQfiFOA8",
 	"spine": "4.1.24",
 	"x": -722,
 	"y": -60,
@@ -12,7 +12,8 @@
 "bones": [
 	{ "name": "root" },
 	{ "name": "fat dragon", "parent": "root", "length": 728.56, "rotation": 83.35, "x": -108.11, "y": 49.25 },
-	{ "name": "shadow", "parent": "root", "x": 243.89, "y": 61.96 }
+	{ "name": "shadow", "parent": "root", "x": 243.89, "y": 61.96 },
+	{ "name": "text", "parent": "shadow", "rotation": 83.35, "x": -233.46, "y": 776.55 }
 ],
 "slots": [
 	{ "name": "shadow", "bone": "shadow", "attachment": "shadow" },

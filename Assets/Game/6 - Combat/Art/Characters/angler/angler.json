@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "l5QE09YvkyA",
+	"hash": "CGw+Ll6qpRg",
 	"spine": "4.1.24",
 	"x": -384,
 	"y": -18,
@@ -12,7 +12,8 @@
 "bones": [
 	{ "name": "root" },
 	{ "name": "angler dragon", "parent": "root", "length": 456.36, "rotation": 39.11, "x": -70.84, "y": 51.18 },
-	{ "name": "shadow", "parent": "root", "x": 30.53, "y": 14.15 }
+	{ "name": "shadow", "parent": "root", "x": 30.53, "y": 14.15 },
+	{ "name": "text", "parent": "shadow", "rotation": 39.11, "x": 188.64, "y": 372.77 }
 ],
 "slots": [
 	{ "name": "shadow", "bone": "shadow", "attachment": "shadow" },

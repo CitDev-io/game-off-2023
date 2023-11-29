@@ -52,7 +52,6 @@ public class StageChoreographer : MonoBehaviour
     }
 
     void HandleStageComplete() {
-        Debug.Log("CHECK " + MyActors.Count);
         MyActors
             .Where(actor => actor._character.isDead && actor._character.Config.TeamType == TeamType.PLAYER)
             .ToList()
@@ -76,12 +75,14 @@ public class StageChoreographer : MonoBehaviour
         if (buff is BuffPolymorph) {
             PolymorphCharacter(buff.Target, true);
         }
+        buff.Target.GetComponent<ActorCharacter>().FloatingBuffDown(buff);
     }
 
     void HandleBuffRemoved(Buff buff) {
         if (buff is BuffPolymorph) {
             PolymorphCharacter(buff.Target, false);
         }
+        buff.Target.GetComponent<ActorCharacter>().FloatingBuffUp(buff);
     }
 
     void HandleWaveReady() {
@@ -126,9 +127,11 @@ public class StageChoreographer : MonoBehaviour
         // } else {
         //     sourceMotor.EnqueuePerformance(CharacterActorPerformance.SPECIALATTACK);
         // }
+        ActorCharacter victimMotor = cd.Target.GetComponent<ActorCharacter>();
+
+        victimMotor.FloatingDamageText(cd.DamageToHealth);
 
         if (cd.DamageToHealth > 0) {
-            ActorCharacter victimMotor = cd.Target.GetComponent<ActorCharacter>();
             
             victimMotor.EnqueuePerformance(CharacterActorPerformance.TAKEDAMAGE);
             if (cd.Target.isDead) {

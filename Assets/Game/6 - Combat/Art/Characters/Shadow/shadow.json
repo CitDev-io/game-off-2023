@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "5BiECTS0mCU",
+	"hash": "cYhS52fRmww",
 	"spine": "4.1.24",
 	"x": -387,
 	"y": -7,
@@ -11,7 +11,8 @@
 },
 "bones": [
 	{ "name": "root" },
-	{ "name": "shadow dragon", "parent": "root", "length": 458.81, "rotation": -176.79, "x": 224.35, "y": 102.26 }
+	{ "name": "shadow dragon", "parent": "root", "length": 458.81, "rotation": -176.79, "x": 224.35, "y": 102.26 },
+	{ "name": "text", "parent": "shadow dragon", "rotation": 176.79, "x": 226.17, "y": -486.72 }
 ],
 "slots": [
 	{ "name": "shadow dragon", "bone": "shadow dragon", "attachment": "shadow dragon" }

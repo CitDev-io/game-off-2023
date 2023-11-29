@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "YtDEkJ3QdwE",
+	"hash": "ulYv4otzvcw",
 	"spine": "4.1.24",
 	"x": -514,
 	"y": -18,
@@ -12,7 +12,8 @@
 "bones": [
 	{ "name": "root" },
 	{ "name": "pirate", "parent": "root", "length": 525.33, "rotation": 87.6, "x": -22.56, "y": 51.19 },
-	{ "name": "shadow", "parent": "root", "x": 47.49, "y": 13.55 }
+	{ "name": "shadow", "parent": "root", "x": 47.49, "y": 13.55 },
+	{ "name": "text", "parent": "shadow", "rotation": 87.6, "x": -37, "y": 597.92 }
 ],
 "slots": [
 	{ "name": "shadow", "bone": "shadow", "attachment": "shadow" },

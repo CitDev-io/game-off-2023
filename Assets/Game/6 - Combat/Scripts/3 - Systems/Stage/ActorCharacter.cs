@@ -14,10 +14,6 @@ public class ActorCharacter : MonoBehaviour
     public TMP_Text NameTicker;
     [SerializeField]
     public TMP_Text StaggerTicker; 
-    [SerializeField]
-    public GameObject TurnIndicator;
-    public GameObject HighlightIndicator;
-    public UI_CharacterElementIndicator ElementIndicator;
     GameObject _displayLayer;
     SpriteRenderer _skin;
     SkeletonAnimation _spineSkin;
@@ -30,20 +26,32 @@ public class ActorCharacter : MonoBehaviour
     public Sprite CritterSkinSprite;
     public SkeletonDataAsset CritterSkin2;
     public Sprite CritterSkinSprite2;
+    
+    [Header("Floating Prefabs")]
+    public GameObject DamageTextPrefab;
+    public GameObject BuffUpPrefab;
+    public GameObject BuffDownPrefab;
+    
+    [Header("Static Decorators")]
+    public GameObject FloatingBrokenIcon;
+    public GameObject TurnIndicator;
+    public GameObject HighlightIndicator;
 
-
+    [HideInInspector]
     public Character _character;
     void Awake() {
         _character = GetComponent<Character>();
         _displayLayer = transform.Find("DisplayLayer").gameObject;
         _skin = _displayLayer.transform.Find("Skin").GetComponent<SpriteRenderer>();
         _spineSkin = _displayLayer.transform.Find("SpineSkin").GetComponent<SkeletonAnimation>();
+        FloatingBrokenIcon.SetActive(false);
+        FloatingBrokenIcon.transform.position = OverHeadPosition() + new Vector3(0f, 0.5f, 0f);
     }
 
     void Start()
     {
         IN_SPINE_MODE = _character.Config.SpineSkeleton != null;
-        ElementIndicator.SetPowerType(_character.Config.PowerType);
+        // ElementIndicator.SetPowerType(_character.Config.PowerType);
         GetDressed();
         SpineEventSubscribe();
         StartCoroutine(BrilliantActing());
@@ -93,7 +101,44 @@ public class ActorCharacter : MonoBehaviour
         }
     }
 
+    public void FloatingDamageText(int dmg) {
+        if (dmg < 0) {
+            FloatingDamageText((-dmg).ToString(), Color.green);
+        } else if (dmg == 0) {
+            FloatingDamageText("miss", Color.white);    
+        } else {
+            FloatingDamageText((-dmg).ToString(), Color.red);
+        }
+    }
 
+    Vector3 OverHeadPosition() {
+        if (IN_SPINE_MODE) {
+            var bone = _spineSkin.skeleton.FindBone("text");
+            if (bone == null) {
+                return transform.position;
+            }
+            return bone.GetWorldPosition(_spineSkin.transform);
+        }
+        return transform.position + new Vector3(0f, 2f, 0f);
+    }
+
+    void FloatingDamageText(string dmg, Color color) {
+        Vector3 offset = new Vector3(Random.Range(-0.5f, 0.5f), 0.5f, 0f);
+        GameObject floatingText = Instantiate(DamageTextPrefab, OverHeadPosition() + offset, Quaternion.identity);
+        floatingText.GetComponent<UI_FloatingText>().Float(dmg, color);
+    }
+
+    public void FloatingBuffUp(Buff buff) {
+        Vector3 offset = new Vector3(Random.Range(-0.5f, 0.5f), 0.5f, 0f);
+        GameObject floatingBuff = Instantiate(BuffUpPrefab, OverHeadPosition() + offset, Quaternion.identity);
+        floatingBuff.GetComponent<UI_FloatingBuffUp>().ShowBuff(buff);
+    }
+
+    public void FloatingBuffDown(Buff buff) {
+        Vector3 offset = new Vector3(0f, 1.5f, 0f);
+        GameObject floatingBuff = Instantiate(BuffDownPrefab, OverHeadPosition()+offset, Quaternion.identity);
+        floatingBuff.GetComponent<UI_FloatingBuffDown>().ShowBuff(buff);
+    }
 
     public void EnqueuePerformance(CharacterActorPerformance performance) {
         if (performance == CharacterActorPerformance.DIE && _performanceQueue.Contains(CharacterActorPerformance.DIE)) {
@@ -184,6 +229,12 @@ public class ActorCharacter : MonoBehaviour
             HighlightIndicator.SetActive(true);
         } else {
             HighlightIndicator.SetActive(false);
+        }
+
+        if (_character.Config.BaseSP > 0 && _character.currentStagger == 0 && !_character.isDead) {
+            FloatingBrokenIcon.SetActive(true);
+        } else {
+            FloatingBrokenIcon.SetActive(false);
         }
     }
 

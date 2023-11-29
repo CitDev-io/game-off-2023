@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a37d62a4904393d4ba8b4798c11a8be6, type: 3}
   m_Name: Stage2-Starting
   m_EditorClassIdentifier: 
+  StageName: Bonevault Sanctum
+  BossName: Grimbones
+  BossImage: {fileID: 21300000, guid: 581b4186e32f09544aba924bf62cb9ac, type: 3}
+  BackgroundImage: {fileID: 21300000, guid: 1be9de880e7380243b3294463181d11d, type: 3}
   Wave1:
   - {fileID: 11400000, guid: 1156211b837ee604591b7da8f6254557, type: 2}
   - {fileID: 11400000, guid: 6c1c49b459765da4dbe652945258f34e, type: 2}
@@ -33,7 +37,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c446058bb7970e44398486f7bd5c5c15, type: 2}
   Wave5:
   - {fileID: 11400000, guid: caec8b81c4b040949825129bd2b75c91, type: 2}
-  - {fileID: 11400000, guid: c446058bb7970e44398486f7bd5c5c15, type: 2}
   - {fileID: 11400000, guid: daff1d6cbeae45e4796862a86f2886f8, type: 2}
+  - {fileID: 11400000, guid: c446058bb7970e44398486f7bd5c5c15, type: 2}
   Wave6: []
   Wave7: []

@@ -4,6 +4,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "StageConfig", menuName = "GameOff2023/New Stage+Waves Configuration")]
 public class StageConfig : ScriptableObject
 {
+    public string StageName;
+    public string BossName;
+    public Sprite BossImage;
+    public Sprite BackgroundImage;
     public List<CharacterConfig> Wave1;
     public List<CharacterConfig> Wave2;
     public List<CharacterConfig> Wave3;

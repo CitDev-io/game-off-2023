@@ -71,14 +71,59 @@ public class UI_PortraitController : MonoBehaviour
 
         Sprite blank = Resources.Load<Sprite>("bufficons/blank");
 
-        Buff1.sprite = Character.Buffs.Count > 0 ? Resources.Load<Sprite>(Character.Buffs[0].PortraitArt) : blank;
+        if (Character.Buffs.Count > 0) {
+            Buff1.sprite = Resources.Load<Sprite>(Character.Buffs[0].PortraitArt);
+            if (Character.Buffs[0].isDebuff) {
+                Buff1.color = Color.red;
+            } else {
+                Buff1.color = Color.white;
+            }
+        } else {
+            Buff1.sprite = blank;
+        }
 
-        Buff2.sprite = Character.Buffs.Count > 1 ? Resources.Load<Sprite>(Character.Buffs[1].PortraitArt) : blank;
+        if (Character.Buffs.Count > 1) {
+            Buff2.sprite = Resources.Load<Sprite>(Character.Buffs[1].PortraitArt);
+            if (Character.Buffs[1].isDebuff) {
+                Buff2.color = Color.red;
+            } else {
+                Buff2.color = Color.white;
+            }
+        } else {
+            Buff2.sprite = blank;
+        }
 
-        Buff3.sprite = Character.Buffs.Count > 2 ? Resources.Load<Sprite>(Character.Buffs[2].PortraitArt) : blank;
+        if (Character.Buffs.Count > 2) {
+            Buff3.sprite = Resources.Load<Sprite>(Character.Buffs[2].PortraitArt);
+            if (Character.Buffs[2].isDebuff) {
+                Buff3.color = Color.red;
+            } else {
+                Buff3.color = Color.white;
+            }
+        } else {
+            Buff3.sprite = blank;
+        }
 
-        Buff4.sprite = Character.Buffs.Count > 3 ? Resources.Load<Sprite>(Character.Buffs[3].PortraitArt) : blank;
+        if (Character.Buffs.Count > 3) {
+            Buff4.sprite = Resources.Load<Sprite>(Character.Buffs[3].PortraitArt);
+            if (Character.Buffs[3].isDebuff) {
+                Buff4.color = Color.red;
+            } else {
+                Buff4.color = Color.white;
+            }
+        } else {
+            Buff4.sprite = blank;
+        }
 
-        Buff5.sprite = Character.Buffs.Count > 4 ? Resources.Load<Sprite>(Character.Buffs[4].PortraitArt) : blank;
+        if (Character.Buffs.Count > 4) {
+            Buff5.sprite = Resources.Load<Sprite>(Character.Buffs[4].PortraitArt);
+            if (Character.Buffs[4].isDebuff) {
+                Buff5.color = Color.red;
+            } else {
+                Buff5.color = Color.white;
+            }
+        } else {
+            Buff5.sprite = blank;
+        }
     }
 }

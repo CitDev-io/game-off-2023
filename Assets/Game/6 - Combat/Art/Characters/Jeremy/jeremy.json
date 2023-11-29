@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "yEqSbjQdhqk",
+	"hash": "1ge0EA6b/mA",
 	"spine": "4.1.24",
 	"x": -232,
 	"y": -34,
@@ -12,7 +12,8 @@
 "bones": [
 	{ "name": "root" },
 	{ "name": "jeremy", "parent": "root", "length": 433.48, "rotation": 78.73, "x": -63.82, "y": 18.74 },
-	{ "name": "shadow", "parent": "root", "x": 29.56, "y": -0.96 }
+	{ "name": "shadow", "parent": "root", "x": 29.56, "y": -0.96 },
+	{ "name": "text", "parent": "shadow", "rotation": 78.73, "x": 5.53, "y": 570.13 }
 ],
 "slots": [
 	{ "name": "jeremy shadow", "bone": "shadow", "attachment": "jeremy shadow" },

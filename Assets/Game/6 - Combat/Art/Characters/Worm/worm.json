@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "1CG+NQfjp74",
+	"hash": "gst5m65oOpM",
 	"spine": "4.1.24",
 	"x": -186,
 	"y": -16,
@@ -12,7 +12,8 @@
 "bones": [
 	{ "name": "root" },
 	{ "name": "worm", "parent": "root", "length": 375.84, "rotation": 55.88, "x": -92.3, "y": 53.16 },
-	{ "name": "shadow", "parent": "root", "x": 69.86, "y": 6.53 }
+	{ "name": "shadow", "parent": "root", "x": 69.86, "y": 6.53 },
+	{ "name": "text", "parent": "shadow", "rotation": 55.88, "x": 16.62, "y": 427.73 }
 ],
 "slots": [
 	{ "name": "worm wyrm shadow", "bone": "shadow", "attachment": "worm wyrm shadow" },

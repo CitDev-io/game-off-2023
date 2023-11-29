@@ -14,6 +14,7 @@ public delegate void ScaleDelegate(int light, int dark);
 public delegate void CalculatedDamageDelegate(CalculatedDamage cd);
 public delegate void BuffDelegate(Buff buff);
 public delegate void TurnOrderDelegate(Character character, List<Character> InQueue);
+public delegate void StageDelegate(StageConfig stageConfig);
 
 public class EventProvider
 {
@@ -25,9 +26,10 @@ public class EventProvider
     public EffectPlanDelegate OnEffectPlanExecutionStart;
     public EffectPlanDelegate OnEffectPlanExecutionComplete;
     public TurnOrderDelegate OnTurnOrderChanged;
+
     public StandardDelegate OnStageComplete;
     public CharacterDelegate OnCharacterSummoned;
-
+    public StageDelegate OnStageSetup;
 
     public CombatPhaseDelegate OnPhaseAwake;
     public CombatPhaseDelegate OnPhasePrompt;

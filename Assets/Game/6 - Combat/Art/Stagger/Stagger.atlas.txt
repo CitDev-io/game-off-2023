@@ -1,0 +1,17 @@
+Stagger.png
+size:172,153
+filter:Linear,Linear
+pma:true
+bottom
+bounds:85,6,85,72
+offsets:57,78,202,202
+line
+bounds:2,80,112,71
+offsets:49,70,202,202
+point
+bounds:116,90,61,45
+offsets:1,1,63,47
+rotate:90
+top
+bounds:2,2,81,76
+offsets:61,52,202,202

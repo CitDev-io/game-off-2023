@@ -15,6 +15,9 @@ public class UIManager : MonoBehaviour
     public UI_TextCrawler TextCrawlUI;
     public UI_ScalePanelManager ScalePanelUI;
     public UI_TurnOrderManager TurnOrderUI;
+    public UI_StageCurtain StageCurtainUI;
+    public UI_StageNameIntro StageNameUI;
+    public SpriteRenderer BackgroundImage;
     bool IsSelectingAbility = false;
     bool IsSelectingTarget = false;
     bool IsSelectingBoon = false;
@@ -28,9 +31,11 @@ public class UIManager : MonoBehaviour
     }
 
     public void BoonSelected(BaseBoonResolver boon) {
-        if (BoonTimeout) {
+        if (BoonTimeout || !IsSelectingBoon) {
             return;
         }
+        Debug.Log("SELECTED A BOON");
+        IsSelectingBoon = false;
         BoonTimeout = true;
         StartCoroutine(BoonTimeoutRoutine());
         BoonUI.Dismiss();
@@ -164,6 +169,27 @@ public class UIManager : MonoBehaviour
         _eventProvider.OnBuffAdded += HandleBuffAdded;
         _eventProvider.OnEffectPlanExecutionStart += HandleEffectPlanExecutionStart;
         _eventProvider.OnTurnOrderChanged += HandleTurnOrderChanged;
+        _eventProvider.OnStageSetup += HandleStageSetup;
+    }
+
+    void HandleStageSetup(StageConfig stageConfig) {
+        IsPerforming = true;
+        if (stageConfig.BackgroundImage != null) {
+            BackgroundImage.sprite = stageConfig.BackgroundImage;
+        }
+        StageNameUI.SetStageInfo(stageConfig);
+        StartCoroutine(IntroduceStageRoutine());
+    }
+
+    IEnumerator IntroduceStageRoutine() {
+        
+        yield return new WaitForSeconds(1f);
+        StageCurtainUI.gameObject.SetActive(true);
+        StageCurtainUI.CurtainUp();
+        yield return new WaitForSeconds(0.5f);
+        StageNameUI.IntroduceStage();
+        yield return new WaitForSeconds(4.5f);
+        IsPerforming = false;
     }
 
     void HandleTurnOrderChanged(Character character, List<Character> InQueue) {
@@ -237,7 +263,7 @@ public class UIManager : MonoBehaviour
             AbilityUI.SetAvailableAbilities(availableAbilities);
             AbilityUI.ToggleToSelectedAbility((int) AbilityCategory.BASICATTACK);
             AbilityUI.gameObject.SetActive(true);
-            AbilityUI.gameObject.transform.position = combatant.transform.position + new Vector3(-2.25f, 3.35f, .25f);
+            AbilityUI.gameObject.transform.position = combatant.transform.position + new Vector3(-2.5f, 3.35f, .25f);
             IsSelectingAbility = true;
             IsSelectingBoon = false;
             IsSelectingTarget = false;

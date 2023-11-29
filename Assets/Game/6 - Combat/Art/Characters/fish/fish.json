@@ -1,18 +1,19 @@
 {
 "skeleton": {
-	"hash": "qvzZ+O55uY8",
+	"hash": "TUGTxORQiV8",
 	"spine": "4.1.24",
 	"x": -118.28,
 	"y": -13,
 	"width": 248,
 	"height": 266.76,
-	"images": "./fish/images/",
+	"images": "./images/",
 	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Dragons/fish"
 },
 "bones": [
 	{ "name": "root" },
 	{ "name": "fish", "parent": "root", "length": 240.31, "rotation": 43.7, "x": -90.73, "y": 72.32 },
-	{ "name": "shadow", "parent": "root", "x": 1050.33, "y": -881.85 }
+	{ "name": "shadow", "parent": "root", "x": 1050.33, "y": -881.85 },
+	{ "name": "text", "parent": "shadow", "rotation": 43.7, "x": -977.61, "y": 1130.89 }
 ],
 "slots": [
 	{ "name": "shadow", "bone": "shadow", "attachment": "shadow" },

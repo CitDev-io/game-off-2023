@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "rmXzhFSt8PY",
+	"hash": "rc1jhz5JyWY",
 	"spine": "4.1.24",
 	"x": -172,
 	"y": -43,
@@ -12,7 +12,8 @@
 "bones": [
 	{ "name": "root" },
 	{ "name": "fire dragon", "parent": "root", "length": 238.92, "rotation": 59.76, "x": -45.22, "y": 20.6 },
-	{ "name": "shadow", "parent": "root", "x": 61.46, "y": 0.2 }
+	{ "name": "shadow", "parent": "root", "x": 61.46, "y": 0.2 },
+	{ "name": "text", "parent": "shadow", "rotation": 59.76, "x": -24.76, "y": 322.06 }
 ],
 "slots": [
 	{ "name": "fire dragon shadow", "bone": "shadow", "attachment": "fire dragon shadow" },

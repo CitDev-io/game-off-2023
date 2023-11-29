@@ -1,0 +1,104 @@
+{
+"skeleton": {
+	"hash": "iEuVaVk2+NE",
+	"spine": "4.1.24",
+	"x": -99,
+	"y": -51,
+	"width": 202,
+	"height": 202,
+	"images": "./images/",
+	"audio": "/Users/michaelha/Library/Mobile Documents/com~apple~CloudDocs/Game Jams/Game Off 2023/Spine/Stagger"
+},
+"bones": [
+	{ "name": "root" },
+	{ "name": "shield", "parent": "root", "x": 2.15, "y": 88.26 },
+	{ "name": "top", "parent": "shield", "length": 89.43, "rotation": 40.76, "x": -34.03, "y": -50 },
+	{ "name": "bottom", "parent": "shield", "length": 86.2, "rotation": 8.18, "x": -29.35, "y": -59.84 },
+	{ "name": "line", "parent": "shield", "x": 35.81, "y": -13.55 },
+	{ "name": "point", "parent": "shield", "x": 12.26, "y": -27.9 }
+],
+"slots": [
+	{ "name": "bottom", "bone": "bottom", "attachment": "bottom" },
+	{ "name": "top", "bone": "top", "attachment": "top" },
+	{ "name": "line", "bone": "line" },
+	{ "name": "point", "bone": "point" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"bottom": {
+				"bottom": { "x": 31.98, "y": 17.21, "rotation": -8.18, "width": 202, "height": 202 }
+			},
+			"line": {
+				"line": { "x": -35.95, "y": -24.71, "width": 202, "height": 202 }
+			},
+			"point": {
+				"point": { "x": -12.4, "y": -10.36, "width": 63, "height": 47 }
+			},
+			"top": {
+				"top": { "x": 33.33, "y": -13.23, "rotation": -40.76, "width": 202, "height": 202 }
+			}
+		}
+	}
+],
+"animations": {
+	"idle": {
+		"slots": {
+			"bottom": {
+				"rgba": [
+					{ "time": 1.2667, "color": "ffffffff" },
+					{ "time": 1.6, "color": "ffffff00" }
+				]
+			},
+			"line": {
+				"attachment": [
+					{ "time": 0.0667, "name": "line" },
+					{ "time": 0.2 }
+				]
+			},
+			"point": {
+				"attachment": [
+					{ "time": 0.1, "name": "point" },
+					{ "time": 0.1667 }
+				]
+			},
+			"top": {
+				"rgba": [
+					{ "time": 1.2667, "color": "ffffffff" },
+					{ "time": 1.6, "color": "ffffff00" }
+				]
+			}
+		},
+		"bones": {
+			"bottom": {
+				"translate": [
+					{ "time": 0.3 },
+					{ "time": 0.6671, "x": -26.64, "y": -17.78 }
+				]
+			},
+			"top": {
+				"translate": [
+					{
+						"time": 0.7016,
+						"curve": [ 0.798, 0, 0.895, 0, 0.745, 0, 0.947, 8.14 ]
+					},
+					{ "time": 0.9919, "y": -54.83 }
+				]
+			},
+			"line": {
+				"scale": [
+					{ "time": 0.0667, "x": 0.025, "y": 0.025 },
+					{ "time": 0.1667 }
+				]
+			},
+			"point": {
+				"translate": [
+					{ "time": 0.1, "x": 62.39, "y": 43.67 },
+					{ "time": 0.1333, "x": -24.97, "y": -12.15 }
+				]
+			}
+		}
+	}
+}
+}

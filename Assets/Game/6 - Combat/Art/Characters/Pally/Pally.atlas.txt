@@ -1,103 +1,108 @@
 Pally.png
-size:1060,267
+size:1131,269
 filter:Linear,Linear
 pma:true
 arm back
-bounds:501,110,117,155
+bounds:685,76,117,155
+rotate:90
 arm front
-bounds:620,113,102,152
+bounds:479,2,102,152
 offsets:1,0,103,153
+rotate:90
 belt
-bounds:501,69,133,39
+bounds:262,58,133,39
 offsets:1,1,135,41
 closed
-bounds:688,4,75,65
+bounds:842,2,75,65
 offsets:1,1,78,67
+rotate:90
 crotch armor
-bounds:996,94,68,48
+bounds:909,2,68,48
 offsets:1,1,70,50
-rotate:90
+dead
+bounds:210,4,41,15
+offsets:1,2,43,18
 foot back
-bounds:940,28,61,59
+bounds:754,15,61,59
 offsets:1,1,63,62
-rotate:90
 foot right
-bounds:1001,35,57,57
+bounds:979,5,57,57
 offsets:1,2,59,60
 grip
-bounds:864,3,81,74
+bounds:397,16,81,74
 offsets:1,1,84,76
 rotate:90
 hair
-bounds:835,86,87,46
+bounds:633,17,87,46
 offsets:1,2,90,50
-hand back bottom
-bounds:924,91,71,70
-offsets:1,1,73,72
 rotate:90
+hand back bottom
+bounds:681,4,71,70
+offsets:1,1,73,72
 head
-bounds:832,164,101,119
+bounds:957,166,101,119
 offsets:1,1,103,122
 rotate:90
 hurt
-bounds:793,134,44,15
-offsets:1067,821,2050,1538
+bounds:210,21,44,15
+offsets:1,1,46,17
 leg back
-bounds:708,77,34,64
+bounds:144,2,34,64
 offsets:1,0,35,65
 rotate:90
 leg right
-bounds:636,71,40,70
+bounds:1038,10,40,70
 offsets:3,0,43,78
 rotate:90
 mad
-bounds:774,99,59,21
+bounds:817,15,59,21
 offsets:2,1,62,23
+rotate:90
 mustache
-bounds:724,122,67,27
+bounds:262,29,67,27
 offsets:1,1,69,29
 norm
-bounds:774,77,59,20
+bounds:331,36,59,20
 offsets:1,1,61,22
 normal
-bounds:839,150,41,12
-offsets:1067,823,2050,1538
+bounds:633,3,41,12
+offsets:1,1,44,15
 nose
-bounds:882,136,26,16
+bounds:909,61,26,16
 offsets:1,1,29,18
-rotate:90
 scarf
-bounds:573,4,113,63
+bounds:147,38,113,63
 offsets:1,1,115,65
 scarf tassel
-bounds:168,2,51,116
+bounds:1078,151,51,116
 offsets:0,0,51,117
-rotate:90
+shadow
+bounds:685,195,270,72
+offsets:2,2,274,76
 shield
-bounds:168,55,168,210
+bounds:267,99,168,210
 offsets:3,2,172,228
-shoulder back
-bounds:953,164,101,100
-offsets:1,1,103,102
 rotate:90
+shoulder back
+bounds:950,64,101,100
+offsets:1,1,103,102
 shoulder front
-bounds:724,151,114,106
+bounds:842,79,114,106
 offsets:1,2,116,109
 rotate:90
 shoulder strap
-bounds:286,13,140,40
+bounds:2,3,140,40
 offsets:1,1,142,43
 skirt
-bounds:428,3,143,56
+bounds:2,45,143,56
 offsets:1,1,145,61
 sword
-bounds:2,2,263,164
+bounds:2,103,263,164
 offsets:1,2,265,167
-rotate:90
 tassel
-bounds:765,2,73,97
+bounds:1053,52,73,97
 offsets:1,2,75,107
-rotate:90
 torso
-bounds:338,61,161,204
+bounds:479,106,161,204
 offsets:1,1,164,206
+rotate:90

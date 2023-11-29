@@ -58,7 +58,7 @@ public class CombatReferee : MonoBehaviour
         eventProvider.OnInput_BackOutOfTargetSelection += HandleUserTargetBackout;
         eventProvider.OnInput_BoonSelected += HandleUserChoseBoon;
         SetupParty();
-        SetupWave();
+        StartCoroutine(SetupWave());
     }
 
 
@@ -240,8 +240,8 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
 
    
     // TODO: Simplify into less calls to combatState
-    void SetupWave() {
-        // TODO: orchestrate through stagechoreo
+    IEnumerator SetupWave() {
+         // TODO: orchestrate through stagechoreo
         ClearStage();
 
         // clear out enemies from last wave
@@ -261,8 +261,16 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         // set up current combatant
         combatState.MoveToNextCombatant();
 
+        if (gameState.WaveNumber == 1) {
+            StageConfig stageConfig = waveProvider.GetStageConfig(gameState.StageNumber);
+            eventProvider.OnStageSetup?.Invoke(stageConfig);
+        }
+
+        while (__uiManager.IsPerforming || __stageChoreographer.IsPerforming()) {
+            yield return new WaitForSeconds(0.1f);
+        }
+
         eventProvider.OnWaveReady?.Invoke();
-        Debug.Log(combatState.CurrentCombatant.Config.name + " ACTS FIRST");
         // let the phase driver run this
         StartCoroutine(CombatPhaseDriver());
     }
@@ -322,7 +330,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
     // fine here
     void WaveChangeover() {
         gameState.WaveNumber++;
-        SetupWave();
+        StartCoroutine(SetupWave());
     }
 
     // fine here
@@ -333,7 +341,7 @@ Debug.LogWarning(combatState.CurrentCombatant.gameObject.name + " PHASE PROMPTED
         gameState.WaveNumber = 1;
         eventProvider.OnStageComplete?.Invoke();
         StageResetPlayerCharacters();
-        SetupWave();
+        StartCoroutine(SetupWave());
     }
 
     // fine here

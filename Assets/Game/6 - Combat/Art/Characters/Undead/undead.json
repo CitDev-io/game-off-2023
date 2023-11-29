@@ -1,6 +1,6 @@
 {
 "skeleton": {
-	"hash": "kJyqlfolVK0",
+	"hash": "0Ragx2h6aSo",
 	"spine": "4.1.24",
 	"x": -471,
 	"y": -104,
@@ -12,7 +12,8 @@
 "bones": [
 	{ "name": "root" },
 	{ "name": "undead dragon", "parent": "root", "length": 508.65, "rotation": 78.12, "x": -79.99, "y": 42.35 },
-	{ "name": "shadow", "parent": "root", "x": 44.93, "y": 23.14 }
+	{ "name": "shadow", "parent": "root", "x": 44.93, "y": 23.14 },
+	{ "name": "text", "parent": "shadow", "rotation": 78.12, "x": 47.03, "y": 630.27 }
 ],
 "slots": [
 	{ "name": "shadow", "bone": "shadow", "attachment": "shadow" },
