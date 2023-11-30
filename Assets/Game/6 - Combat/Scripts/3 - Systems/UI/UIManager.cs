@@ -39,6 +39,7 @@ public class UIManager : MonoBehaviour
     }
 
     public void UserRetryResponse() {
+        Debug.Log("RETRY");
         ddol.PlaySound("Menu_Select");
         GameOverUI.gameObject.SetActive(false);
         _eventProvider.OnInput_RetryResponse?.Invoke();
@@ -46,28 +47,34 @@ public class UIManager : MonoBehaviour
 
     public void UserReviveResponse(bool revive) {
         if (CurrentSelectionState != SelectionState.REVIVE) return;
-        
+        Debug.Log("REVIVE");
         ddol.PlaySound("Menu_Select");
         CurrentSelectionState = SelectionState.NONE;
         ReviveUI.SetActive(false);
         _eventProvider.OnInput_ReviveResponse?.Invoke(revive);
     }
     public void TargetSelected(Character target) {
+        if (BoonTimeout || CurrentSelectionState != SelectionState.TARGET) {
+            return;
+        }
         ddol.PlaySound("Menu_Select");
         CurrentSelectionState = SelectionState.NONE;
         _eventProvider.OnInput_CombatantChoseTarget?.Invoke(target);
     }
     public void AbilitySelected(AbilityCategory category) {
+        if (BoonTimeout || CurrentSelectionState != SelectionState.ABILITY) {
+            return;
+        }
         ddol.PlaySound("Menu_Select");
         CurrentSelectionState = SelectionState.NONE;
         _eventProvider.OnInput_CombatantChoseAbility?.Invoke(category);
     }
 
     public void BoonSelected(BaseBoonResolver boon) {
-        ddol.PlaySound("Menu_Select");
         if (BoonTimeout || CurrentSelectionState != SelectionState.BOON) {
             return;
         }
+        ddol.PlaySound("Menu_Select");
         CurrentSelectionState = SelectionState.NONE;
         BoonTimeout = true;
         StartCoroutine(BoonTimeoutRoutine());
@@ -77,6 +84,7 @@ public class UIManager : MonoBehaviour
 
     public void RequestBackupToAbilitySelection() {
         ddol.PlaySound("Menu_Cancel");
+        CurrentSelectionState = SelectionState.NONE;
         TurnOrderUI.ClearSelection();
         _eventProvider.OnInput_BackOutOfTargetSelection?.Invoke();
     }
