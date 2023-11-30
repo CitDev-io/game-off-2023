@@ -29,32 +29,42 @@ public class UIManager : MonoBehaviour
     public SpriteRenderer BackgroundImage;
     public GameObject WinUI;
     public GameObject ReviveUI;
+    GameController_DDOL ddol;
     SelectionState CurrentSelectionState = SelectionState.NONE;
 
     bool BoonTimeout = false;
 
+    void Start() {
+        ddol = FindFirstObjectByType<GameController_DDOL>();     
+    }
+
     public void UserRetryResponse() {
+        ddol.PlaySound("Menu_Select");
         GameOverUI.gameObject.SetActive(false);
         _eventProvider.OnInput_RetryResponse?.Invoke();
     }
 
     public void UserReviveResponse(bool revive) {
         if (CurrentSelectionState != SelectionState.REVIVE) return;
-
+        
+        ddol.PlaySound("Menu_Select");
         CurrentSelectionState = SelectionState.NONE;
         ReviveUI.SetActive(false);
         _eventProvider.OnInput_ReviveResponse?.Invoke(revive);
     }
     public void TargetSelected(Character target) {
+        ddol.PlaySound("Menu_Select");
         CurrentSelectionState = SelectionState.NONE;
         _eventProvider.OnInput_CombatantChoseTarget?.Invoke(target);
     }
     public void AbilitySelected(AbilityCategory category) {
+        ddol.PlaySound("Menu_Select");
         CurrentSelectionState = SelectionState.NONE;
         _eventProvider.OnInput_CombatantChoseAbility?.Invoke(category);
     }
 
     public void BoonSelected(BaseBoonResolver boon) {
+        ddol.PlaySound("Menu_Select");
         if (BoonTimeout || CurrentSelectionState != SelectionState.BOON) {
             return;
         }
@@ -66,6 +76,7 @@ public class UIManager : MonoBehaviour
     }
 
     public void RequestBackupToAbilitySelection() {
+        ddol.PlaySound("Menu_Cancel");
         TurnOrderUI.ClearSelection();
         _eventProvider.OnInput_BackOutOfTargetSelection?.Invoke();
     }
@@ -292,6 +303,7 @@ public class UIManager : MonoBehaviour
         bool isBossInWave = waveInfo.Boss != null;
 
         if (isBossInWave) {
+            ddol.PlayMusic("Boss" + waveInfo.StageNumber.ToString());
             yield return new WaitForSeconds(.5f);
             // setup boss UI
             BossTauntUI.Taunt(waveInfo.Boss.Portrait, waveInfo.Boss.Name, waveInfo.Boss.WaveIntroTaunt);

@@ -162,6 +162,10 @@ public class ActorCharacter : MonoBehaviour
         if (e.Data.Name == "damage") {
             StartCoroutine(SpineFlashRedPerformance());
         }
+
+        if (e.Data.Name == "attack") {
+            FindFirstObjectByType<GameController_DDOL>().PlaySound("Swing_" + Random.Range(1, 4).ToString());
+        }
     }
 
     void ChangeSpineSkinRed() {

@@ -80,6 +80,7 @@ public class UI_BoonMenuManager : MonoBehaviour
 
     public void ToggleToBoonByIndex(int index) {
         CurrentSelection = _boons[index];
+        FindFirstObjectByType<GameController_DDOL>().PlaySound("Menu_Navigate");
         Option1.SetSelected(index == 0);
         Option2.SetSelected(index == 1);
         Option3.SetSelected(index == 2);

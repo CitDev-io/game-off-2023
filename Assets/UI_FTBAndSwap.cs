@@ -26,7 +26,7 @@ public class UI_FTBAndSwap : MonoBehaviour
         }
         yield return new WaitForSeconds(1.7f);
         GameObject.FindFirstObjectByType<GameController_DDOL>().FadeToStop();
-        yield return new WaitForSeconds(1.2f);
+        yield return new WaitForSeconds(1f);
         changer.SwapToScene("CombatScene");
     }
 }

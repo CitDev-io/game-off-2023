@@ -45,7 +45,6 @@ public class UI_TextCrawler : MonoBehaviour
         }
     }
     public void EnqueueMessage(string message) {
-        Debug.Log("QUEUE" + message);
         if (MessageQueue.Contains(message)) {
             return;
         }

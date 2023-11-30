@@ -24,6 +24,7 @@ public class UI_SettingsMenuManager : MonoBehaviour
     }
 
     public void OnClick() {
+        FindFirstObjectByType<GameController_DDOL>().PlaySound("Menu_Navigate");
         ToggleRotationDirection();
         if (!IsMoving) {
             StartCoroutine(DoRotation());

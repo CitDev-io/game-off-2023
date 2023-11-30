@@ -15,6 +15,7 @@ public class UI_VolumeChoiceIcon : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        FindFirstObjectByType<GameController_DDOL>().PlaySound("Menu_Select");
         SetVolume();
     }
 

@@ -24,6 +24,9 @@ public class UI_ScalePanelManager : MonoBehaviour
         }
 
         SetAnimation(0, animName, false);
+        if (_prevLight != lightCount || _prevShadow != shadowCount) {
+            FindFirstObjectByType<GameController_DDOL>().PlaySound("Scale_Click");
+        }
 
         _prevLight = lightCount;
         _prevShadow = shadowCount;

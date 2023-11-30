@@ -21,6 +21,7 @@ public class UI_MusicToggleButton : MonoBehaviour, IPointerClickHandler
     {
         bool setTo = !_gc.musicOn;
         DisplayMusicAs(setTo);
+        _gc.PlaySound("Menu_Select");
         _gc.SetMusicToggle(setTo);
     }
 

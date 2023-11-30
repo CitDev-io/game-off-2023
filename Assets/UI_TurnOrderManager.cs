@@ -71,6 +71,7 @@ public class UI_TurnOrderManager : MonoBehaviour
     public void ToggleRight() {
         Character next = findEligibleToTheLeft();
         if (next == null) return;
+        FindFirstObjectByType<GameController_DDOL>().PlaySound("Menu_Navigate");
         CurrentSelection.IsHighlighted = false;
 
         CurrentSelection = next;
@@ -80,6 +81,7 @@ public class UI_TurnOrderManager : MonoBehaviour
     public void ToggleLeft() {
         Character next = findEligibleToTheRight();
         if (next == null) return;
+        FindFirstObjectByType<GameController_DDOL>().PlaySound("Menu_Navigate");
         CurrentSelection.IsHighlighted = false;
 
         CurrentSelection = next;

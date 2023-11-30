@@ -21,7 +21,7 @@ public class UI_VolumePanel : MonoBehaviour, IPointerClickHandler
     }
 
     void TogglePanel() {
-        _gc.PlaySound("Click");
+        _gc.PlaySound("Menu_Navigate");
         showPanel = !showPanel;
         volumeSelectionPanel.SetActive(showPanel);
     }

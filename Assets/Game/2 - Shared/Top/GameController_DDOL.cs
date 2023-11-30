@@ -58,6 +58,13 @@ public class GameController_DDOL : MonoBehaviour
         audioSource_SFX.UnPause();
     }
 
+    public void PlaySound(AudioClip clip)
+    {
+        if (clip == null) return;
+
+        audioSource_SFX.PlayOneShot(clip);
+    }
+
     public void PlaySound(string clipName)
     {
         AudioClip audioClip = GetAudioClipByName(clipName);

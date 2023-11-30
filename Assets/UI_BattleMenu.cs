@@ -16,6 +16,7 @@ public class UI_BattleMenu : MonoBehaviour
     public GameObject Cursor2;
     public GameObject Cursor3;
 
+
     [SerializeField]
     AbilityCategory Selected = AbilityCategory.BASICATTACK;
    
@@ -52,6 +53,7 @@ public class UI_BattleMenu : MonoBehaviour
     public void ToggleUp() {
         int OPTIONCOUNT = ActiveOptionCount();
         int currentlySelected = (int)CurrentlySelected();
+        FindFirstObjectByType<GameController_DDOL>().PlaySound("Menu_Navigate");
         currentlySelected = (currentlySelected - 1 + OPTIONCOUNT) % OPTIONCOUNT;
         ToggleToSelectedAbility(currentlySelected);
     }
@@ -59,6 +61,7 @@ public class UI_BattleMenu : MonoBehaviour
     public void ToggleDown() {
         int OPTIONCOUNT = ActiveOptionCount();
         int currentlySelected = (int)CurrentlySelected();
+        FindFirstObjectByType<GameController_DDOL>().PlaySound("Menu_Navigate");
         currentlySelected = (currentlySelected + 1) % OPTIONCOUNT;
         ToggleToSelectedAbility(currentlySelected);
     }

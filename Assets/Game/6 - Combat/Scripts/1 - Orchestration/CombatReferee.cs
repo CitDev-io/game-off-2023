@@ -29,6 +29,7 @@ public class CombatReferee : MonoBehaviour
     CombatPhase CurrentCombatPhase = CombatPhase.INIT;
     [SerializeField] bool CombatAwaitingUser = false;
     bool UserRequestedRevertToAbilitySelection = false;
+    GameController_DDOL ddol;
 
     void Awake() {
         eventProvider = new EventProvider();
@@ -51,6 +52,7 @@ public class CombatReferee : MonoBehaviour
         eventProvider.OnInput_ReviveResponse += UserResponse_Revive;
         eventProvider.OnInput_RetryResponse += HandleWaveRetryRequest;
         SetupParty();
+        ddol = FindFirstObjectByType<GameController_DDOL>();        
         StartCoroutine(SetupWave());
     }
 
@@ -261,6 +263,7 @@ public class CombatReferee : MonoBehaviour
         // set up current combatant
         combatState.MoveToNextCombatant();
         if (gameState.WaveNumber == 1) {
+            ddol.PlayMusic("Battle" + gameState.StageNumber.ToString());
             StageConfig stageConfig = waveProvider.GetStageConfig(gameState.StageNumber);
             eventProvider.OnStageSetup?.Invoke(stageConfig);
         }

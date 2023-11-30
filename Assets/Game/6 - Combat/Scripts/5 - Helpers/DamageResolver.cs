@@ -108,6 +108,7 @@ public class DamageResolver {
     }
 
     int GetFullVictimMitigationPower(Character victim, PowerType element) {
+        if (victim == null || victim.Config == null) return 0; //WHY WOULD THIS HAPPEN???
         return victim.Config.BaseMitigation + GetMitigationPowerForPowerType(victim, element);
     }
 
