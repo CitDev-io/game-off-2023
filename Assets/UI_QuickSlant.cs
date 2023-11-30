@@ -30,19 +30,19 @@ public class UI_QuickSlant : MonoBehaviour
 
     IEnumerator SlantIn(RectTransform panel, float delay) {
         yield return new WaitForSeconds(delay);
-        while (panel.sizeDelta.y < 700f) {
+        while (panel.sizeDelta.y < 1024f) {
             yield return new WaitForSeconds(SPEED);
-            panel.sizeDelta = new Vector2(200f, panel.sizeDelta.y + AMOUNT);
+            panel.sizeDelta = new Vector2(350f, panel.sizeDelta.y + AMOUNT);
         
         }
     }
 
     [ContextMenu("Slant")]
     void SlantAgain() {
-        Panel1.sizeDelta = new Vector2(200f, 0f);
-        Panel2.sizeDelta = new Vector2(200f, 0f);
-        Panel3.sizeDelta = new Vector2(200f, 0f);
-        Panel4.sizeDelta = new Vector2(200f, 0f);
+        Panel1.sizeDelta = new Vector2(350f, 0f);
+        Panel2.sizeDelta = new Vector2(350f, 0f);
+        Panel3.sizeDelta = new Vector2(350f, 0f);
+        Panel4.sizeDelta = new Vector2(350f, 0f);
         Slant();
     }
 }
