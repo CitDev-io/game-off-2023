@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GameController_DDOL : MonoBehaviour
@@ -41,6 +42,10 @@ public class GameController_DDOL : MonoBehaviour
         SetSoundLevel(currentVolume);
     }
 
+    public bool IsMusicPlaying() {
+        return audioSource_Music.isPlaying;
+    }
+
     public void PauseSound()
     {
         audioSource_Music.Pause();
@@ -69,6 +74,25 @@ public class GameController_DDOL : MonoBehaviour
     {
         audioSource_SFX.Stop();
     }
+
+    public void StopMusic() {
+        audioSource_Music.Stop();
+    }
+
+    public void FadeToStop() {
+        StartCoroutine(FadeToStopCoroutine());
+    }
+
+    IEnumerator FadeToStopCoroutine() {
+        float startingVolume = audioSource_Music.volume;
+        while (audioSource_Music.volume > 0f) {
+            audioSource_Music.volume -= 0.001f;
+            yield return new WaitForSeconds(0.01f);
+        }
+        audioSource_Music.Stop();
+        audioSource_Music.volume = startingVolume;
+    }
+
     public void PlayMusic(string songName)
     {
         AudioClip audioClip = GetSongClipByName(songName);
