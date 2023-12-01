@@ -92,11 +92,14 @@ public class GameController_DDOL : MonoBehaviour
 
     IEnumerator FadeToStopCoroutine() {
         float startingVolume = audioSource_Music.volume;
+        AudioClip startingAudio = audioSource_Music.clip;
         while (audioSource_Music.volume > 0f) {
             audioSource_Music.volume -= 0.001f;
             yield return new WaitForSeconds(0.01f);
         }
-        audioSource_Music.Stop();
+        if (audioSource_Music.clip == startingAudio) {
+            audioSource_Music.Stop();
+        }
         audioSource_Music.volume = startingVolume;
     }
 
