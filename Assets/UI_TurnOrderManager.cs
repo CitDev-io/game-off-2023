@@ -10,7 +10,7 @@ public class UI_TurnOrderManager : MonoBehaviour
     // public TextMeshProUGUI Flavor2;
     // public TextMeshProUGUI Flavor3;
     public Character CurrentSelection;
-    List<Character> EligibleTargets = new List<Character>();
+    public List<Character> EligibleTargets = new List<Character>();
     public UI_PortraitController TopPortrait;
     public List<UI_PortraitController> Portraits;
     public bool SelectionModeOn = false;

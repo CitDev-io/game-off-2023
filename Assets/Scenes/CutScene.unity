@@ -938,7 +938,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: ffb9e37ae456b6a4baeba9103fb9b547, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1250,14 +1250,15 @@ MonoBehaviour:
   Bubble2_Pally: {fileID: 437678214}
   DELAY3: 3.25
   Bubble3_Priest: {fileID: 1658137739}
-  DELAY4: 1.25
+  DELAY4: 0.75
   Bubble4_Pally: {fileID: 1777835269}
   RogueTalking: {fileID: 21300000, guid: 850aa963dd0c4a84cac3c79eb79ac48a, type: 3}
   RogueSilent: {fileID: 21300000, guid: ffb9e37ae456b6a4baeba9103fb9b547, type: 3}
   RogueBody: {fileID: 1072809013}
   Camera2: {fileID: 589820306}
   Camera3: {fileID: 2019082338}
-  DELAY5: 2
+  DELAY4B: 0.5
+  DELAY5: 0.25
   DELAY6: 0.75
   WarlockBody: {fileID: 857866910}
   WarlockIdle: {fileID: 21300000, guid: ca572b9d477b6e74cbc85c9da5553e1a, type: 3}

@@ -27,7 +27,7 @@ public class UIManager : MonoBehaviour
     public UI_StageCurtain StageCurtainUI;
     public UI_StageNameIntro StageNameUI;
     public SpriteRenderer BackgroundImage;
-    public GameObject WinUI;
+    public UI_WinPanel WinUI;
     public GameObject ReviveUI;
     GameController_DDOL ddol;
     SelectionState CurrentSelectionState = SelectionState.NONE;
@@ -53,6 +53,14 @@ public class UIManager : MonoBehaviour
         ReviveUI.SetActive(false);
         _eventProvider.OnInput_ReviveResponse?.Invoke(revive);
     }
+
+    public void SelectTargetIfEligible(Character target) {
+        
+        if (TurnOrderUI.EligibleTargets.Contains(target)) {
+            TargetSelected(target);
+        }
+    }
+
     public void TargetSelected(Character target) {
         if (BoonTimeout || CurrentSelectionState != SelectionState.TARGET) {
             return;
@@ -228,7 +236,9 @@ public class UIManager : MonoBehaviour
     }
 
     void HandleGameVictory() {
-        WinUI.SetActive(true);
+        StageCurtainUI.CurtainDown();
+        WinUI.gameObject.SetActive(true);
+        WinUI.StartItUp();
     }
 
     void HandleGameOver(int livesLeft) {

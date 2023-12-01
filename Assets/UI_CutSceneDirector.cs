@@ -22,6 +22,7 @@ public class UI_CutSceneDirector : MonoBehaviour
     public Camera Camera2;
     public Camera Camera3;
 
+public float DELAY4B = 0.5f;
     public float DELAY5 = 3f;
     public float DELAY6 = 3f;
     public SpriteRenderer WarlockBody;
@@ -30,7 +31,6 @@ public class UI_CutSceneDirector : MonoBehaviour
 
     public float DELAY7 = 3f;
     public GameObject Priest;
-
 
 public float DELAY8 = 3f;
     public SpriteRenderer PaladinBody;
@@ -60,7 +60,7 @@ GameController_DDOL ddol;
         Camera2.enabled = false;
         Camera3.enabled = false;
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.5f);
         RogueBody.sprite = RogueTalking;
         Bubble1_Rogue.Say("Hey Pally, want to go slay dragons with us? They have shiny scales!");
 
@@ -84,6 +84,11 @@ Camera.SetupCurrent(Camera1);
         Bubble2_Pally.Hide();
         WarlockBody.sprite = WarlockEyeRoll;
         Priest.SetActive(true);
+
+        
+        yield return new WaitForSeconds(DELAY4B);
+
+        WarlockBody.sprite = WarlockIdle;
 
         yield return new WaitForSeconds(DELAY5);
 

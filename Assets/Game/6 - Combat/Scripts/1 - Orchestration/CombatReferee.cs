@@ -472,12 +472,13 @@ public class CombatReferee : MonoBehaviour
         yield return new WaitForSeconds(1f);
         List<Character> EligibleTargets = combatState.GetEligibleTargetsForSelectedAbility();
         
-
+        Character randomTarget;
         if (EligibleTargets.Count == 0) {
-            yield break;
+            randomTarget = combatState.CurrentCombatant;
+        } else {
+            randomTarget = EligibleTargets[UnityEngine.Random.Range(0, EligibleTargets.Count)];
         }
 
-        Character randomTarget = EligibleTargets[UnityEngine.Random.Range(0, EligibleTargets.Count)];
         TargetSelected(randomTarget);
     }
 

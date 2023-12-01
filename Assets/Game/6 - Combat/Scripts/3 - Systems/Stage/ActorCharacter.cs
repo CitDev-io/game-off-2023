@@ -207,7 +207,7 @@ public class ActorCharacter : MonoBehaviour
     {
         if (_character.isDead) return;
 
-        GameObject.Find("GameManager").GetComponent<UIManager>().TargetSelected(_character);
+        GameObject.Find("GameManager").GetComponent<UIManager>().SelectTargetIfEligible(_character);
     }
 
     void FixedUpdate()
