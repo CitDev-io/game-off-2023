@@ -15,10 +15,21 @@ A 2D Turn-Based RPG by CitizenDevelopers (citdev.io)
 
 
 # Tune It Yourself!
+- Poke around the [Combat Config Folder](https://github.com/CitDev-io/game-off-2023/tree/develop/Assets/Game/6%20-%20Combat/CombatConfig)
 - Game is tuned by our designers using Unity Scriptable Objects
 - `CharacterConfig` allows you to create characters or tune existing ones with properties like BaseMitigation, BaseHP, BaseSP, MinAttackDamage, MaxAttackDamage, SpecialAttackMin, SpecialAttackMax
 - `StageConfig` lets you build your own stages with up to 7 waves of enemies.
 - Adjust the `Enemy Set List` to decide which Stages are in the game
+
+
+.
+
+
+.
+
+
+.
+
 
 ## Code Layer Responsibility Map
 Majority of C# game logic is written into `/Assets/Game/6 - Combat/Scripts/`. Each script should fall under one of these layers. (Plenty of UI/State are out of place ☹️)
