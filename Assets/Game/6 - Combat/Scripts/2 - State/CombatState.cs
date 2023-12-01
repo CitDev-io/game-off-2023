@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 public class CombatState
@@ -270,6 +271,24 @@ public class CombatState
     }
 
     void IdentifyGlobalTriggers(EffectPlan _e) {
+        List<Character> AvailablePrayers = FullCombatantList.FindAll(combatant => combatant.Config.PlayerClass == PCAdventureClassType.PRIEST && combatant.Config.SupportTreeLevel > 2 && combatant.GenericWaveCounter == 0);
+
+        if (AvailablePrayers.Count > 0) {
+
+            Character Prayer = AvailablePrayers[0];
+            List<Character> DeadAllies = FullCombatantList.FindAll(combatant => combatant.Config.TeamType == Prayer.Config.TeamType && combatant.isDead);
+
+            if (DeadAllies.Count != 0) {
+
+                Character ReviveTarget = DeadAllies[0];
+                AbilityPrayer prayer = new AbilityPrayer(ReviveTarget);
+                
+                _e.Add(prayer.GetUncommitted(Prayer, null, null));
+                
+                Prayer.GenericWaveCounter = 1;
+            }
+        }
+
         // Check for Improved Counterattack
         if (_e.Source is AbilityBasicAttack || !_e.Source.IsAbility) return;
         if (_e.Source is AbilityCounterattack) return;
@@ -286,24 +305,6 @@ public class CombatState
             );
             _e.Add(ea);
         });
-
-        List<Character> AvailablePrayers = FullCombatantList.FindAll(combatant => combatant.Config.PlayerClass == PCAdventureClassType.PRIEST && combatant.Config.SupportTreeLevel > 2 && combatant.GenericWaveCounter == 0);
-        UnityEngine.Debug.Log("AvailablePrayers: " + AvailablePrayers.Count);
-
-        if (AvailablePrayers.Count > 0) {
-            UnityEngine.Debug.Log("IN");
-            Character Prayer = AvailablePrayers[0];
-            List<Character> DeadAllies = FullCombatantList.FindAll(combatant => combatant.Config.TeamType == Prayer.Config.TeamType && combatant.isDead);
-            UnityEngine.Debug.Log("DeadAllies: " + DeadAllies.Count);
-
-            if (DeadAllies.Count != 0) {
-                UnityEngine.Debug.Log("IN");
-                Character ReviveTarget = DeadAllies[0];
-                Prayer.GenericWaveCounter = 1;
-                ReviveOrder ea = new ReviveOrder(ReviveTarget, 50, new AbilityBlessing(Prayer.Config.AttackTreeLevel, Prayer.Config.SupportTreeLevel));
-                _e.Add(ea);
-            }
-        }
     }
 
     void ResolveSummonOrders(EffectPlan _e) {
