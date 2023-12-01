@@ -15,7 +15,7 @@ public class AbilityPyroPeakaboo : Effect
     {
         var _e = new EffectPlan(source, source, this);
 
-        _e.AddToRevivalList(new ReviveOrder(source, 50, this));
+        _e.Add(new ReviveOrder(source, 50, this));
 
         return _e;
     }

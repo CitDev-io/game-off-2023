@@ -254,7 +254,7 @@ public class UIManager : MonoBehaviour
     IEnumerator IntroduceStageRoutine() {
         yield return new WaitForSeconds(1f);
         StageCurtainUI.CurtainUp();
-        yield return new WaitForSeconds(0.5f);
+        // yield return new WaitForSeconds(0.5f);
         StageNameUI.IntroduceStage();
         yield return new WaitForSeconds(4.5f);
         IsPerforming = false;

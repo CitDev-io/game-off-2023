@@ -23,7 +23,7 @@ public class EffectPlan
     public List<EffectPlan> EffectResponseOrders = new List<EffectPlan>();
     public List<ScaleOrder> ScaleOrders = new List<ScaleOrder>();
 
-    public EffectPlan AddToRevivalList(ReviveOrder ro) {
+    public EffectPlan Add(ReviveOrder ro) {
         ReviveOrders.Add(ro);
         return this;
     }

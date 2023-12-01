@@ -473,9 +473,11 @@ public class CombatReferee : MonoBehaviour
         List<Character> EligibleTargets = combatState.GetEligibleTargetsForSelectedAbility();
         
 
-        // get random eligibletarget
-        Character randomTarget = EligibleTargets[UnityEngine.Random.Range(0, EligibleTargets.Count)];
+        if (EligibleTargets.Count == 0) {
+            yield break;
+        }
 
+        Character randomTarget = EligibleTargets[UnityEngine.Random.Range(0, EligibleTargets.Count)];
         TargetSelected(randomTarget);
     }
 

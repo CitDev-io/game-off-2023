@@ -6,6 +6,6 @@ public class BuffCounterattack : Buff
         Description = "When taking damage, this unit will attack the source back";
         AgingPhase = CombatPhase.CHARACTERTURN_CLEANUP;
         isDebuff = false;
-        PortraitArt = "bufficons/counterattack";
+        PortraitArt = "bufficons/counter attack";
     }
 }

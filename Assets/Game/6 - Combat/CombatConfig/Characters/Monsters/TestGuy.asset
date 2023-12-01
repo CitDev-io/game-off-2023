@@ -10,26 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1f911328fe241041bd769443387dfdb, type: 3}
-  m_Name: JeremyLight
+  m_Name: TestGuy
   m_EditorClassIdentifier: 
-  _Name: Tom
-  _PowerType: 0
+  _Name: MORPHEUS
+  _PowerType: 1
   _TeamType: 1
   _PlayerClass: 0
   ScaleBounty: 1
-  _Portrait: {fileID: 21300000, guid: 624ac598662c8c54caeba0686c759424, type: 3}
-  _Skin: {fileID: 21300000, guid: 1c7b58028cb5d124aa95c359322fdf5b, type: 3}
-  _SpineSkeleton: {fileID: 11400000, guid: 909d70de0df1b9a40be0ffed313f30ba, type: 2}
-  _SpecialAttack: 12
+  _Portrait: {fileID: 21300000, guid: d55dec5225c1a2b45ab86acf9115aa8b, type: 3}
+  _Skin: {fileID: 21300000, guid: 781463e6d0121de4f89a9f21e8ba89f3, type: 3}
+  _SpineSkeleton: {fileID: 11400000, guid: 98ecf850dc1349941a19c268c28fe74d, type: 2}
+  _SpecialAttack: 0
   _UltimateAbility: 0
   _NativeBuff: 0
   _BaseMitigation: 0
-  _BaseHP: 150
-  _BaseSP: 150
-  _BaseAttackMin: 30
-  _BaseAttackMax: 30
-  _BaseSpecialMin: 30
-  _BaseSpecialMax: 30
+  _BaseHP: 22000
+  _BaseSP: 22000
+  _BaseAttackMin: 1
+  _BaseAttackMax: 1
+  _BaseSpecialMin: 1
+  _BaseSpecialMax: 1
   SupportTreeLevel: 0
   AttackTreeLevel: 0
   IsBoss: 0

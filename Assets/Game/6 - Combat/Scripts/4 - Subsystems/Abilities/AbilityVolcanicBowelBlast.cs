@@ -22,11 +22,13 @@ public class AbilityVolcanicBowelBlast : Effect
             return _e;
         }
 
+        int DamageToAllies = (int) (source.GetSpecialAttackRoll(false) / 4f);
+
         foreach(Character Ally in NearbyAllies) {
             DamageOrder DamageToTarget = new DamageOrder(
                 source,
                 Ally,
-                source.GetSpecialAttackRoll(false) / 4,
+                DamageToAllies,
                 this
             );
             _e.Add(DamageToTarget);

@@ -293,4 +293,12 @@ public class Character : MonoBehaviour
         AddBuff(new BuffCharmed(this, this, 1));
     }
 
+    [ContextMenu("combo")]
+    void A() {
+        AddBuff(new BuffBlinded(this, this, 1));
+        AddBuff(new BuffStrengthen(this, this, 1));
+        AddBuff(new BuffStunned(this, this, 1));
+        // AddBuff(new BuffElementalVulnerability(this, this, 1));
+        AddBuff(new BuffWeakness(this, this, 1));
+    }
 }
