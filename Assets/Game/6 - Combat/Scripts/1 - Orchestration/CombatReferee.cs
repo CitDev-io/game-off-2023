@@ -536,19 +536,19 @@ public class CombatReferee : MonoBehaviour
         }
     }
 
-    void Update(){
-        CheatCodes();
-    }
+    // void Update(){
+    //     CheatCodes();
+    // }
 
-    void CheatCodes() {
-        if (Input.GetKeyDown(KeyCode.V)) {
-            DefeatWave();
-        }
+    // void CheatCodes() {
+    //     if (Input.GetKeyDown(KeyCode.V)) {
+    //         DefeatWave();
+    //     }
 
-        if (Input.GetKeyDown(KeyCode.R)) {
-            ReviveAndHealAllPCs();
-        }
-    }
+    //     if (Input.GetKeyDown(KeyCode.R)) {
+    //         ReviveAndHealAllPCs();
+    //     }
+    // }
 
     [ContextMenu("Revive All PCs")]
     void ReviveAndHealAllPCs() {
