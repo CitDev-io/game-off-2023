@@ -17,7 +17,10 @@ MonoBehaviour:
   BossImage: {fileID: 21300000, guid: 0ac55f9f886d827408c102bdf33c5ff7, type: 3}
   BackgroundImage: {fileID: 21300000, guid: e2a019fa01240764b8127035e05a3f39, type: 3}
   Wave1:
-  - {fileID: 11400000, guid: 8a3eafb5c4eaebb4fb57b98894f922e5, type: 2}
+  - {fileID: 11400000, guid: c446058bb7970e44398486f7bd5c5c15, type: 2}
+  - {fileID: 11400000, guid: caec8b81c4b040949825129bd2b75c91, type: 2}
+  - {fileID: 11400000, guid: caec8b81c4b040949825129bd2b75c91, type: 2}
+  - {fileID: 11400000, guid: caec8b81c4b040949825129bd2b75c91, type: 2}
   Wave2: []
   Wave3: []
   Wave4: []

@@ -173,7 +173,6 @@ public class ActorCharacter : MonoBehaviour
         _spineSkin.skeleton.R = flashColor.r;
         _spineSkin.skeleton.G = flashColor.g;
         _spineSkin.skeleton.B = flashColor.b;
-        _spineSkin.skeleton.A = flashColor.a;
     }
 
     void ChangeSpineSkinWhite() {
@@ -181,7 +180,6 @@ public class ActorCharacter : MonoBehaviour
         _spineSkin.skeleton.R = flashColor.r;
         _spineSkin.skeleton.G = flashColor.g;
         _spineSkin.skeleton.B = flashColor.b;
-        _spineSkin.skeleton.A = flashColor.a;
     }
 
     IEnumerator SpineFlashRedPerformance() {
@@ -379,6 +377,7 @@ public class ActorCharacter : MonoBehaviour
             float alpha = 1f;
                 while (alpha > 0f) {
                     _spineSkin.skeleton.A = alpha;
+ 
                     alpha -= DEATH_FADE_INCREMENT;
                     yield return new WaitForSeconds(DEATH_FADE_SPEED);
                 }
@@ -401,20 +400,21 @@ public class ActorCharacter : MonoBehaviour
     }
 
     IEnumerator CrackedPerformance() {
-        _skin.color = new Color(1f, 0f, 0f, 0.8f);
-        yield return new WaitForSeconds(0.1f);
-        _skin.color = new Color(1f, 1f, 1f, 1f);
-        yield return new WaitForSeconds(0.1f);
-        _skin.color = new Color(1f, 0f, 0f, 0.8f);
-        yield return new WaitForSeconds(0.1f);
-        _skin.color = new Color(1f, 1f, 1f, 1f);
+        yield return null;
+        // _skin.color = new Color(1f, 0f, 0f, 0.8f);
+        // yield return new WaitForSeconds(0.1f);
+        // _skin.color = new Color(1f, 1f, 1f, 1f);
+        // yield return new WaitForSeconds(0.1f);
+        // _skin.color = new Color(1f, 0f, 0f, 0.8f);
+        // yield return new WaitForSeconds(0.1f);
+        // _skin.color = new Color(1f, 1f, 1f, 1f);
     }
 
     IEnumerator RevivedPerformance() {
         _displayLayer.SetActive(true);
         if (IN_SPINE_MODE) {
             IsActing = true;
-            if (_spineSkin.skeleton.A == 0f) {
+            if (_spineSkin.skeleton.A < 4f) {
                 float alpha = 0f;
                 while (alpha < 0.95f) {
                     _spineSkin.skeleton.A = alpha;

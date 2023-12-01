@@ -90,7 +90,7 @@ public class UI_TurnOrderManager : MonoBehaviour
 
     public void SetSelectionMode(bool on) {
         SelectionModeOn = on;
-        if (on) {
+        if (on && EligibleTargets.Count > 0) {
             CurrentSelection = EligibleTargets[0];
             CurrentSelection.IsHighlighted = true;
         }
